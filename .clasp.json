@@ -1,0 +1,18 @@
+{
+  "scriptId": "1nDTNgVzkJE6wwY9rKkcPnFuYkxqwn8Rp9p1hH9ALNseOdC2ZAsoX6AXl",
+  "rootDir": ".",
+  "filePushOrder": [
+    "FL_Config.gs",
+    "FL_XmlParser.gs",
+    "FL_DataStore.gs",
+    "FL_Metadata.gs",
+    "FL_Parser_Shopee.gs",
+    "FL_Parser_TikTok.gs",
+    "FL_Parser_Lazada.gs",
+    "FL_ProductNames.gs",
+    "FL_Main.gs",
+    "Index.html",
+    "Dashboard_Executive.html",
+    "Dashboard_Annual.html"
+  ]
+}
