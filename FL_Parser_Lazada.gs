@@ -91,7 +91,7 @@ function FL_parseLazadaOrder(driveFile) {
     // (paidPrice รวมค่าส่งอยู่แล้ว ดังนั้นต้องหักค่าส่งออก)
     const revenue = paidPx - shipping - discount - refund;
 
-    totalGross    += unitPx;
+    totalGross    += unitPx - refund;
     totalShipping += shipping;
     totalRevenue  += revenue;
 
@@ -188,7 +188,9 @@ function FL_parseLazadaIncome(driveFile) {
   let paymentFee  = 0;
   let sellingFee  = 0;
   let premiumFee  = 0;
+  let otherFee    = 0;
   let totalNet    = 0;
+  const otherTypes = {};
 
   // Per-order net (ใช้ตรวจสอบ)
   const orderMap = {};
@@ -217,10 +219,19 @@ function FL_parseLazadaIncome(driveFile) {
       sellingFee += amount;
     } else if (lowerType.includes('premium')) {
       premiumFee += amount;
+    } else {
+      otherFee += amount;
+      otherTypes[txnType] = (otherTypes[txnType] || 0) + 1;
     }
   }
 
-  const totalFees = paymentFee + sellingFee + premiumFee; // ทุกอย่างเป็น negative
+  const totalFees = paymentFee + sellingFee + premiumFee + otherFee;
+
+  const unknownTxnKeys = Object.keys(otherTypes);
+  if (unknownTxnKeys.length > 0) {
+    Logger.log('FL_parseLazadaIncome: ⚠️ unrecognized txn types: '
+      + unknownTxnKeys.map(t => `"${t}" (${otherTypes[t]}x)`).join(', '));
+  }
 
   return {
     monthKey,
@@ -234,6 +245,7 @@ function FL_parseLazadaIncome(driveFile) {
       payment_fee: paymentFee,
       selling_fee: sellingFee,
       premium_fee: premiumFee,
+      other_fee:   otherFee,
     },
     order_count:  Object.keys(orderMap).length,
     sourceFile:   filename,
