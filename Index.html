@@ -3154,13 +3154,15 @@ https://matthewjamestaylor.com/responsive-attributes
             document.getElementById('importStatusDesc').textContent = "เกิดข้อผิดพลาดในการดึงข้อมูล!";
             updateStatus('error', 'นำเข้าล้มเหลว');
 
-            showAlert('danger', 'การทำงานถูกหยุดชะงัก: ' + error.message);
+            const errMsg = (error && error.message) ? error.message
+                         : (error && error.toString && error.toString() !== '[object Object]') ? error.toString()
+                         : 'GAS system error (ดู Executions log ใน Apps Script editor)';
+            showAlert('danger', 'การทำงานถูกหยุดชะงัก: ' + errMsg);
 
-            // แสดง Error ในตาราง
             renderResultTable([{
                 platform: 'System-Error',
                 file_name: 'Execution Failed',
-                status: error.message,
+                status: errMsg,
                 status_type: 'error'
             }], false);
         }

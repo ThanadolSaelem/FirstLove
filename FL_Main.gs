@@ -844,10 +844,19 @@ function FL_scanAndImportAll() {
 function FL_scanNow() {
   PropertiesService.getScriptProperties()
     .setProperty('FL_LAST_RUN', String(new Date().getTime()));
-  // อัปเดต SKU Master ทุกครั้งที่กดสแกนมือ — ไม่ต้องรันแยก
   try { FL_importSkuMasterData(); } catch(e) { Logger.log('SKU master update skipped: ' + e); }
-  const result = FL_doScanAndImportAll();
-  // ตรวจ SKU ใหม่ → เพิ่ม product_names อัตโนมัติ
+  let result;
+  try {
+    result = FL_doScanAndImportAll();
+  } catch(e) {
+    const msg = (e && e.message) ? e.message : String(e);
+    Logger.log('FL_scanNow: FL_doScanAndImportAll threw: ' + msg);
+    return [{
+      file_name: 'System', platform: '-', file_type: '-',
+      status: 'error', status_type: 'error',
+      message: 'error', detail: 'เกิดข้อผิดพลาดระบบ: ' + msg,
+    }];
+  }
   try { FL_syncProductNames(); } catch(e) { Logger.log('FL_syncProductNames skipped: ' + e); }
   FL_clearDashboardCache();
   return result;
