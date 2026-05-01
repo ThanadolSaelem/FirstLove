@@ -56,6 +56,7 @@ function FL_parseTikTokIncome(driveFile) {
         for (let j = 0; j < row.length; j++) {
           const val = row[j];
           if (val === '' || val === null || val === undefined) continue;
+          if (!/^-?\d+(\.\d+)?$/.test(val.toString().replace(/,/g, '').trim())) continue;
           const num = FL_toNum(val);
           if (num !== 0) return num;
         }
@@ -75,6 +76,7 @@ function FL_parseTikTokIncome(driveFile) {
         for (let j = 0; j < row.length; j++) {
           const val = row[j];
           if (val === '' || val === null || val === undefined) continue;
+          if (!/^-?\d+(\.\d+)?$/.test(val.toString().replace(/,/g, '').trim())) continue;
           const num = FL_toNum(val);
           if (num !== 0) return num;
         }
@@ -173,7 +175,7 @@ function FL_parseTikTokOrder(driveFile) {
       skuMap[skuRef] = { skuRef, category: FL_getCategory(skuRef), units: 0, revenue: 0 };
     }
     skuMap[skuRef].units   += qty;
-    skuMap[skuRef].revenue += net > 0 ? net : price * qty;
+    skuMap[skuRef].revenue += net !== 0 ? net : price * qty;
   }
 
   return {

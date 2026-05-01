@@ -136,6 +136,8 @@ const FL_ITEM_NAME_FALLBACK = [
   { keyword: 'set 2 เดือน',     skuRef: 'Bundle_Gluta4+VitC2' },
   { keyword: 'กลูต้า2+vitc',    skuRef: 'Bundle_Gluta2+VitC1' },
   { keyword: 'กลูต้า4+vitc',    skuRef: 'Bundle_Gluta4+VitC2' },
+  { keyword: 'probiotic-2',     skuRef: 'Probiotic-2'          },
+  { keyword: 'probiotic-1',     skuRef: 'Probiotic-1'          },
   { keyword: 'probiotic',       skuRef: 'Bundle_Triple'        },
   { keyword: 'กลูต้า 6 กระปุก', skuRef: 'GlutaX9-6'           },
   { keyword: 'กลูต้า 4 กระปุก', skuRef: 'GlutaX9-4'           },
