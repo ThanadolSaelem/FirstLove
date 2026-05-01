@@ -409,6 +409,7 @@
         @media (min-width: 1024px) {
             [data-lg~="2column"] { grid-template-columns: repeat(2, 1fr); }
             [data-lg~="3column"] { grid-template-columns: repeat(3, 1fr); }
+            .ad-card-col2 { grid-column: 2; }
         }
 
         /* ── Cards ── */
@@ -1999,6 +2000,17 @@
                         </div>
                     </div>
 
+                    <!-- Ad Spend Card -->
+                    <div class="card ad-card-col2">
+                        <div class="card-head">
+                            <span class="card-ttl">ค่าโฆษณา</span>
+                            <span class="tip" data-tip="ค่าโฆษณารวมของช่วงที่เลือก กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา">ⓘ</span>
+                        </div>
+                        <div class="card-body" id="adSpendBody">
+                            <div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:13px;">กำลังโหลด...</div>
+                        </div>
+                    </div>
+
                 </div><!-- /row1 -->
 
                 <!-- ROW 2: Top Products | Platform Share + Fee -->
@@ -2104,7 +2116,7 @@
 
                 </div><!-- /row3 -->
 
-                <!-- ROW 4: Insights + Ad Spend -->
+                <!-- ROW 4: Insights -->
                 <div data-sm="1column gap" data-lg="2column gap">
 
                     <!-- Auto Insights -->
@@ -2119,17 +2131,6 @@
                             <ul class="ins-list" id="insList">
                                 <li class="ins-item"><span class="ins-icon">⏳</span>กำลังวิเคราะห์...</li>
                             </ul>
-                        </div>
-                    </div>
-
-                    <!-- Ad Spend Card -->
-                    <div class="card">
-                        <div class="card-head">
-                            <span class="card-ttl">ค่าโฆษณา vs ยอดขาย</span>
-                            <span class="tip" data-tip="เปรียบเทียบค่าโฆษณาที่ใช้กับยอดขายสุทธิเดือนนี้">ⓘ</span>
-                        </div>
-                        <div class="card-body" id="adSpendBody">
-                            <div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:13px;">กำลังโหลด...</div>
                         </div>
                     </div>
 
@@ -2761,30 +2762,10 @@
                     </div>`;
                 return;
             }
-            const roas = adSpend.roas;
-            const roasColor = roas >= 3 ? '#10b981' : roas >= 1.5 ? '#f59e0b' : '#ef4444';
             el.innerHTML = `
-                <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#faf5ff;border-radius:10px;">
-                        <div>
-                            <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:2px;">ยอดขายสุทธิ</div>
-                            <div style="font-size:18px;font-weight:800;color:#1e1b3a;">฿${FMT(fNet)}</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:2px;">ค่าโฆษณา</div>
-                            <div style="font-size:18px;font-weight:800;color:#f59e0b;">฿${FMT(total)}</div>
-                        </div>
-                    </div>
-                    ${roas !== null ? `
-                    <div style="text-align:center;padding:10px;background:#f0fdf4;border-radius:10px;border:1.5px solid ${roasColor}30;">
-                        <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:3px;">ROAS (Return on Ad Spend)</div>
-                        <div style="font-size:26px;font-weight:800;color:${roasColor};">${roas}x</div>
-                        <div style="font-size:10px;color:var(--text-light);">ทุก ฿1 ที่ยิงโฆษณา ได้ยอดขายกลับมา ฿${roas}</div>
-                    </div>` : ''}
-                    <div style="height:4px;background:#e9d5ff;border-radius:4px;overflow:hidden;">
-                        <div style="height:100%;width:${Math.min(total/fNet*100,100).toFixed(1)}%;background:#f59e0b;border-radius:4px;"></div>
-                    </div>
-                    <div style="font-size:10.5px;color:var(--text-sub);text-align:center;">ค่าโฆษณาคิดเป็น ${fNet ? (total/fNet*100).toFixed(1) : 0}% ของยอดขาย</div>
+                <div style="text-align:center;padding:16px 0 12px;">
+                    <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:6px;letter-spacing:.3px;">ค่าโฆษณารวม</div>
+                    <div style="font-size:28px;font-weight:800;color:#f59e0b;">฿${FMT(total)}</div>
                 </div>`;
         }
 
