@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Love — ข้อมูลโฆษณา</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple-50:#faf5ff;--purple-100:#f3e8ff;--purple-200:#e9d5ff;
+      --purple-500:#a855f7;--purple-600:#9333ea;--purple-700:#7c3aed;
+      --purple-800:#6d28d9;--purple-900:#4c1d95;
+      --brand:#8b5cf6;--bg:#f0ecff;--surface:#fff;--surface-2:#faf8ff;
+      --text-main:#1e1b3a;--text-sub:#6b7280;--text-light:#9ca3af;
+      --border:#e5e7eb;--success:#10b981;--success-bg:#d1fae5;
+      --warning:#f59e0b;--warning-bg:#fef3c7;--danger:#ef4444;--danger-bg:#fee2e2;
+      --tiktok:#5b4a9e;--shopee:#f97316;--facebook:#1877f2;
+      --sh-sm:0 1px 3px rgba(139,92,246,.08);--sh-md:0 4px 16px rgba(139,92,246,.10);
+      --r:12px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Noto Sans Thai','Inter',sans-serif;background:linear-gradient(135deg,#f0ecff 0%,#faf5ff 50%,#ede9fe 100%);background-attachment:fixed;color:var(--text-main);min-height:100vh;font-size:13px;}
+    .sidebar{width:228px;background:linear-gradient(160deg,#3b0764 0%,#5b21b6 40%,#7c3aed 100%);display:flex;flex-direction:column;padding:22px 0;position:fixed;top:0;left:0;bottom:0;z-index:100;box-shadow:4px 0 30px rgba(76,29,149,.25);}
+    .logo-area{padding:0 18px 20px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;}
+    .logo-icon{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    .brand-name{color:#fff;font-weight:700;font-size:15px;letter-spacing:.3px;}
+    .brand-sub{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;}
+    .nav-items-wrap{padding:16px 10px;flex:1;overflow-y:auto;}
+    .nav-label{color:rgba(255,255,255,.4);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:10px 8px 4px;}
+    .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .18s;margin-bottom:2px;}
+    .nav-item:hover{background:rgba(255,255,255,.12);color:#fff;}
+    .nav-item.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600;}
+    .nav-icon{width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .main-content{margin-left:228px;padding:28px 32px;min-height:100vh;}
+    .page-header{margin-bottom:24px;}
+    .page-header h2{font-size:22px;font-weight:700;color:var(--text-main);}
+    .page-header p{color:var(--text-sub);margin-top:4px;font-size:13px;}
+    .card{background:var(--surface);border-radius:var(--r);box-shadow:var(--sh-md);border:1px solid rgba(139,92,246,.08);overflow:hidden;margin-bottom:20px;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface-2);}
+    .card-header-icon{width:36px;height:36px;background:var(--purple-100);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+    .card-header-text h3{font-size:14px;font-weight:600;color:var(--text-main);}
+    .card-header-text p{font-size:12px;color:var(--text-sub);margin-top:2px;}
+    .card-body{padding:20px;}
+    .year-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+    .year-bar label{font-size:13px;font-weight:500;color:var(--text-sub);}
+    .year-select{padding:6px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-main);cursor:pointer;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit;}
+    .btn-primary{background:var(--purple-700);color:#fff;}.btn-primary:hover{background:var(--purple-800);}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-secondary{background:var(--surface);color:var(--text-main);border:1px solid var(--border);}.btn-secondary:hover{background:var(--bg);}
+    .form-grid{display:grid;gap:0;}
+    .form-row{display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+    .form-row:last-child{border-bottom:none;}
+    .form-row.header-row{background:var(--bg);font-weight:600;font-size:12px;color:var(--text-sub);}
+    .form-cell{padding:10px 12px;display:flex;align-items:center;}
+    .form-cell.label-cell{font-weight:500;font-size:13px;gap:8px;}
+    .form-cell.label-cell .platform-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .form-cell input[type=number]{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-main);transition:border .15s;}
+    .form-cell input[type=number]:focus{outline:none;border-color:var(--purple-500);}
+    .section-row{background:var(--surface-2);}
+    .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
+    .subtotal-row{background:#faf5ff;font-weight:600;}
+    .total-row{background:var(--purple-100);font-weight:700;}
+    .action-bar{display:flex;justify-content:flex-end;gap:10px;padding-top:16px;}
+    /* Summary table */
+    .table-wrap{overflow-x:auto;}
+    table.sum-table{width:100%;border-collapse:collapse;font-size:12px;}
+    table.sum-table th{background:var(--bg);padding:8px 12px;text-align:right;font-weight:600;color:var(--text-sub);border-bottom:2px solid var(--border);white-space:nowrap;}
+    table.sum-table th:first-child{text-align:left;}
+    table.sum-table td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);color:var(--text-main);}
+    table.sum-table td:first-child{text-align:left;font-weight:500;}
+    table.sum-table tr:hover td{background:var(--purple-50);}
+    table.sum-table .total-row td{background:var(--purple-100);font-weight:700;border-top:2px solid var(--purple-300);}
+    table.sum-table .sub-th{font-size:10px;color:var(--text-light);font-weight:400;}
+    .roas-good{color:var(--success);font-weight:700;}
+    .roas-ok{color:var(--warning);font-weight:700;}
+    .roas-bad{color:var(--danger);font-weight:700;}
+    .num{font-variant-numeric:tabular-nums;}
+    .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;}
+    .alert.success{background:var(--success-bg);color:#065f46;display:block;}
+    .alert.danger{background:var(--danger-bg);color:#991b1b;display:block;}
+    .month-input{padding:7px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-main);}
+    .month-input:focus{outline:none;border-color:var(--purple-500);}
+    .chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+    .chip-tiktok{background:#ede9fe;color:var(--tiktok);}
+    .chip-shopee{background:#fff7ed;color:var(--shopee);}
+    .chip-facebook{background:#eff6ff;color:var(--facebook);}
+    @media(max-width:900px){
+      .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:10px;}
+      .main-content{margin-left:0;padding:16px;}
+      .form-row{grid-template-columns:150px 1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-icon">💜</div>
+    <div><div class="brand-name">First Love</div><div class="brand-sub">Ad Performance</div></div>
+  </div>
+  <div class="nav-items-wrap">
+    <div class="nav-label">แดชบอร์ด</div>
+    <a href="#" class="nav-item" onclick="navTo('dashboard');return false">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg></span>มุมมองผู้บริหาร
+    </a>
+    <a href="#" class="nav-item" onclick="navTo('annual');return false">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>มุมมองรายปี
+    </a>
+    <a href="#" class="nav-item active" onclick="navTo('ad');return false">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>ข้อมูลโฆษณา
+    </a>
+    <div class="nav-label">ระบบ</div>
+    <a href="#" class="nav-item" onclick="navTo('import');return false">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>นำเข้าข้อมูล
+    </a>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+  <div class="page-header">
+    <h2>ข้อมูลโฆษณา</h2>
+    <p>บันทึกค่าโฆษณาและยอดขายแบบแยก Platform — ใส่มือรายเดือน</p>
+  </div>
+
+  <div id="alertBox" class="alert"></div>
+
+  <!-- ── Input Card ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">✏️</div>
+      <div class="card-header-text">
+        <h3>บันทึกรายเดือน</h3>
+        <p>กรอกค่าโฆษณา (บาท) และยอดขายที่มาจากโฆษณานี้ (บาท) แยกตาม Platform</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+        <label style="font-weight:600;font-size:13px;">เดือน:</label>
+        <input type="month" id="inputMonth" class="month-input">
+        <button class="btn btn-secondary" onclick="loadMonth()">โหลดข้อมูล</button>
+      </div>
+
+      <!-- Form table -->
+      <div class="form-grid">
+        <div class="form-row header-row">
+          <div class="form-cell label-cell">Platform / ประเภท</div>
+          <div class="form-cell">ค่าโฆษณา (บาท)</div>
+          <div class="form-cell">ยอดขาย (บาท)</div>
+        </div>
+
+        <!-- TikTok section -->
+        <div class="form-row section-row">
+          <div class="form-cell label-cell" colspan="3">
+            <span class="platform-dot" style="background:var(--tiktok)"></span>
+            <span class="section-label" style="color:var(--tiktok)">TikTok</span>
+          </div>
+          <div class="form-cell"></div><div class="form-cell"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">Awareness (Brand / Influencer)</div>
+          <div class="form-cell"><input type="number" id="tt_awareness_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_awareness_sale" min="0" step="1" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">GMV Max</div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_sale" min="0" step="1" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">GMV Live</div>
+          <div class="form-cell"><input type="number" id="tt_gmvlive_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvlive_sale" min="0" step="1" placeholder="0"></div>
+        </div>
+        <div class="form-row subtotal-row">
+          <div class="form-cell label-cell" style="padding-left:24px;color:var(--text-sub);font-size:12px;">รวม TikTok</div>
+          <div class="form-cell num" id="tt_total_ad_disp" style="color:var(--text-sub);">—</div>
+          <div class="form-cell num" id="tt_total_sale_disp" style="color:var(--text-sub);">—</div>
+        </div>
+
+        <!-- Shopee -->
+        <div class="form-row section-row">
+          <div class="form-cell label-cell">
+            <span class="platform-dot" style="background:var(--shopee)"></span>
+            <span class="section-label" style="color:var(--shopee)">Shopee</span>
+          </div>
+          <div class="form-cell"></div><div class="form-cell"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">Shopee Ads</div>
+          <div class="form-cell"><input type="number" id="sp_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="sp_sale" min="0" step="1" placeholder="0"></div>
+        </div>
+
+        <!-- Facebook -->
+        <div class="form-row section-row">
+          <div class="form-cell label-cell">
+            <span class="platform-dot" style="background:var(--facebook)"></span>
+            <span class="section-label" style="color:var(--facebook)">Facebook</span>
+          </div>
+          <div class="form-cell"></div><div class="form-cell"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">Facebook Ads</div>
+          <div class="form-cell"><input type="number" id="fb_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="fb_sale" min="0" step="1" placeholder="0"></div>
+        </div>
+
+        <!-- Grand total -->
+        <div class="form-row total-row">
+          <div class="form-cell label-cell">รวมทั้งหมด</div>
+          <div class="form-cell num" id="grand_ad_disp">—</div>
+          <div class="form-cell num" id="grand_sale_disp">—</div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-secondary" onclick="clearForm()">ล้างค่า</button>
+        <button class="btn btn-primary" id="btnSave" onclick="saveMonth()">💾 บันทึกเดือนนี้</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Monthly Summary ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📊</div>
+      <div class="card-header-text">
+        <h3>สรุปรายเดือน</h3>
+        <p>ค่าโฆษณาและยอดขายทุก Platform แยกตามเดือน</p>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+        <label style="font-size:12px;color:var(--text-sub);">ปี:</label>
+        <select id="yearSelect" class="year-select" onchange="loadSummary()"></select>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div id="summaryLoading" style="padding:32px;text-align:center;color:var(--text-sub);">กำลังโหลด...</div>
+      <div id="summaryWrap" class="table-wrap" style="display:none;">
+        <table class="sum-table" id="summaryTable">
+          <thead>
+            <tr>
+              <th rowspan="2">เดือน</th>
+              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok Awareness</th>
+              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok GMV Max</th>
+              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok GMV Live</th>
+              <th colspan="2" style="text-align:center;color:var(--shopee);">Shopee</th>
+              <th colspan="2" style="text-align:center;color:var(--facebook);">Facebook</th>
+              <th colspan="2" style="text-align:center;border-left:2px solid var(--border);">รวมทั้งหมด</th>
+              <th rowspan="2">ROAS</th>
+            </tr>
+            <tr>
+              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+              <th class="sub-th" style="border-left:2px solid var(--border);">โฆษณา</th><th class="sub-th">ยอดขาย</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Annual Total ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🏆</div>
+      <div class="card-header-text">
+        <h3>สรุปยอดรวมทั้งปี</h3>
+        <p>รวม ค่าโฆษณา และยอดขาย แยกตาม Platform</p>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div id="annualWrap" class="table-wrap">
+        <table class="sum-table" id="annualTable">
+          <thead>
+            <tr>
+              <th>Platform / ประเภท</th>
+              <th>ค่าโฆษณา (บาท)</th>
+              <th>ยอดขาย (บาท)</th>
+              <th>ROAS</th>
+            </tr>
+          </thead>
+          <tbody id="annualBody"><tr><td colspan="4" style="padding:24px;text-align:center;color:var(--text-sub);">กำลังโหลด...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Helpers ────────────────────────────────────────────────
+  function fmt(n) {
+    if (!n && n !== 0) return '—';
+    return Number(n).toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+  function roasClass(r) {
+    if (!r || r <= 0) return '';
+    if (r >= 3) return 'roas-good';
+    if (r >= 1.5) return 'roas-ok';
+    return 'roas-bad';
+  }
+  function showAlert(type, msg) {
+    const el = document.getElementById('alertBox');
+    el.className = 'alert ' + type;
+    el.textContent = msg;
+    setTimeout(() => el.className = 'alert', 4000);
+  }
+  function navTo(page) {
+    google.script.run
+      .withSuccessHandler(function(url) {
+        var dest = (url && url.indexOf('http') === 0) ? url + '?page=' + page
+          : window.location.href.split('?')[0] + '?page=' + page;
+        window.top.location.href = dest;
+      })
+      .withFailureHandler(function() {
+        window.top.location.href = window.location.href.split('?')[0] + '?page=' + page;
+      })
+      .FL_getWebAppUrl();
+  }
+
+  // ── Form helpers ───────────────────────────────────────────
+  const FIELDS = [
+    {id:'tt_awareness', platform:'tiktok', ad_type:'awareness'},
+    {id:'tt_gmvmax',    platform:'tiktok', ad_type:'gmv_max'},
+    {id:'tt_gmvlive',   platform:'tiktok', ad_type:'gmv_live'},
+    {id:'sp',           platform:'shopee', ad_type:''},
+    {id:'fb',           platform:'facebook', ad_type:''},
+  ];
+
+  function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function updateTotals() {
+    const ttAd   = val('tt_awareness_ad') + val('tt_gmvmax_ad') + val('tt_gmvlive_ad');
+    const ttSale = val('tt_awareness_sale') + val('tt_gmvmax_sale') + val('tt_gmvlive_sale');
+    const grandAd   = ttAd + val('sp_ad') + val('fb_ad');
+    const grandSale = ttSale + val('sp_sale') + val('fb_sale');
+    document.getElementById('tt_total_ad_disp').textContent   = ttAd   > 0 ? fmt(ttAd)   : '—';
+    document.getElementById('tt_total_sale_disp').textContent = ttSale > 0 ? fmt(ttSale) : '—';
+    document.getElementById('grand_ad_disp').textContent      = grandAd   > 0 ? fmt(grandAd)   : '—';
+    document.getElementById('grand_sale_disp').textContent    = grandSale > 0 ? fmt(grandSale) : '—';
+  }
+
+  document.querySelectorAll('input[type=number]').forEach(inp => {
+    inp.addEventListener('input', updateTotals);
+  });
+
+  function clearForm() {
+    FIELDS.forEach(f => {
+      document.getElementById(f.id + '_ad').value = '';
+      document.getElementById(f.id + '_sale').value = '';
+    });
+    updateTotals();
+  }
+
+  function fillForm(entries) {
+    clearForm();
+    (entries || []).forEach(e => {
+      const f = FIELDS.find(x => x.platform === e.platform && x.ad_type === e.ad_type);
+      if (!f) return;
+      document.getElementById(f.id + '_ad').value   = e.ad_amount   || '';
+      document.getElementById(f.id + '_sale').value = e.sales_amount || '';
+    });
+    updateTotals();
+  }
+
+  // ── Load existing data for a month ────────────────────────
+  function loadMonth() {
+    const mk = document.getElementById('inputMonth').value;
+    if (!mk) { showAlert('danger', 'กรุณาเลือกเดือน'); return; }
+    google.script.run
+      .withSuccessHandler(fillForm)
+      .withFailureHandler(e => showAlert('danger', e.message))
+      .FL_getAdSpendDetail(mk);
+  }
+
+  // ── Save ───────────────────────────────────────────────────
+  function saveMonth() {
+    const mk = document.getElementById('inputMonth').value;
+    if (!mk) { showAlert('danger', 'กรุณาเลือกเดือน'); return; }
+    const entries = FIELDS.map(f => ({
+      platform: f.platform, ad_type: f.ad_type,
+      ad_amount: val(f.id + '_ad'), sales_amount: val(f.id + '_sale'),
+    }));
+    const btn = document.getElementById('btnSave');
+    btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+    google.script.run
+      .withSuccessHandler(function(res) {
+        btn.disabled = false; btn.textContent = '💾 บันทึกเดือนนี้';
+        if (res && res.success) { showAlert('success', res.message); loadSummary(); }
+        else showAlert('danger', (res && res.message) || 'บันทึกไม่สำเร็จ');
+      })
+      .withFailureHandler(function(e) {
+        btn.disabled = false; btn.textContent = '💾 บันทึกเดือนนี้';
+        showAlert('danger', 'บันทึกผิดพลาด: ' + e.message);
+      })
+      .FL_saveAdSpendDetail(mk, entries);
+  }
+
+  // ── Summary table ──────────────────────────────────────────
+  function loadSummary() {
+    const year = document.getElementById('yearSelect').value;
+    if (!year) return;
+    document.getElementById('summaryLoading').style.display = 'block';
+    document.getElementById('summaryWrap').style.display    = 'none';
+    google.script.run
+      .withSuccessHandler(renderSummary)
+      .withFailureHandler(e => { document.getElementById('summaryLoading').textContent = 'โหลดไม่สำเร็จ: ' + e.message; })
+      .FL_getAdSpendDetailAnnual(year);
+  }
+
+  function renderSummary(data) {
+    document.getElementById('summaryLoading').style.display = 'none';
+    document.getElementById('summaryWrap').style.display    = 'block';
+    const keys = Object.keys(data || {}).sort();
+    const tbody = document.getElementById('summaryBody');
+
+    // Accumulate annual totals
+    const annual = {tt_aw:{ad:0,sale:0}, tt_gm:{ad:0,sale:0}, tt_gl:{ad:0,sale:0},
+                    sp:{ad:0,sale:0}, fb:{ad:0,sale:0}, total:{ad:0,sale:0}};
+
+    if (keys.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="14" style="padding:24px;text-align:center;color:var(--text-sub);">ยังไม่มีข้อมูล</td></tr>';
+      renderAnnual(annual);
+      return;
+    }
+
+    const rows = keys.map(mk => {
+      const entries = data[mk] || [];
+      function getAmt(plat, type, field) {
+        const e = entries.find(x => x.platform === plat && x.ad_type === type);
+        return e ? (e[field] || 0) : 0;
+      }
+      const ttAw  = {ad: getAmt('tiktok','awareness','ad_amount'),   sale: getAmt('tiktok','awareness','sales_amount')};
+      const ttGm  = {ad: getAmt('tiktok','gmv_max','ad_amount'),      sale: getAmt('tiktok','gmv_max','sales_amount')};
+      const ttGl  = {ad: getAmt('tiktok','gmv_live','ad_amount'),     sale: getAmt('tiktok','gmv_live','sales_amount')};
+      const sp    = {ad: getAmt('shopee','','ad_amount'),              sale: getAmt('shopee','','sales_amount')};
+      const fb    = {ad: getAmt('facebook','','ad_amount'),            sale: getAmt('facebook','','sales_amount')};
+      const totalAd   = ttAw.ad + ttGm.ad + ttGl.ad + sp.ad + fb.ad;
+      const totalSale = ttAw.sale + ttGm.sale + ttGl.sale + sp.sale + fb.sale;
+      const roas = totalAd > 0 ? (totalSale / totalAd).toFixed(2) : null;
+
+      ['tt_aw','tt_gm','tt_gl'].forEach((k,i) => {
+        const src = [ttAw,ttGm,ttGl][i];
+        annual[k].ad += src.ad; annual[k].sale += src.sale;
+      });
+      annual.sp.ad += sp.ad; annual.sp.sale += sp.sale;
+      annual.fb.ad += fb.ad; annual.fb.sale += fb.sale;
+      annual.total.ad += totalAd; annual.total.sale += totalSale;
+
+      const rc = roasClass(parseFloat(roas));
+      return `<tr>
+        <td>${mk}</td>
+        <td>${fmt(ttAw.ad)}</td><td>${fmt(ttAw.sale)}</td>
+        <td>${fmt(ttGm.ad)}</td><td>${fmt(ttGm.sale)}</td>
+        <td>${fmt(ttGl.ad)}</td><td>${fmt(ttGl.sale)}</td>
+        <td>${fmt(sp.ad)}</td><td>${fmt(sp.sale)}</td>
+        <td>${fmt(fb.ad)}</td><td>${fmt(fb.sale)}</td>
+        <td style="border-left:2px solid var(--border);font-weight:600;">${fmt(totalAd)}</td>
+        <td style="font-weight:600;">${fmt(totalSale)}</td>
+        <td class="${rc}">${roas ? roas + 'x' : '—'}</td>
+      </tr>`;
+    });
+
+    // Total row
+    const annualRoas = annual.total.ad > 0 ? (annual.total.sale / annual.total.ad).toFixed(2) : null;
+    const rc = roasClass(parseFloat(annualRoas));
+    rows.push(`<tr class="total-row">
+      <td>รวม ${document.getElementById('yearSelect').value}</td>
+      <td>${fmt(annual.tt_aw.ad)}</td><td>${fmt(annual.tt_aw.sale)}</td>
+      <td>${fmt(annual.tt_gm.ad)}</td><td>${fmt(annual.tt_gm.sale)}</td>
+      <td>${fmt(annual.tt_gl.ad)}</td><td>${fmt(annual.tt_gl.sale)}</td>
+      <td>${fmt(annual.sp.ad)}</td><td>${fmt(annual.sp.sale)}</td>
+      <td>${fmt(annual.fb.ad)}</td><td>${fmt(annual.fb.sale)}</td>
+      <td style="border-left:2px solid var(--border);">${fmt(annual.total.ad)}</td>
+      <td>${fmt(annual.total.sale)}</td>
+      <td class="${rc}">${annualRoas ? annualRoas + 'x' : '—'}</td>
+    </tr>`);
+
+    tbody.innerHTML = rows.join('');
+    renderAnnual(annual);
+  }
+
+  function renderAnnual(a) {
+    const rows = [
+      {label:'TikTok Awareness', color:'var(--tiktok)', d: a.tt_aw},
+      {label:'TikTok GMV Max',   color:'var(--tiktok)', d: a.tt_gm},
+      {label:'TikTok GMV Live',  color:'var(--tiktok)', d: a.tt_gl},
+      {label:'Shopee Ads',       color:'var(--shopee)', d: a.sp},
+      {label:'Facebook Ads',     color:'var(--facebook)', d: a.fb},
+    ];
+    const ttTotal = {ad: a.tt_aw.ad+a.tt_gm.ad+a.tt_gl.ad, sale: a.tt_aw.sale+a.tt_gm.sale+a.tt_gl.sale};
+    const ttRoas = ttTotal.ad > 0 ? (ttTotal.sale / ttTotal.ad).toFixed(2) : null;
+    const grRoas = a.total.ad > 0 ? (a.total.sale / a.total.ad).toFixed(2) : null;
+
+    let html = rows.map(r => {
+      const roas = r.d.ad > 0 ? (r.d.sale / r.d.ad).toFixed(2) : null;
+      const rc = roasClass(parseFloat(roas));
+      return `<tr>
+        <td style="color:${r.color};font-weight:600;">${r.label}</td>
+        <td>${fmt(r.d.ad)}</td><td>${fmt(r.d.sale)}</td>
+        <td class="${rc}">${roas ? roas + 'x' : '—'}</td>
+      </tr>`;
+    }).join('');
+    html += `<tr style="background:var(--purple-50);font-weight:600;">
+      <td>รวม TikTok</td><td>${fmt(ttTotal.ad)}</td><td>${fmt(ttTotal.sale)}</td>
+      <td class="${roasClass(parseFloat(ttRoas))}">${ttRoas ? ttRoas + 'x' : '—'}</td>
+    </tr>`;
+    html += `<tr class="total-row">
+      <td>รวมทั้งหมด</td><td>${fmt(a.total.ad)}</td><td>${fmt(a.total.sale)}</td>
+      <td class="${roasClass(parseFloat(grRoas))}">${grRoas ? grRoas + 'x' : '—'}</td>
+    </tr>`;
+    document.getElementById('annualBody').innerHTML = html;
+  }
+
+  // ── Init ───────────────────────────────────────────────────
+  function init() {
+    const now = new Date();
+    const cy  = now.getFullYear();
+    const cm  = String(now.getMonth() + 1).padStart(2, '0');
+    document.getElementById('inputMonth').value = cy + '-' + cm;
+
+    const sel = document.getElementById('yearSelect');
+    for (let y = cy + 1; y >= cy - 2; y--) {
+      const o = document.createElement('option');
+      o.value = String(y); o.textContent = 'ปี ' + y;
+      if (y === cy) o.selected = true;
+      sel.appendChild(o);
+    }
+    loadSummary();
+  }
+
+  window.addEventListener('load', init);
+</script>
+</body>
+</html>
