@@ -371,97 +371,108 @@ function FL_repairTikTokIncomeMonthKeys() {
 
 // ─── Ad Spend (ค่าโฆษณา) ─────────────────────────────────────
 
-/**
- * บันทึกหรืออัปเดตค่าโฆษณา (total) ต่อเดือน
- * เรียกจาก Index.html → saveAdSpend()
- * @param {string} monthKey  e.g. '2026-04'
- * @param {number} amount    ค่าโฆษณาทั้งหมดเดือนนั้น (บาท)
- * @returns {{ success: boolean, message: string }}
- */
-function FL_saveAdSpend(monthKey, amount) {
-  try {
-    const cfg = FL_getConfig();
-    if (!cfg.OUTPUT_SHEET_ID) return { success: false, message: 'ยังไม่ได้ตั้งค่า Output Sheet ID' };
-    const ss = SpreadsheetApp.openById(cfg.OUTPUT_SHEET_ID);
-    let sheet = ss.getSheetByName(FL_SHEETS.AD_SPEND);
-    if (!sheet) {
-      sheet = ss.insertSheet(FL_SHEETS.AD_SPEND);
-      sheet.appendRow(FL_HEADERS.AD_SPEND);
-      sheet.getRange(1, 1, 1, FL_HEADERS.AD_SPEND.length)
-        .setFontWeight('bold').setBackground('#6B46C1').setFontColor('#FFFFFF');
-      sheet.setFrozenRows(1);
-    }
-    const mk = String(monthKey || '').trim();
-    if (!mk || !/^\d{4}-\d{2}$/.test(mk)) return { success: false, message: 'month_key ไม่ถูกต้อง (ต้องเป็น YYYY-MM)' };
-    const amt = parseFloat(amount);
-    if (isNaN(amt) || amt < 0) return { success: false, message: 'จำนวนไม่ถูกต้อง' };
+function _FL_adSheet(create) {
+  const cfg = FL_getConfig();
+  if (!cfg.OUTPUT_SHEET_ID) return null;
+  const ss = SpreadsheetApp.openById(cfg.OUTPUT_SHEET_ID);
+  let sheet = ss.getSheetByName(FL_SHEETS.AD_SPEND);
+  if (!sheet && create) {
+    sheet = ss.insertSheet(FL_SHEETS.AD_SPEND);
+    sheet.appendRow(FL_HEADERS.AD_SPEND);
+    sheet.getRange(1, 1, 1, FL_HEADERS.AD_SPEND.length)
+      .setFontWeight('bold').setBackground('#6B46C1').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
 
-    // Upsert: find existing row for this month_key and overwrite, or append
+/**
+ * บันทึกข้อมูลโฆษณาแบบแยก platform/type รายเดือน
+ * entries = [{platform, ad_type, ad_amount, sales_amount}, ...]
+ */
+function FL_saveAdSpendDetail(monthKey, entries) {
+  try {
+    const mk = String(monthKey || '').trim();
+    if (!mk || !/^\d{4}-\d{2}$/.test(mk)) return { success: false, message: 'month_key ไม่ถูกต้อง' };
+    const sheet = _FL_adSheet(true);
+    if (!sheet) return { success: false, message: 'ยังไม่ได้ตั้งค่า Output Sheet ID' };
+
     const data = sheet.getDataRange().getValues();
-    for (let i = 1; i < data.length; i++) {
-      if (String(data[i][0]).replace(/^'/, '') === mk) {
-        sheet.getRange(i + 1, 2).setValue(amt);
-        sheet.getRange(i + 1, 3).setValue(new Date());
-        FL_clearDashboardCache();
-        return { success: true, message: `อัปเดตค่าโฆษณา ${mk}: ฿${amt.toLocaleString()} แล้ว` };
-      }
+    for (let i = data.length - 1; i >= 1; i--) {
+      if (String(data[i][0]).replace(/^'/, '') === mk) sheet.deleteRow(i + 1);
     }
-    sheet.appendRow(["'" + mk, amt, new Date()]);
+    const now = new Date();
+    (entries || []).forEach(e => {
+      const adAmt = parseFloat(e.ad_amount) || 0;
+      const saleAmt = parseFloat(e.sales_amount) || 0;
+      if (adAmt === 0 && saleAmt === 0) return;
+      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, now]);
+    });
     FL_clearDashboardCache();
-    return { success: true, message: `บันทึกค่าโฆษณา ${mk}: ฿${amt.toLocaleString()} สำเร็จ` };
+    return { success: true, message: `บันทึกข้อมูลโฆษณา ${mk} สำเร็จ` };
   } catch (e) {
     return { success: false, message: e.toString() };
   }
 }
 
-/**
- * ดึงค่าโฆษณาของเดือนนั้น
- * @param {string} monthKey  e.g. '2026-04'
- * @returns {number}  0 ถ้าไม่มีข้อมูล
- */
-function FL_getAdSpend(monthKey) {
+/** ดึงข้อมูลโฆษณาแบบ detail รายเดือน → [{platform, ad_type, ad_amount, sales_amount}] */
+function FL_getAdSpendDetail(monthKey) {
   try {
-    const cfg = FL_getConfig();
-    if (!cfg.OUTPUT_SHEET_ID) return 0;
-    const ss = SpreadsheetApp.openById(cfg.OUTPUT_SHEET_ID);
-    const sheet = ss.getSheetByName(FL_SHEETS.AD_SPEND);
-    if (!sheet) return 0;
+    const sheet = _FL_adSheet(false);
+    if (!sheet) return [];
     const mk = String(monthKey || '').trim();
     const data = sheet.getDataRange().getValues();
+    const result = [];
     for (let i = 1; i < data.length; i++) {
-      if (String(data[i][0]).replace(/^'/, '') === mk) return parseFloat(data[i][1]) || 0;
+      if (String(data[i][0]).replace(/^'/, '') !== mk) continue;
+      if (data[i].length >= 6) {
+        result.push({ platform: data[i][1], ad_type: data[i][2],
+                      ad_amount: parseFloat(data[i][3]) || 0, sales_amount: parseFloat(data[i][4]) || 0 });
+      }
     }
-    return 0;
-  } catch (e) {
-    Logger.log('FL_getAdSpend error: ' + e);
-    return 0;
-  }
+    return result;
+  } catch (e) { Logger.log('FL_getAdSpendDetail error: ' + e); return []; }
 }
 
-/**
- * ดึงค่าโฆษณาทั้งปี → array เรียงตาม month_key
- * @param {string} year  e.g. '2026'
- * @returns {Object.<string,number>}  { '2026-01': 60000, '2026-02': 0, ... }
- */
-function FL_getAdSpendAnnual(year) {
+/** ดึงข้อมูลโฆษณาทั้งปี → { '2026-01': [{platform,ad_type,ad_amount,sales_amount},...], ... } */
+function FL_getAdSpendDetailAnnual(year) {
   try {
-    const cfg = FL_getConfig();
-    if (!cfg.OUTPUT_SHEET_ID) return {};
-    const ss = SpreadsheetApp.openById(cfg.OUTPUT_SHEET_ID);
-    const sheet = ss.getSheetByName(FL_SHEETS.AD_SPEND);
+    const sheet = _FL_adSheet(false);
     if (!sheet) return {};
     const y = String(year || '');
     const out = {};
     const data = sheet.getDataRange().getValues();
     for (let i = 1; i < data.length; i++) {
       const mk = String(data[i][0]).replace(/^'/, '');
-      if (mk.startsWith(y)) out[mk] = parseFloat(data[i][1]) || 0;
+      if (!mk.startsWith(y) || data[i].length < 6) continue;
+      if (!out[mk]) out[mk] = [];
+      out[mk].push({ platform: data[i][1], ad_type: data[i][2],
+                     ad_amount: parseFloat(data[i][3]) || 0, sales_amount: parseFloat(data[i][4]) || 0 });
     }
     return out;
-  } catch (e) {
-    Logger.log('FL_getAdSpendAnnual error: ' + e);
-    return {};
-  }
+  } catch (e) { Logger.log('FL_getAdSpendDetailAnnual error: ' + e); return {}; }
+}
+
+/** ดึงยอดรวม ad_amount ของเดือนนั้น (backward-compat กับ dashboard) */
+function FL_getAdSpend(monthKey) {
+  return FL_getAdSpendDetail(monthKey).reduce((s, e) => s + e.ad_amount, 0);
+}
+
+/** ดึงยอดรวม ad_amount ทั้งปีเป็น { month_key: total } (backward-compat) */
+function FL_getAdSpendAnnual(year) {
+  const annual = FL_getAdSpendDetailAnnual(year);
+  const out = {};
+  Object.keys(annual).forEach(mk => {
+    out[mk] = annual[mk].reduce((s, e) => s + e.ad_amount, 0);
+  });
+  return out;
+}
+
+/** FL_saveAdSpend — legacy single-total form ยังใช้ได้ (เก็บใต้ platform='total') */
+function FL_saveAdSpend(monthKey, amount) {
+  return FL_saveAdSpendDetail(monthKey, [
+    { platform: 'total', ad_type: '', ad_amount: parseFloat(amount) || 0, sales_amount: 0 }
+  ]);
 }
 
 // ─── Error Log ───────────────────────────────────────────────

@@ -22,12 +22,14 @@ function doGet(e) {
   const pageMap = {
     'dashboard': 'Dashboard_Executive',
     'annual':    'Dashboard_Annual',
+    'ad':        'Dashboard_Ad',
     'import':    'Index',
   };
   const file  = pageMap[page] || 'Index';
   const titleMap = {
     'Dashboard_Executive': 'First Love — Executive Dashboard',
     'Dashboard_Annual':    'First Love — Annual Dashboard',
+    'Dashboard_Ad':        'First Love — Ad Performance',
     'Index':               'First Love — Data Import',
   };
   return HtmlService
