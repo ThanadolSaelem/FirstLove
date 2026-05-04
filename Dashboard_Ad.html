@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <style>
     :root {
       --purple-50:#faf5ff;--purple-100:#f3e8ff;--purple-200:#e9d5ff;--purple-300:#d8b4fe;
@@ -432,26 +431,38 @@
       return String(v);
     };
 
+    // inline plugin — draws value labels directly above each bar on the canvas
+    const barLabelPlugin = {
+      id: 'barLabels',
+      afterDatasetsDraw(chart) {
+        const {ctx} = chart;
+        chart.data.datasets.forEach((ds, di) => {
+          const meta = chart.getDatasetMeta(di);
+          if (meta.hidden) return;
+          meta.data.forEach((bar, i) => {
+            const v = ds.data[i];
+            if (!v || v <= 0) return;
+            ctx.save();
+            ctx.fillStyle = '#374151';
+            ctx.font = '500 9px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(thbFmt(v), bar.x, bar.y - 3);
+            ctx.restore();
+          });
+        });
+      }
+    };
+
     // ── Spend chart: grouped bars — Spending vs Sale per month ──
     _chartSpend = new Chart(document.getElementById('chartSpend').getContext('2d'), {
       type: 'bar',
+      plugins: [barLabelPlugin],
       data: {
         labels,
         datasets: [
-          {
-            label: "Spending",
-            data: rows.map(r => r.totalAd),
-            backgroundColor: '#6366f1',
-            borderRadius: 3,
-            maxBarThickness: 80,
-          },
-          {
-            label: 'Sale',
-            data: rows.map(r => r.totalSale),
-            backgroundColor: '#fb923c',
-            borderRadius: 3,
-            maxBarThickness: 80,
-          },
+          {label: 'Spending', data: rows.map(r => r.totalAd),   backgroundColor: '#6366f1', borderRadius: 3, maxBarThickness: 80},
+          {label: 'Sale',     data: rows.map(r => r.totalSale), backgroundColor: '#fb923c', borderRadius: 3, maxBarThickness: 80},
         ]
       },
       options: {
@@ -459,17 +470,9 @@
         interaction: {mode: 'index', intersect: false},
         plugins: {
           legend: {position: 'bottom', labels: {font: {size: 11}, padding: 16, usePointStyle: true}},
-          tooltip: {
-            callbacks: {label: ctx => '  ' + ctx.dataset.label + ': ฿' + thbFmt(ctx.raw)}
-          },
-          datalabels: {
-            anchor: 'end', align: 'top', offset: 4,
-            font: {size: 9, weight: '500'},
-            color: '#374151',
-            formatter: v => v > 0 ? thbFmt(v) : '',
-          }
+          tooltip: {callbacks: {label: ctx => '  ' + ctx.dataset.label + ': ฿' + thbFmt(ctx.raw)}},
         },
-        layout: {padding: {top: 52, left: 4, right: 4}},
+        layout: {padding: {top: 28, left: 4, right: 4}},
         scales: {
           x: {grid: {display: false}, ticks: {font: {size: 11}}},
           y: {ticks: {callback: thbAxis, font: {size: 11}}, grid: {color: 'rgba(0,0,0,.05)'}},
@@ -504,7 +507,6 @@
         plugins: {
           legend: {position: 'bottom', labels: {font: {size: 11}, padding: 14, usePointStyle: true}},
           tooltip: {callbacks: {label: ctx => ctx.raw !== null ? '  ' + ctx.dataset.label + ': ' + ctx.raw + 'x' : null}},
-          datalabels: {display: false}
         },
         scales: {
           x: {grid: {display: false}, ticks: {font: {size: 11}}},
