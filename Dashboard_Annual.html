@@ -1716,15 +1716,7 @@
                         <option value="">(ไม่มี)</option>
                     </select>
 
-                    <span class="f-lbl" style="margin-left:8px;">ค่าโฆษณา:</span>
-                    <select class="f-sel" id="selAdPlatform" onchange="onAdPlatformChange()">
-                        <option value="all">ทั้งหมด</option>
-                        <option value="tiktok">TikTok</option>
-                        <option value="shopee">Shopee</option>
-                        <option value="lazada">Lazada</option>
-                    </select>
-
-                    <button class="btn-sm" onclick="initLoad()">↻ รีเฟรช</button>
+<button class="btn-sm" onclick="initLoad()">↻ รีเฟรช</button>
                     <button class="btn-sm" onclick="downloadDebugData()">⬇️ โหลดข้อมูล Debug</button>
                 </div>
             </div>
@@ -1863,7 +1855,6 @@
         let IS_COMP_MODE = false;
         let PRIMARY_DATA = null;
         let COMPARE_DATA = null;
-        let AD_PLATFORM = 'all';
 
         const FMT = n => Math.round(n || 0).toLocaleString('th-TH');
         const FMTK = n => {
@@ -1945,12 +1936,7 @@
             fetchPrimary();
         }
 
-        function onAdPlatformChange() {
-            AD_PLATFORM = document.getElementById('selAdPlatform').value;
-            if (PRIMARY_DATA) renderAll();
-        }
-
-        function onCompareYearChange() {
+function onCompareYearChange() {
             COMP_YEAR = document.getElementById('selCompareYear').value;
             if (COMP_YEAR) {
                 IS_COMP_MODE = true;
@@ -2012,7 +1998,7 @@
             const feePct = p.totalGross > 0 ? (p.totalFees / p.totalGross * 100).toFixed(1) : null;
             updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `${feePct}% of gross` : null);
 
-            renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null), AD_PLATFORM);
+            renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
             renderMargin(PRIMARY_DATA.marginRanking || []);
             renderPlatformBar(PRIMARY_DATA.monthly);
             renderFeePie(PRIMARY_DATA.feeByPlatform);
@@ -2285,21 +2271,9 @@
         }
 
         // REQ-07: always-on annotations on monthly net chart
-        function renderMonthBar(pMonths, cMonths, adPlatFilter) {
+        function renderMonthBar(pMonths, cMonths) {
             const el = document.getElementById('chartMonthBar');
-
-            // Determine ad spend value per month based on platform filter
-            const adVal = (m) => {
-                if (!m.adSpendByPlat && !m.adSpend) return 0;
-                if (!adPlatFilter || adPlatFilter === 'all') return m.adSpend || 0;
-                return (m.adSpendByPlat || {})[adPlatFilter] || 0;
-            };
-            const adLabel = adPlatFilter && adPlatFilter !== 'all'
-                ? `ค่าโฆษณา (${PLBL[adPlatFilter]})`
-                : 'ค่าโฆษณา';
-            const adColor = (adPlatFilter && adPlatFilter !== 'all') ? PCOL[adPlatFilter] : '#f59e0b';
-
-            const hasAdSpend = (pMonths || []).some(m => adVal(m) > 0);
+            const hasAdSpend = (pMonths || []).some(m => (m.adSpend || 0) > 0);
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Month');
             dt.addColumn('number', YEAR);
@@ -2309,7 +2283,7 @@
                 dt.addColumn({ type: 'string', role: 'annotation' });
             }
             if (hasAdSpend) {
-                dt.addColumn('number', adLabel);
+                dt.addColumn('number', 'ค่าโฆษณา');
                 dt.addColumn({ type: 'string', role: 'annotation' });
             }
 
@@ -2323,7 +2297,7 @@
                     monthVals.push(v2);
                 }
                 if (hasAdSpend) {
-                    const av = adVal(m);
+                    const av = m.adSpend || 0;
                     row.push(av || null, av > 0 ? FMT(Math.round(av)) : null);
                 }
                 monthVals.push(v1);
@@ -2332,17 +2306,15 @@
 
             const yMaxM = Math.ceil(Math.max(...monthVals, 0) * 1.3) || 10;
 
-            // Series config: bars first, then line for adSpend
             const seriesConfig = {};
             const adSpendSeriesIdx = cMonths ? 2 : 1;
             if (hasAdSpend) {
-                seriesConfig[adSpendSeriesIdx] = { type: 'line', color: adColor, lineWidth: 2.5, pointSize: 5 };
+                seriesConfig[adSpendSeriesIdx] = { type: 'line', color: '#f59e0b', lineWidth: 2.5, pointSize: 5 };
             }
 
-            const barColors = cMonths ? ['#8b5cf6', '#4c1d95'] : ['#8b5cf6'];
             const options = {
                 backgroundColor: 'transparent',
-                colors: [...barColors, adColor],
+                colors: cMonths ? ['#8b5cf6', '#4c1d95', '#f59e0b'] : ['#8b5cf6', '#f59e0b'],
                 seriesType: 'bars',
                 series: seriesConfig,
                 chartArea: { left: 50, top: 32, right: 14, bottom: 36 },
