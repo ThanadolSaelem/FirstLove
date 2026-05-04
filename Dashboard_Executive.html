@@ -2365,12 +2365,17 @@
                 .slice(0, 10);
 
             // ── Charts & Tables ──
-            const allPlats = ['tiktok', 'shopee', 'lazada'];
-            renderDonut(allPlats, byP);
-            renderFeeBar(byP, allPlats);
-            renderCatPlatformChart(DATA.unitsByCategoryPlatform);
+            renderDonut(platforms, byP);
+            renderFeeBar(byP, platforms);
+            renderCatPlatformChart(DATA.unitsByCategoryPlatform, platFilter);
             renderTopTable(topSkus);
-            renderWaterfall(DATA.waterfall);
+            const filteredWaterfall = platFilter ? {
+                gross:    byP[platFilter]?.gross    || 0,
+                discount: Math.abs(byP[platFilter]?.seller_discount || 0),
+                fees:     Math.abs(byP[platFilter]?.platform_fees   || 0),
+                net:      byP[platFilter]?.transferred || 0,
+            } : DATA.waterfall;
+            renderWaterfall(filteredWaterfall);
             renderStock(DATA.stockStatus, DATA.stockThreshold);
             renderInsights(DATA, sum, plat, fNet);
             renderAdSpend(DATA.adSpend, fNet);
@@ -2545,32 +2550,33 @@
         const SKU_PALETTE = ['#7c3aed','#f97316','#10b981','#3b82f6','#ec4899','#eab308','#6366f1','#14b8a6','#f43f5e','#64748b'];
 
         // ── Grouped Chart: Category × Platform (current month) ──
-        function renderCatPlatformChart(catPlat) {
+        function renderCatPlatformChart(catPlat, platFilter) {
             const el = document.getElementById('chartCatPlatform');
             if (!el) return;
             const data = catPlat || {};
-            const cats = Object.keys(data).filter(c => c !== 'เซต' && c !== 'อื่นๆ' && data[c].total > 0);
+            const allP = ['tiktok', 'shopee', 'lazada'];
+            const shownPlats = platFilter ? [platFilter] : allP;
+            const cats = Object.keys(data).filter(c => c !== 'เซต' && c !== 'อื่นๆ' &&
+                shownPlats.some(p => (data[c][p] || 0) > 0));
             if (!cats.length) { el.innerHTML = noData(200); return; }
 
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'หมวด');
-            dt.addColumn('number', 'TikTok'); dt.addColumn({ type: 'string', role: 'annotation' });
-            dt.addColumn('number', 'Shopee'); dt.addColumn({ type: 'string', role: 'annotation' });
-            dt.addColumn('number', 'Lazada'); dt.addColumn({ type: 'string', role: 'annotation' });
+            shownPlats.forEach(p => {
+                dt.addColumn('number', PLBL[p]);
+                dt.addColumn({ type: 'string', role: 'annotation' });
+            });
 
             cats.forEach(cat => {
                 const d = data[cat];
-                dt.addRow([
-                    cat,
-                    d.tiktok || 0, d.tiktok ? String(d.tiktok) : null,
-                    d.shopee || 0, d.shopee ? String(d.shopee) : null,
-                    d.lazada || 0, d.lazada ? String(d.lazada) : null,
-                ]);
+                const row = [cat];
+                shownPlats.forEach(p => row.push(d[p] || 0, (d[p] || 0) > 0 ? String(d[p]) : null));
+                dt.addRow(row);
             });
 
             new google.visualization.ColumnChart(el).draw(dt, {
                 backgroundColor: 'transparent',
-                colors: [PCOL.tiktok, PCOL.shopee, PCOL.lazada],
+                colors: shownPlats.map(p => PCOL[p]),
                 legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } },
                 bar: { groupWidth: '65%' },
                 hAxis: { textStyle: { fontSize: 11, color: '#4b5563' }, gridlines: { count: 0 } },
