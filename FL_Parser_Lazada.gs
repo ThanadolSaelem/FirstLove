@@ -68,6 +68,13 @@ function FL_parseLazadaOrder(driveFile) {
 
   for (let i = 1; i < rows.length; i++) {
     const row    = rows[i];
+
+    // Multi-month export guard: skip orders from months other than monthKey.
+    if (COL_DATE >= 0) {
+      const rowMk = FL_monthKeyFromDateStr(rows[i][COL_DATE]);
+      if (rowMk && rowMk !== monthKey) continue;
+    }
+
     const status = (row[COL_STATUS] || '').toString().trim().toLowerCase();
 
     // ✅ นับ: confirmed, delivered, shipped

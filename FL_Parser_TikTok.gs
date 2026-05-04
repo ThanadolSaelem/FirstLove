@@ -159,6 +159,15 @@ function FL_parseTikTokOrder(driveFile) {
 
   for (let i = dataStartRow; i < rows.length; i++) {
     const row = rows[i];
+
+    // Multi-month export guard: skip orders from months other than monthKey.
+    // TikTok exports often span 60–90 days; without this filter all orders in the
+    // file would be attributed to the first order's month.
+    if (COL_DATE >= 0) {
+      const rowMk = FL_monthKeyFromDateStr(rows[i][COL_DATE]);
+      if (rowMk && rowMk !== monthKey) continue;
+    }
+
     const status = (row[COL_STATUS] || '').toString().trim();
     if (status && !successStatuses.includes(status)) continue;
 
