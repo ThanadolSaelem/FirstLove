@@ -2378,7 +2378,7 @@
             renderWaterfall(filteredWaterfall);
             renderStock(DATA.stockStatus, DATA.stockThreshold);
             renderInsights(DATA, sum, plat, fNet);
-            renderAdSpend(DATA.adSpend, fNet);
+            renderAdSpend(DATA.adSpend, fNet, platFilter);
         }
 
         // ── Waterfall: Gross → −Discount → −Fees → Net ──
@@ -2760,24 +2760,76 @@
                 list.map(x => `<li class="ins-item"><span class="ins-icon">${x.i}</span><span>${x.t}</span></li>`).join('');
         }
 
-        // ── Ad Spend ──
-        function renderAdSpend(adSpend, fNet) {
+        // ── Ad Spend Line Chart ──
+        function renderAdSpend(adSpend, fNet, platFilter) {
             const el = document.getElementById('adSpendBody');
             if (!el) return;
-            const total = adSpend && adSpend.total > 0 ? adSpend.total : 0;
-            if (!total) {
+
+            const trend = (adSpend && adSpend.trend) || [];
+            const shownPlats = platFilter ? [platFilter] : ['tiktok', 'shopee', 'lazada'];
+
+            // Check if any month has data for the shown platforms
+            const hasData = trend.some(row => shownPlats.some(p => (row[p] || 0) > 0));
+            if (!hasData) {
                 el.innerHTML = `
                     <div style="text-align:center;padding:24px 0 8px;">
-                        <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">ยังไม่มีข้อมูลค่าโฆษณาเดือนนี้</div>
+                        <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">ยังไม่มีข้อมูลค่าโฆษณา</div>
                         <div style="font-size:11px;color:var(--text-light);">กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา</div>
                     </div>`;
                 return;
             }
+
+            // Summary row (total for current month = last in trend)
+            const curRow = trend[trend.length - 1] || {};
+            const curTotal = shownPlats.reduce((s, p) => s + (curRow[p] || 0), 0);
+            const roasStr  = (adSpend.roas && platFilter === null) ? `<span style="font-size:11px;color:#9ca3af;margin-left:8px;">ROAS ${adSpend.roas}x</span>` : '';
+
             el.innerHTML = `
-                <div style="text-align:center;padding:16px 0 12px;">
-                    <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:6px;letter-spacing:.3px;">ค่าโฆษณารวม</div>
-                    <div style="font-size:28px;font-weight:800;color:#f59e0b;">฿${FMT(total)}</div>
-                </div>`;
+                <div style="display:flex;align-items:baseline;gap:6px;padding:10px 0 4px 0;">
+                    <div style="font-size:22px;font-weight:800;color:#f59e0b;">฿${FMT(curTotal)}</div>
+                    <div style="font-size:10px;color:#9ca3af;">${curRow.label || ''}</div>
+                    ${roasStr}
+                </div>
+                <div id="chartAdSpend" style="width:100%;height:160px;"></div>`;
+
+            const chartEl = document.getElementById('chartAdSpend');
+            if (!chartEl) return;
+
+            const dt = new google.visualization.DataTable();
+            dt.addColumn('string', 'เดือน');
+            shownPlats.forEach(p => {
+                dt.addColumn('number', PLBL[p]);
+                dt.addColumn({ type: 'string', role: 'annotation' });
+            });
+
+            trend.forEach(row => {
+                const r = [row.label || row.month];
+                shownPlats.forEach(p => {
+                    const v = row[p] || 0;
+                    r.push(v, v > 0 ? FMT(Math.round(v)) : null);
+                });
+                dt.addRow(r);
+            });
+
+            new google.visualization.LineChart(chartEl).draw(dt, {
+                backgroundColor: 'transparent',
+                colors: shownPlats.map(p => PCOL[p]),
+                legend: shownPlats.length > 1
+                    ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } }
+                    : 'none',
+                lineWidth: 2.5,
+                pointSize: 5,
+                hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
+                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+                         gridlines: { color: '#f3f4f6' }, minValue: 0 },
+                chartArea: { left: 36, top: shownPlats.length > 1 ? 32 : 10, right: 10, bottom: 24 },
+                annotations: {
+                    alwaysOutside: true,
+                    textStyle: { fontSize: 10, bold: true, color: '#92400e' },
+                    stem: { length: 4 },
+                },
+                tooltip: { textStyle: { fontSize: 11 } },
+            });
         }
 
         // ══════════════════════════════

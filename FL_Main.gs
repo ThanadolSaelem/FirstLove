@@ -244,9 +244,30 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         adSpendAmount = FL_getAdSpend(targetMonth);
       }
     }
+    // Build per-month per-platform ad spend trend (last 6 months, chronological)
+    const adTrendMonths = allMonths.slice(0, 6).reverse();
+    const adTrendYears  = [...new Set(adTrendMonths.map(m => m.substring(0, 4)))];
+    const adDetailByYr  = {};
+    adTrendYears.forEach(yr => {
+      if (typeof FL_getAdSpendDetailAnnual === 'function')
+        adDetailByYr[yr] = FL_getAdSpendDetailAnnual(yr);
+    });
+    const adTrend = adTrendMonths.map(m => {
+      const entries = (adDetailByYr[m.substring(0, 4)] || {})[m] || [];
+      const byP = { tiktok: 0, shopee: 0, lazada: 0 };
+      entries.forEach(e => {
+        const p = (e.platform || '').toLowerCase();
+        if (byP[p] !== undefined) byP[p] += e.ad_amount;
+      });
+      return { month: m, label: FL_monthLabel(m),
+               tiktok: byP.tiktok, shopee: byP.shopee, lazada: byP.lazada,
+               total: byP.tiktok + byP.shopee + byP.lazada };
+    });
+
     const adSpend = {
       total: adSpendAmount,
       roas:  adSpendAmount > 0 ? Math.round(curNet / adSpendAmount * 100) / 100 : null,
+      trend: adTrend,
     };
 
     // Stock status (REQ-05) — computed once per dashboard load
