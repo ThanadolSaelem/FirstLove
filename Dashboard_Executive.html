@@ -2760,39 +2760,14 @@
                 list.map(x => `<li class="ins-item"><span class="ins-icon">${x.i}</span><span>${x.t}</span></li>`).join('');
         }
 
-        // ── Ad Spend ──
+        // ── Ad Spend Line Chart ──
         function renderAdSpend(adSpend, fNet) {
             const el = document.getElementById('adSpendBody');
             if (!el) return;
 
-            const isAll  = DATA.isAllMode || MONTH_KEY === 'all';
-            const total  = (adSpend && adSpend.total) || 0;
-            const trend  = (adSpend && adSpend.trend) || [];
-            const roasStr = adSpend && adSpend.roas
-                ? `<span style="font-size:11px;color:#9ca3af;margin-left:8px;">ROAS ${adSpend.roas}x</span>`
-                : '';
-
-            // ── Single-month mode: just show the total ──
-            if (!isAll) {
-                if (!total) {
-                    el.innerHTML = `
-                        <div style="text-align:center;padding:24px 0 8px;">
-                            <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">ยังไม่มีข้อมูลค่าโฆษณาเดือนนี้</div>
-                            <div style="font-size:11px;color:var(--text-light);">กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา</div>
-                        </div>`;
-                    return;
-                }
-                el.innerHTML = `
-                    <div style="text-align:center;padding:20px 0 8px;">
-                        <div style="font-size:10.5px;color:var(--text-sub);margin-bottom:6px;letter-spacing:.3px;">ค่าโฆษณารวม</div>
-                        <div style="font-size:28px;font-weight:800;color:#f59e0b;">฿${FMT(total)}</div>
-                        ${roasStr}
-                    </div>`;
-                return;
-            }
-
-            // ── All-months mode: line chart across every month ──
+            const trend   = (adSpend && adSpend.trend) || [];
             const hasData = trend.some(r => (r.total || 0) > 0);
+
             if (!hasData) {
                 el.innerHTML = `
                     <div style="text-align:center;padding:24px 0 8px;">
@@ -2802,7 +2777,19 @@
                 return;
             }
 
-            el.innerHTML = `<div id="chartAdSpend" style="width:100%;height:180px;"></div>`;
+            // Summary: total of selected month (last in trend when single-month, overall total when all)
+            const total   = (adSpend && adSpend.total) || 0;
+            const roasStr = adSpend && adSpend.roas
+                ? `<span style="font-size:11px;color:#9ca3af;margin-left:8px;">ROAS ${adSpend.roas}x</span>`
+                : '';
+
+            el.innerHTML = `
+                <div style="display:flex;align-items:baseline;gap:6px;padding:8px 0 2px 0;">
+                    <div style="font-size:22px;font-weight:800;color:#f59e0b;">฿${FMT(total)}</div>
+                    ${roasStr}
+                </div>
+                <div id="chartAdSpend" style="width:100%;height:150px;"></div>`;
+
             const chartEl = document.getElementById('chartAdSpend');
             if (!chartEl) return;
 
@@ -2825,7 +2812,7 @@
                 hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
                 vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
                          gridlines: { color: '#f3f4f6' }, minValue: 0 },
-                chartArea: { left: 40, top: 14, right: 10, bottom: 24 },
+                chartArea: { left: 40, top: 18, right: 10, bottom: 24 },
                 annotations: {
                     alwaysOutside: true,
                     textStyle: { fontSize: 10, bold: true, color: '#92400e' },

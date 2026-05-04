@@ -1807,6 +1807,17 @@
                     </div>
                 </div>
 
+                <!-- Ad Spend Line Chart (full width) -->
+                <div class="card" style="margin-top:11px;">
+                    <div class="card-head">
+                        <span class="card-ttl">ค่าโฆษณารายเดือน</span>
+                        <span class="tip" data-tip="ยอดค่าโฆษณารวมแต่ละเดือน กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา">ⓘ</span>
+                    </div>
+                    <div class="card-body" style="padding:8px 13px 16px;">
+                        <div id="adSpendAnnualBody" style="height:200px;"></div>
+                    </div>
+                </div>
+
                 <!-- Product Lifecycle Quadrant (full width) -->
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
@@ -2003,7 +2014,48 @@ function onCompareYearChange() {
             renderPlatformBar(PRIMARY_DATA.monthly);
             renderFeePie(PRIMARY_DATA.feeByPlatform);
             renderHeatmap(PRIMARY_DATA.monthly);
+            renderAdSpendAnnual(PRIMARY_DATA.monthly);
             renderQuadrant(PRIMARY_DATA.quadrant || []);
+        }
+
+        // ── Ad Spend dedicated line chart (Annual) ──
+        function renderAdSpendAnnual(monthly) {
+            const el = document.getElementById('adSpendAnnualBody');
+            if (!el) return;
+
+            const hasData = (monthly || []).some(m => (m.adSpend || 0) > 0);
+            if (!hasData) {
+                el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">ยังไม่มีข้อมูลค่าโฆษณา — กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา</div>';
+                return;
+            }
+
+            const dt = new google.visualization.DataTable();
+            dt.addColumn('string', 'เดือน');
+            dt.addColumn('number', 'ค่าโฆษณา');
+            dt.addColumn({ type: 'string', role: 'annotation' });
+
+            (monthly || []).forEach(m => {
+                const v = m.adSpend || 0;
+                dt.addRow([m.label ? m.label.split(' ')[0] : m.month, v || null, v > 0 ? FMT(Math.round(v)) : null]);
+            });
+
+            new google.visualization.LineChart(el).draw(dt, {
+                backgroundColor: 'transparent',
+                colors: ['#f59e0b'],
+                legend: 'none',
+                lineWidth: 2.5,
+                pointSize: 5,
+                hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
+                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+                         gridlines: { color: '#f3f4f6' }, minValue: 0 },
+                chartArea: { left: 50, top: 20, right: 14, bottom: 28 },
+                annotations: {
+                    alwaysOutside: true,
+                    textStyle: { fontSize: 10, bold: true, color: '#92400e' },
+                    stem: { length: 4 },
+                },
+                tooltip: { textStyle: { fontSize: 11 } },
+            });
         }
 
         // ── Heatmap (Month × Platform) — pure HTML/CSS ──
@@ -2270,20 +2322,15 @@ function onCompareYearChange() {
             new google.visualization.ColumnChart(el).draw(dt, options);
         }
 
-        // REQ-07: always-on annotations on monthly net chart
+        // REQ-07: always-on annotations on monthly net chart (revenue only)
         function renderMonthBar(pMonths, cMonths) {
             const el = document.getElementById('chartMonthBar');
-            const hasAdSpend = (pMonths || []).some(m => (m.adSpend || 0) > 0);
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Month');
             dt.addColumn('number', YEAR);
             dt.addColumn({ type: 'string', role: 'annotation' });
             if (cMonths) {
                 dt.addColumn('number', COMP_YEAR);
-                dt.addColumn({ type: 'string', role: 'annotation' });
-            }
-            if (hasAdSpend) {
-                dt.addColumn('number', 'ค่าโฆษณา');
                 dt.addColumn({ type: 'string', role: 'annotation' });
             }
 
@@ -2296,36 +2343,24 @@ function onCompareYearChange() {
                     row.push(v2, v2 ? FMTK(v2) : '');
                     monthVals.push(v2);
                 }
-                if (hasAdSpend) {
-                    const av = m.adSpend || 0;
-                    row.push(av || null, av > 0 ? FMT(Math.round(av)) : null);
-                }
                 monthVals.push(v1);
                 dt.addRow(row);
             });
 
             const yMaxM = Math.ceil(Math.max(...monthVals, 0) * 1.3) || 10;
 
-            const seriesConfig = {};
-            const adSpendSeriesIdx = cMonths ? 2 : 1;
-            if (hasAdSpend) {
-                seriesConfig[adSpendSeriesIdx] = { type: 'line', color: '#f59e0b', lineWidth: 2.5, pointSize: 5 };
-            }
-
             const options = {
                 backgroundColor: 'transparent',
-                colors: cMonths ? ['#8b5cf6', '#4c1d95', '#f59e0b'] : ['#8b5cf6', '#f59e0b'],
-                seriesType: 'bars',
-                series: seriesConfig,
+                colors: cMonths ? ['#8b5cf6', '#4c1d95'] : ['#8b5cf6'],
                 chartArea: { left: 50, top: 32, right: 14, bottom: 36 },
-                legend: (cMonths || hasAdSpend) ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
+                legend: cMonths ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
                 hAxis: { textStyle: { color: '#9ca3af', fontSize: 10 } },
                 vAxis: { textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3f4f6' }, viewWindow: { min: 0, max: yMaxM } },
-                annotations: { alwaysOutside: true, textStyle: { fontSize: 9.5, color: '#92400e', bold: true }, stem: { length: 3 } },
+                annotations: { alwaysOutside: true, textStyle: { fontSize: 9.5, color: '#1e1b3a', bold: true }, stem: { length: 3 } },
                 tooltip: { textStyle: { fontSize: 11 } },
             };
 
-            new google.visualization.ComboChart(el).draw(dt, options);
+            new google.visualization.ColumnChart(el).draw(dt, options);
         }
 
         // REQ-NEW: Stacked bar — revenue by platform per month
