@@ -185,10 +185,11 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       const g = sumField(targetMonth, p, 'gross');
       const f = sumField(targetMonth, p, 'platform_fees');
       byPlatform[p] = {
-        gross:         g,
-        platform_fees: f,
-        transferred:   sumField(targetMonth, p, 'transferred'),
-        feeRate:       g > 0 ? Math.abs(f) / g * 100 : 0,
+        gross:           g,
+        platform_fees:   f,
+        transferred:     sumField(targetMonth, p, 'transferred'),
+        seller_discount: sumField(targetMonth, p, 'seller_discount'),
+        feeRate:         g > 0 ? Math.abs(f) / g * 100 : 0,
       };
     });
 
