@@ -244,9 +244,23 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         adSpendAmount = FL_getAdSpend(targetMonth);
       }
     }
+    // Ad spend trend: total per month across all available months (chronological)
+    const adTrendYears = [...new Set(allMonths.map(m => m.substring(0, 4)))];
+    const adSpendByYr  = {};
+    adTrendYears.forEach(yr => {
+      if (typeof FL_getAdSpendAnnual === 'function')
+        adSpendByYr[yr] = FL_getAdSpendAnnual(yr);
+    });
+    const adTrend = allMonths.slice().reverse().map(m => ({
+      month: m,
+      label: FL_monthLabel(m),
+      total: (adSpendByYr[m.substring(0, 4)] || {})[m] || 0,
+    }));
+
     const adSpend = {
       total: adSpendAmount,
       roas:  adSpendAmount > 0 ? Math.round(curNet / adSpendAmount * 100) / 100 : null,
+      trend: adTrend,
     };
 
     // Stock status (REQ-05) — computed once per dashboard load
@@ -475,7 +489,7 @@ function FL_getAnnualDashboardData(year) {
       feeByPlatform[p] = { amount: pFees, rate: pGross > 0 ? Math.round(pFees / pGross * 1000) / 10 : 0 };
     });
 
-    // Ad Spend per month (annual)
+    // Ad Spend per month (annual) — total only
     const adSpendMap = (typeof FL_getAdSpendAnnual === 'function') ? FL_getAdSpendAnnual(targetYear) : {};
     monthly.forEach(m => { m.adSpend = adSpendMap[m.month] || 0; });
 
