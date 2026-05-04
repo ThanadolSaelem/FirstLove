@@ -496,9 +496,19 @@ function FL_getAnnualDashboardData(year) {
       feeByPlatform[p] = { amount: pFees, rate: pGross > 0 ? Math.round(pFees / pGross * 1000) / 10 : 0 };
     });
 
-    // Ad Spend per month (annual)
-    const adSpendMap = (typeof FL_getAdSpendAnnual === 'function') ? FL_getAdSpendAnnual(targetYear) : {};
-    monthly.forEach(m => { m.adSpend = adSpendMap[m.month] || 0; });
+    // Ad Spend per month (annual) — include per-platform breakdown
+    const adDetailAnnual = (typeof FL_getAdSpendDetailAnnual === 'function')
+      ? FL_getAdSpendDetailAnnual(targetYear) : {};
+    monthly.forEach(m => {
+      const entries = adDetailAnnual[m.month] || [];
+      const byP = { tiktok: 0, shopee: 0, lazada: 0 };
+      entries.forEach(e => {
+        const p = (e.platform || '').toLowerCase();
+        if (byP[p] !== undefined) byP[p] += e.ad_amount;
+      });
+      m.adSpend        = byP.tiktok + byP.shopee + byP.lazada;
+      m.adSpendByPlat  = byP;
+    });
 
     const result = {
       year:          targetYear,
