@@ -418,10 +418,10 @@
     document.getElementById('chartEmpty').style.display = 'none';
     switchTab(_activeTab);
 
-    const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    const enMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     function fmtMonth(mk) {
       const [y, m] = mk.split('-');
-      return thMonths[parseInt(m, 10) - 1] + "'" + y.slice(2);
+      return enMonths[parseInt(m, 10) - 1] + "'" + y.slice(2);
     }
     const labels = keys.map(fmtMonth);
 
