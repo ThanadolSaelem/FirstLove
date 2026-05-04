@@ -418,6 +418,13 @@
     document.getElementById('chartEmpty').style.display = 'none';
     switchTab(_activeTab);
 
+    const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    function fmtMonth(mk) {
+      const [y, m] = mk.split('-');
+      return thMonths[parseInt(m, 10) - 1] + "'" + y.slice(2);
+    }
+    const labels = keys.map(fmtMonth);
+
     const thbFmt = v => Number(v).toLocaleString('th-TH', {maximumFractionDigits:0});
     const thbAxis = v => {
       if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
@@ -429,7 +436,7 @@
     _chartSpend = new Chart(document.getElementById('chartSpend').getContext('2d'), {
       type: 'bar',
       data: {
-        labels: keys,
+        labels,
         datasets: [
           {
             label: "Spending",
@@ -460,7 +467,6 @@
             font: {size: 9, weight: '500'},
             color: '#374151',
             formatter: v => v > 0 ? thbFmt(v) : '',
-            clamp: true,
           }
         },
         layout: {padding: {top: 52, left: 4, right: 4}},
@@ -484,7 +490,7 @@
     _chartRoas = new Chart(document.getElementById('chartRoas').getContext('2d'), {
       type: 'line',
       data: {
-        labels: keys,
+        labels,
         datasets: [
           {label:'ROAS รวม', data:roasTotal, borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,.1)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#8b5cf6', fill:true, tension:0.3, spanGaps:true},
           {label:'TikTok',   data:roasTT,    borderColor:'#5b4a9e', borderDash:[5,3], borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#5b4a9e', fill:false, tension:0.3, spanGaps:true},
