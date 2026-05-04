@@ -18,7 +18,7 @@
       --border:#e5e7eb;--success:#10b981;--success-bg:#d1fae5;
       --warning:#f59e0b;--warning-bg:#fef3c7;--danger:#ef4444;--danger-bg:#fee2e2;
       --tiktok:#5b4a9e;--shopee:#f97316;--facebook:#1877f2;
-      --sh-sm:0 1px 3px rgba(139,92,246,.08);--sh-md:0 4px 16px rgba(139,92,246,.10);
+      --sh-md:0 4px 16px rgba(139,92,246,.10);
       --r:12px;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -45,8 +45,6 @@
     .card-header-text h3{font-size:14px;font-weight:600;color:var(--text-main);}
     .card-header-text p{font-size:12px;color:var(--text-sub);margin-top:2px;}
     .card-body{padding:20px;}
-    .year-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-    .year-bar label{font-size:13px;font-weight:500;color:var(--text-sub);}
     .year-select{padding:6px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text-main);cursor:pointer;}
     .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit;}
     .btn-primary{background:var(--purple-700);color:#fff;}.btn-primary:hover{background:var(--purple-800);}
@@ -76,7 +74,6 @@
     table.sum-table td:first-child{text-align:left;font-weight:500;}
     table.sum-table tr:hover td{background:var(--purple-50);}
     table.sum-table .total-row td{background:var(--purple-100);font-weight:700;border-top:2px solid var(--purple-300);}
-    table.sum-table .sub-th{font-size:10px;color:var(--text-light);font-weight:400;}
     .roas-good{color:var(--success);font-weight:700;}
     .roas-ok{color:var(--warning);font-weight:700;}
     .roas-bad{color:var(--danger);font-weight:700;}
@@ -233,12 +230,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg>
       </div>
       <div class="card-header-text">
-        <h3>กราฟแสดงผล</h3>
+        <h3>กราฟสรุปรายเดือน</h3>
         <p>ภาพรวมค่าโฆษณา ยอดขาย และ ROAS รายเดือน</p>
       </div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
         <label style="font-size:12px;color:var(--text-sub);">ปี:</label>
-        <select id="yearSelectChart" class="year-select" onchange="yearChanged()"></select>
+        <select id="yearSelect" class="year-select" onchange="loadSummary()"></select>
       </div>
       <div style="display:flex;gap:6px;margin-left:12px;">
         <button class="tab-btn active" id="tabBtnSpend" onclick="switchTab('spend')">ค่าโฆษณา & ยอดขาย</button>
@@ -246,53 +243,13 @@
       </div>
     </div>
     <div class="card-body">
+      <div id="chartLoading" style="padding:40px;text-align:center;color:var(--text-sub);">กำลังโหลด...</div>
       <div id="chartEmpty" style="display:none;padding:40px;text-align:center;color:var(--text-sub);">ยังไม่มีข้อมูลสำหรับปีนี้</div>
-      <div id="chart-spend" class="chart-wrap">
+      <div id="chart-spend" class="chart-wrap" style="display:none;">
         <canvas id="chartSpend"></canvas>
       </div>
       <div id="chart-roas" class="chart-wrap" style="display:none;">
         <canvas id="chartRoas"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Monthly Summary Table -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-header-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-      </div>
-      <div class="card-header-text">
-        <h3>สรุปรายเดือน</h3>
-        <p>ค่าโฆษณาและยอดขายทุก Platform แยกตามเดือน</p>
-      </div>
-    </div>
-    <div class="card-body" style="padding:0;">
-      <div id="summaryLoading" style="padding:32px;text-align:center;color:var(--text-sub);">กำลังโหลด...</div>
-      <div id="summaryWrap" class="table-wrap" style="display:none;">
-        <table class="sum-table" id="summaryTable">
-          <thead>
-            <tr>
-              <th rowspan="2">เดือน</th>
-              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok Awareness</th>
-              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok GMV Max</th>
-              <th colspan="2" style="text-align:center;color:var(--tiktok);">TikTok GMV Live</th>
-              <th colspan="2" style="text-align:center;color:var(--shopee);">Shopee</th>
-              <th colspan="2" style="text-align:center;color:var(--facebook);">Facebook</th>
-              <th colspan="2" style="text-align:center;border-left:2px solid var(--border);">รวมทั้งหมด</th>
-              <th rowspan="2">ROAS</th>
-            </tr>
-            <tr>
-              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-              <th class="sub-th">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-              <th class="sub-th" style="border-left:2px solid var(--border);">โฆษณา</th><th class="sub-th">ยอดขาย</th>
-            </tr>
-          </thead>
-          <tbody id="summaryBody"></tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -309,8 +266,8 @@
       </div>
     </div>
     <div class="card-body" style="padding:0;">
-      <div id="annualWrap" class="table-wrap">
-        <table class="sum-table" id="annualTable">
+      <div class="table-wrap">
+        <table class="sum-table">
           <thead>
             <tr>
               <th>Platform / ประเภท</th>
@@ -359,11 +316,11 @@
 
   // ── Form helpers ───────────────────────────────────────────
   const FIELDS = [
-    {id:'tt_awareness', platform:'tiktok',    ad_type:'awareness'},
-    {id:'tt_gmvmax',    platform:'tiktok',    ad_type:'gmv_max'},
-    {id:'tt_gmvlive',   platform:'tiktok',    ad_type:'gmv_live'},
-    {id:'sp',           platform:'shopee',    ad_type:''},
-    {id:'fb',           platform:'facebook',  ad_type:''},
+    {id:'tt_awareness', platform:'tiktok',   ad_type:'awareness'},
+    {id:'tt_gmvmax',    platform:'tiktok',   ad_type:'gmv_max'},
+    {id:'tt_gmvlive',   platform:'tiktok',   ad_type:'gmv_live'},
+    {id:'sp',           platform:'shopee',   ad_type:''},
+    {id:'fb',           platform:'facebook', ad_type:''},
   ];
 
   function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
@@ -450,31 +407,32 @@
     if (_chartSpend) { _chartSpend.destroy(); _chartSpend = null; }
     if (_chartRoas)  { _chartRoas.destroy();  _chartRoas  = null; }
 
-    const empty = document.getElementById('chartEmpty');
+    document.getElementById('chartLoading').style.display = 'none';
+
     if (!keys || keys.length === 0) {
-      empty.style.display = 'block';
+      document.getElementById('chartEmpty').style.display  = 'block';
       document.getElementById('chart-spend').style.display = 'none';
       document.getElementById('chart-roas').style.display  = 'none';
       return;
     }
-    empty.style.display = 'none';
+    document.getElementById('chartEmpty').style.display = 'none';
     switchTab(_activeTab);
 
     const thbFmt = v => Number(v).toLocaleString('th-TH', {maximumFractionDigits:0});
     const thbAxis = v => {
-      if (v >= 1000000) return (v/1000000).toFixed(1) + 'M';
-      if (v >= 1000)    return (v/1000).toFixed(0) + 'K';
+      if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+      if (v >= 1000)    return (v / 1000).toFixed(0) + 'K';
       return String(v);
     };
 
-    // ── Spend chart: grouped bars (ad vs sales) + data labels ──
+    // ── Spend chart: grouped bars — Spending vs Sale per month ──
     _chartSpend = new Chart(document.getElementById('chartSpend').getContext('2d'), {
       type: 'bar',
       data: {
         labels: keys,
         datasets: [
           {
-            label: "Spending'",
+            label: "Spending",
             data: rows.map(r => r.totalAd),
             backgroundColor: '#6366f1',
             borderRadius: 3,
@@ -493,9 +451,7 @@
         plugins: {
           legend: {position: 'bottom', labels: {font: {size: 11}, padding: 16, usePointStyle: true}},
           tooltip: {
-            callbacks: {
-              label: ctx => '  ' + ctx.dataset.label + ': ฿' + thbFmt(ctx.raw)
-            }
+            callbacks: {label: ctx => '  ' + ctx.dataset.label + ': ฿' + thbFmt(ctx.raw)}
           },
           datalabels: {
             anchor: 'end', align: 'top', offset: 2,
@@ -508,17 +464,14 @@
         layout: {padding: {top: 28}},
         scales: {
           x: {grid: {display: false}, ticks: {font: {size: 11}}},
-          y: {
-            ticks: {callback: thbAxis, font: {size: 11}},
-            grid: {color: 'rgba(0,0,0,.05)'},
-          },
+          y: {ticks: {callback: thbAxis, font: {size: 11}}, grid: {color: 'rgba(0,0,0,.05)'}},
         }
       }
     });
 
     // ── ROAS chart: line per platform + total ──────────────
     const roasTotal = rows.map(r => r.roasNum);
-    const roasTT    = rows.map(r => {
+    const roasTT = rows.map(r => {
       const ad = r.ttAw.ad + r.ttGm.ad + r.ttGl.ad;
       const s  = r.ttAw.sale + r.ttGm.sale + r.ttGl.sale;
       return ad > 0 ? parseFloat((s / ad).toFixed(2)) : null;
@@ -531,30 +484,10 @@
       data: {
         labels: keys,
         datasets: [
-          {
-            label: 'ROAS รวม', data: roasTotal,
-            borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,.1)',
-            borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: '#8b5cf6',
-            fill: true, tension: 0.3, spanGaps: true,
-          },
-          {
-            label: 'TikTok', data: roasTT,
-            borderColor: '#5b4a9e', borderDash: [5,3],
-            borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: '#5b4a9e',
-            fill: false, tension: 0.3, spanGaps: true,
-          },
-          {
-            label: 'Shopee', data: roasSP,
-            borderColor: '#f97316', borderDash: [5,3],
-            borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: '#f97316',
-            fill: false, tension: 0.3, spanGaps: true,
-          },
-          {
-            label: 'Facebook', data: roasFB,
-            borderColor: '#1877f2', borderDash: [5,3],
-            borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: '#1877f2',
-            fill: false, tension: 0.3, spanGaps: true,
-          },
+          {label:'ROAS รวม', data:roasTotal, borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,.1)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#8b5cf6', fill:true, tension:0.3, spanGaps:true},
+          {label:'TikTok',   data:roasTT,    borderColor:'#5b4a9e', borderDash:[5,3], borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#5b4a9e', fill:false, tension:0.3, spanGaps:true},
+          {label:'Shopee',   data:roasSP,    borderColor:'#f97316', borderDash:[5,3], borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#f97316', fill:false, tension:0.3, spanGaps:true},
+          {label:'Facebook', data:roasFB,    borderColor:'#1877f2', borderDash:[5,3], borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#1877f2', fill:false, tension:0.3, spanGaps:true},
         ]
       },
       options: {
@@ -562,90 +495,60 @@
         interaction: {mode: 'index', intersect: false},
         plugins: {
           legend: {position: 'bottom', labels: {font: {size: 11}, padding: 14, usePointStyle: true}},
-          tooltip: {
-            callbacks: {
-              label: ctx => ctx.raw !== null ? '  ' + ctx.dataset.label + ': ' + ctx.raw + 'x' : null
-            }
-          },
-          datalabels: {
-            anchor: 'center', align: 'top', offset: 6,
-            font: {size: 10, weight: '600'},
-            color: ctx => {
-              const v = ctx.dataset.data[ctx.dataIndex];
-              if (!v) return 'transparent';
-              return v >= 3 ? '#059669' : v >= 1.5 ? '#d97706' : '#dc2626';
-            },
-            formatter: v => v !== null ? v + 'x' : '',
-          }
+          tooltip: {callbacks: {label: ctx => ctx.raw !== null ? '  ' + ctx.dataset.label + ': ' + ctx.raw + 'x' : null}},
+          datalabels: {display: false}
         },
         scales: {
           x: {grid: {display: false}, ticks: {font: {size: 11}}},
-          y: {
-            title: {display: true, text: 'ROAS (เท่า)', font: {size: 11}},
-            ticks: {callback: v => v + 'x'},
-            suggestedMin: 0, suggestedMax: 5,
-          }
+          y: {title: {display: true, text: 'ROAS (เท่า)', font: {size: 11}}, ticks: {callback: v => v + 'x'}, suggestedMin: 0, suggestedMax: 5}
         }
       }
     });
   }
 
-  // ── Summary table + chart data source ─────────────────────
-  function yearChanged() {
-    const y = document.getElementById('yearSelectChart').value;
-    document.getElementById('yearSelect').value = y;
-    loadSummary();
-  }
-
+  // ── Data loading ───────────────────────────────────────────
   function loadSummary() {
     const year = document.getElementById('yearSelect').value;
     if (!year) return;
-    document.getElementById('yearSelectChart').value = year;
-    document.getElementById('summaryLoading').style.display = 'block';
-    document.getElementById('summaryWrap').style.display    = 'none';
+    document.getElementById('chartLoading').style.display = 'block';
+    document.getElementById('chartEmpty').style.display   = 'none';
+    document.getElementById('chart-spend').style.display  = 'none';
+    document.getElementById('chart-roas').style.display   = 'none';
     google.script.run
-      .withSuccessHandler(renderSummary)
-      .withFailureHandler(e => { document.getElementById('summaryLoading').textContent = 'โหลดไม่สำเร็จ: ' + e.message; })
+      .withSuccessHandler(renderData)
+      .withFailureHandler(e => {
+        document.getElementById('chartLoading').textContent = 'โหลดไม่สำเร็จ: ' + e.message;
+      })
       .FL_getAdSpendDetailAnnual(year);
   }
 
-  function renderSummary(data) {
-    document.getElementById('summaryLoading').style.display = 'none';
-    document.getElementById('summaryWrap').style.display    = 'block';
-    const keys  = Object.keys(data || {}).sort();
-    const tbody = document.getElementById('summaryBody');
-
+  function renderData(data) {
+    const keys   = Object.keys(data || {}).sort();
     const annual = {tt_aw:{ad:0,sale:0}, tt_gm:{ad:0,sale:0}, tt_gl:{ad:0,sale:0},
                     sp:{ad:0,sale:0}, fb:{ad:0,sale:0}, total:{ad:0,sale:0}};
 
     if (keys.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="14" style="padding:24px;text-align:center;color:var(--text-sub);">ยังไม่มีข้อมูล</td></tr>';
       renderAnnual(annual);
       renderCharts([], []);
       return;
     }
 
-    const chartRows = [];
-
-    const rows = keys.map(mk => {
+    const chartRows = keys.map(mk => {
       const entries = data[mk] || [];
-      function getAmt(plat, type, field) {
+      function g(plat, type, field) {
         const e = entries.find(x => x.platform === plat && x.ad_type === type);
         return e ? (e[field] || 0) : 0;
       }
-      const ttAw = {ad: getAmt('tiktok','awareness','ad_amount'),  sale: getAmt('tiktok','awareness','sales_amount')};
-      const ttGm = {ad: getAmt('tiktok','gmv_max','ad_amount'),     sale: getAmt('tiktok','gmv_max','sales_amount')};
-      const ttGl = {ad: getAmt('tiktok','gmv_live','ad_amount'),    sale: getAmt('tiktok','gmv_live','sales_amount')};
-      const sp   = {ad: getAmt('shopee','','ad_amount'),             sale: getAmt('shopee','','sales_amount')};
-      const fb   = {ad: getAmt('facebook','','ad_amount'),           sale: getAmt('facebook','','sales_amount')};
+      const ttAw = {ad: g('tiktok','awareness','ad_amount'),  sale: g('tiktok','awareness','sales_amount')};
+      const ttGm = {ad: g('tiktok','gmv_max','ad_amount'),    sale: g('tiktok','gmv_max','sales_amount')};
+      const ttGl = {ad: g('tiktok','gmv_live','ad_amount'),   sale: g('tiktok','gmv_live','sales_amount')};
+      const sp   = {ad: g('shopee','','ad_amount'),            sale: g('shopee','','sales_amount')};
+      const fb   = {ad: g('facebook','','ad_amount'),          sale: g('facebook','','sales_amount')};
       const totalAd   = ttAw.ad + ttGm.ad + ttGl.ad + sp.ad + fb.ad;
       const totalSale = ttAw.sale + ttGm.sale + ttGl.sale + sp.sale + fb.sale;
       const roasNum   = totalAd > 0 ? parseFloat((totalSale / totalAd).toFixed(2)) : null;
-      const roas      = roasNum !== null ? roasNum.toFixed(2) : null;
 
-      chartRows.push({ttAw, ttGm, ttGl, sp, fb, totalAd, totalSale, roasNum});
-
-      ['tt_aw','tt_gm','tt_gl'].forEach((k,i) => {
+      ['tt_aw','tt_gm','tt_gl'].forEach((k, i) => {
         const src = [ttAw, ttGm, ttGl][i];
         annual[k].ad += src.ad; annual[k].sale += src.sale;
       });
@@ -653,50 +556,24 @@
       annual.fb.ad += fb.ad; annual.fb.sale += fb.sale;
       annual.total.ad += totalAd; annual.total.sale += totalSale;
 
-      const rc = roasClass(roasNum);
-      return `<tr>
-        <td>${mk}</td>
-        <td>${fmt(ttAw.ad)}</td><td>${fmt(ttAw.sale)}</td>
-        <td>${fmt(ttGm.ad)}</td><td>${fmt(ttGm.sale)}</td>
-        <td>${fmt(ttGl.ad)}</td><td>${fmt(ttGl.sale)}</td>
-        <td>${fmt(sp.ad)}</td><td>${fmt(sp.sale)}</td>
-        <td>${fmt(fb.ad)}</td><td>${fmt(fb.sale)}</td>
-        <td style="border-left:2px solid var(--border);font-weight:600;">${fmt(totalAd)}</td>
-        <td style="font-weight:600;">${fmt(totalSale)}</td>
-        <td class="${rc}">${roas ? roas + 'x' : '—'}</td>
-      </tr>`;
+      return {ttAw, ttGm, ttGl, sp, fb, totalAd, totalSale, roasNum};
     });
 
-    const annualRoas    = annual.total.ad > 0 ? (annual.total.sale / annual.total.ad).toFixed(2) : null;
-    const annualRoasNum = annualRoas ? parseFloat(annualRoas) : null;
-    rows.push(`<tr class="total-row">
-      <td>รวม ${document.getElementById('yearSelect').value}</td>
-      <td>${fmt(annual.tt_aw.ad)}</td><td>${fmt(annual.tt_aw.sale)}</td>
-      <td>${fmt(annual.tt_gm.ad)}</td><td>${fmt(annual.tt_gm.sale)}</td>
-      <td>${fmt(annual.tt_gl.ad)}</td><td>${fmt(annual.tt_gl.sale)}</td>
-      <td>${fmt(annual.sp.ad)}</td><td>${fmt(annual.sp.sale)}</td>
-      <td>${fmt(annual.fb.ad)}</td><td>${fmt(annual.fb.sale)}</td>
-      <td style="border-left:2px solid var(--border);">${fmt(annual.total.ad)}</td>
-      <td>${fmt(annual.total.sale)}</td>
-      <td class="${roasClass(annualRoasNum)}">${annualRoas ? annualRoas + 'x' : '—'}</td>
-    </tr>`);
-
-    tbody.innerHTML = rows.join('');
     renderAnnual(annual);
     renderCharts(keys, chartRows);
   }
 
   function renderAnnual(a) {
     const rows = [
-      {label:'TikTok Awareness', color:'var(--tiktok)',    d: a.tt_aw},
-      {label:'TikTok GMV Max',   color:'var(--tiktok)',    d: a.tt_gm},
-      {label:'TikTok GMV Live',  color:'var(--tiktok)',    d: a.tt_gl},
-      {label:'Shopee Ads',       color:'var(--shopee)',    d: a.sp},
-      {label:'Facebook Ads',     color:'var(--facebook)',  d: a.fb},
+      {label:'TikTok Awareness', color:'var(--tiktok)',   d: a.tt_aw},
+      {label:'TikTok GMV Max',   color:'var(--tiktok)',   d: a.tt_gm},
+      {label:'TikTok GMV Live',  color:'var(--tiktok)',   d: a.tt_gl},
+      {label:'Shopee Ads',       color:'var(--shopee)',   d: a.sp},
+      {label:'Facebook Ads',     color:'var(--facebook)', d: a.fb},
     ];
     const ttTotal = {ad: a.tt_aw.ad+a.tt_gm.ad+a.tt_gl.ad, sale: a.tt_aw.sale+a.tt_gm.sale+a.tt_gl.sale};
     const ttRoas  = ttTotal.ad > 0 ? (ttTotal.sale / ttTotal.ad).toFixed(2) : null;
-    const grRoas  = a.total.ad  > 0 ? (a.total.sale  / a.total.ad).toFixed(2)  : null;
+    const grRoas  = a.total.ad > 0 ? (a.total.sale / a.total.ad).toFixed(2) : null;
 
     let html = rows.map(r => {
       const roas = r.d.ad > 0 ? (r.d.sale / r.d.ad).toFixed(2) : null;
@@ -725,15 +602,13 @@
     const cm  = String(now.getMonth() + 1).padStart(2, '0');
     document.getElementById('inputMonth').value = cy + '-' + cm;
 
-    [document.getElementById('yearSelect'), document.getElementById('yearSelectChart')]
-      .forEach(sel => {
-        for (let y = cy + 1; y >= cy - 2; y--) {
-          const o = document.createElement('option');
-          o.value = String(y); o.textContent = 'ปี ' + y;
-          if (y === cy) o.selected = true;
-          sel.appendChild(o);
-        }
-      });
+    const sel = document.getElementById('yearSelect');
+    for (let y = cy + 1; y >= cy - 2; y--) {
+      const o = document.createElement('option');
+      o.value = String(y); o.textContent = 'ปี ' + y;
+      if (y === cy) o.selected = true;
+      sel.appendChild(o);
+    }
 
     loadSummary();
   }
