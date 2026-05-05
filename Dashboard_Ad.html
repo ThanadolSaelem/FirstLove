@@ -22,17 +22,20 @@
     }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Noto Sans Thai','Inter',sans-serif;background:linear-gradient(135deg,#f0ecff 0%,#faf5ff 50%,#ede9fe 100%);background-attachment:fixed;color:var(--text-main);min-height:100vh;font-size:13px;}
-    .sidebar{width:228px;background:linear-gradient(160deg,#3b0764 0%,#5b21b6 40%,#7c3aed 100%);display:flex;flex-direction:column;padding:22px 0;position:fixed;top:0;left:0;bottom:0;z-index:100;box-shadow:4px 0 30px rgba(76,29,149,.25);}
+    .sidebar{width:228px;background:linear-gradient(160deg,#6d28d9 0%,#9333ea 100%);display:flex;flex-direction:column;padding:22px 0;position:fixed;top:0;left:0;bottom:0;z-index:100;box-shadow:4px 0 20px rgba(76,29,149,.15);}
     .logo-area{padding:0 18px 20px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:10px;}
-    .logo-icon{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
-    .brand-name{color:#fff;font-weight:700;font-size:15px;letter-spacing:.3px;}
-    .brand-sub{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;}
-    .nav-items-wrap{padding:16px 10px;flex:1;overflow-y:auto;}
-    .nav-label{color:rgba(255,255,255,.4);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:10px 8px 4px;}
-    .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .18s;margin-bottom:2px;}
-    .nav-item:hover{background:rgba(255,255,255,.12);color:#fff;}
-    .nav-item.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600;}
-    .nav-icon{width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .logo-mark{width:38px;height:38px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;object-fit:cover;}
+    .brand-name{font-size:13.5px;font-weight:800;color:#fff;}
+    .brand-sub{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;}
+    .nav-items-wrap{padding:0;flex:1;overflow-y:auto;}
+    .nav-label{padding:14px 18px 5px;font-size:12px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:9px 18px;color:rgba(255,255,255,.7);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none;margin-bottom:0;}
+    .nav-item:hover{color:#fff;background:rgba(255,255,255,.08);}
+    .nav-item.active{color:#fff;background:rgba(255,255,255,.16);border-left-color:#e9d5ff;font-weight:600;}
+    .nav-icon{font-size:14px;width:18px;text-align:center;}
+    .nav-ext{font-size:8px;margin-left:auto;background:rgba(255,255,255,.2);color:#fff;padding:1px 5px;border-radius:3px;font-weight:700;}
+    .sidebar-footer{margin-top:auto;padding:14px 18px 0;border-top:1px solid rgba(255,255,255,.1);}
+    .sidebar-ver{font-size:9.5px;color:rgba(255,255,255,.28);text-align:center;}
     .main-content{margin-left:228px;padding:28px 32px;min-height:100vh;}
     .page-header{margin-bottom:24px;}
     .page-header h2{font-size:22px;font-weight:700;color:var(--text-main);}
@@ -93,13 +96,17 @@
 <body>
 
 <!-- Sidebar -->
-<div class="sidebar">
+<aside class="sidebar">
   <div class="logo-area">
-    <div class="logo-icon">FL</div>
-    <div><div class="brand-name">First Love</div><div class="brand-sub">Ad Performance</div></div>
+    <img class="logo-mark" id="logoMark" src="" style="object-fit:cover;border-radius:10px;padding:0;width:44px;height:44px;" onerror="this.style.display='none';var f=document.getElementById('logoFallback');if(f)f.style.display='flex';">
+    <div id="logoFallback" style="display:none;width:44px;height:44px;background:rgba(255,255,255,.18);border-radius:10px;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">FL</div>
+    <div>
+      <div class="brand-name">FIRST LOVE</div>
+      <div class="brand-sub">AD PERFORMANCE</div>
+    </div>
   </div>
   <div class="nav-items-wrap">
-    <div class="nav-label">แดชบอร์ด</div>
+    <div class="nav-label">Dashboard</div>
     <a href="#" class="nav-item" onclick="navTo('dashboard');return false">
       <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg></span>มุมมองผู้บริหาร
     </a>
@@ -113,8 +120,24 @@
     <a href="#" class="nav-item" onclick="navTo('import');return false">
       <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>นำเข้าข้อมูล
     </a>
+    <a href="#" class="nav-item" onclick="navTo('import');return false">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>ตั้งค่าระบบ
+    </a>
+    <div class="nav-label">ระบบจัดเก็บไฟล์</div>
+    <a href="https://drive.google.com/" target="_blank" class="nav-item" id="navShopee">
+      <span class="nav-icon"><img style="width:14px;height:14px;object-fit:contain;"></span>Shopee<span class="nav-ext">↗</span>
+    </a>
+    <a href="https://drive.google.com/" target="_blank" class="nav-item" id="navTikTok">
+      <span class="nav-icon"><img style="width:14px;height:14px;object-fit:contain;"></span>TikTok<span class="nav-ext">↗</span>
+    </a>
+    <a href="https://drive.google.com/" target="_blank" class="nav-item" id="navLazada">
+      <span class="nav-icon"><img style="width:14px;height:14px;object-fit:contain;"></span>Lazada<span class="nav-ext">↗</span>
+    </a>
   </div>
-</div>
+  <div class="sidebar-footer">
+    <div class="sidebar-ver">FL System · v3.0 · โฆษณา</div>
+  </div>
+</aside>
 
 <!-- Main -->
 <div class="main-content">
@@ -619,6 +642,27 @@
       if (y === cy) o.selected = true;
       sel.appendChild(o);
     }
+
+    // Load config: logo + drive folder links
+    google.script.run
+      .withSuccessHandler(function(cfg) {
+        if (!cfg) return;
+        var logo = document.getElementById('logoMark');
+        if (cfg.LOGO_DATA && logo) {
+          logo.src = cfg.LOGO_DATA;
+        } else if (logo) {
+          logo.style.display = 'none';
+          var fb = document.getElementById('logoFallback');
+          if (fb) fb.style.display = 'flex';
+        }
+        if (cfg.FOLDERS) {
+          if (cfg.FOLDERS.SHOPEE) document.getElementById('navShopee').href = 'https://drive.google.com/drive/folders/' + cfg.FOLDERS.SHOPEE;
+          if (cfg.FOLDERS.TIKTOK) document.getElementById('navTikTok').href = 'https://drive.google.com/drive/folders/' + cfg.FOLDERS.TIKTOK;
+          if (cfg.FOLDERS.LAZADA) document.getElementById('navLazada').href = 'https://drive.google.com/drive/folders/' + cfg.FOLDERS.LAZADA;
+        }
+      })
+      .withFailureHandler(function() {})
+      .FL_getCurrentConfig();
 
     loadSummary();
   }
