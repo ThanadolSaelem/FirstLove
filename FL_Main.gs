@@ -244,14 +244,23 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         adSpendAmount = FL_getAdSpend(targetMonth);
       }
     }
-    // Ad spend trend: total per month across all available months (chronological)
+    // Ad spend trend: total per month — include months with ad spend even if no revenue yet
     const adTrendYears = [...new Set(allMonths.map(m => m.substring(0, 4)))];
     const adSpendByYr  = {};
     adTrendYears.forEach(yr => {
       if (typeof FL_getAdSpendAnnual === 'function')
         adSpendByYr[yr] = FL_getAdSpendAnnual(yr);
     });
-    const adTrend = allMonths.slice().reverse().map(m => ({
+    // Also fetch ad spend for years not in allMonths (e.g. current year with no revenue yet)
+    if (typeof FL_getAdSpendAnnual === 'function') {
+      const curYr = new Date().getFullYear().toString();
+      if (!adSpendByYr[curYr]) adSpendByYr[curYr] = FL_getAdSpendAnnual(curYr);
+    }
+    const trendMonthSet = new Set(allMonths);
+    Object.keys(adSpendByYr).forEach(yr =>
+      Object.keys(adSpendByYr[yr]).forEach(mk => trendMonthSet.add(mk))
+    );
+    const adTrend = [...trendMonthSet].sort().map(m => ({
       month: m,
       label: FL_monthLabel(m),
       total: (adSpendByYr[m.substring(0, 4)] || {})[m] || 0,
