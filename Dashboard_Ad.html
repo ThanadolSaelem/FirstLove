@@ -98,8 +98,8 @@
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="logo-area">
-    <img class="logo-mark" id="logoMark" src="" style="object-fit:cover;border-radius:10px;padding:0;width:44px;height:44px;" onerror="this.style.display='none';var f=document.getElementById('logoFallback');if(f)f.style.display='flex';">
-    <div id="logoFallback" style="display:none;width:44px;height:44px;background:rgba(255,255,255,.18);border-radius:10px;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">FL</div>
+    <img class="logo-mark" id="logoMark" src="" style="display:none;object-fit:cover;border-radius:10px;padding:0;width:44px;height:44px;">
+    <div id="logoFallback" style="display:flex;width:44px;height:44px;background:rgba(255,255,255,.18);border-radius:10px;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">FL</div>
     <div>
       <div class="brand-name">FIRST LOVE</div>
       <div class="brand-sub">AD PERFORMANCE</div>
@@ -648,12 +648,11 @@
       .withSuccessHandler(function(cfg) {
         if (!cfg) return;
         var logo = document.getElementById('logoMark');
+        var fb   = document.getElementById('logoFallback');
         if (cfg.LOGO_DATA && logo) {
           logo.src = cfg.LOGO_DATA;
-        } else if (logo) {
-          logo.style.display = 'none';
-          var fb = document.getElementById('logoFallback');
-          if (fb) fb.style.display = 'flex';
+          logo.style.display = 'block';
+          if (fb) fb.style.display = 'none';
         }
         if (cfg.FOLDERS) {
           if (cfg.FOLDERS.SHOPEE) document.getElementById('navShopee').href = 'https://drive.google.com/drive/folders/' + cfg.FOLDERS.SHOPEE;
