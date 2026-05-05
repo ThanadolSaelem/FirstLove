@@ -111,7 +111,7 @@ function FL_parseShopeeOrder(driveFile) {
     if (!skuMap[skuRef]) {
       skuMap[skuRef] = { skuRef, category: FL_getCategory(skuRef), units: 0, revenue: 0 };
     }
-    skuMap[skuRef].units   += qty;
+    skuMap[skuRef].units   += 1;
     skuMap[skuRef].revenue += price * qty;
   }
 
