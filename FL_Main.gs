@@ -18,6 +18,10 @@
  * (default/import) → Index.html (import + config)
  */
 function doGet(e) {
+  try {
+    const svc = ScriptApp.getService();
+    if (svc) PropertiesService.getScriptProperties().setProperty('_WEB_APP_URL', svc.getUrl());
+  } catch (ex) {}
   const page = (e && e.parameter && e.parameter.page) || 'import';
   const pageMap = {
     'dashboard': 'Dashboard_Executive',
@@ -533,10 +537,12 @@ function FL_getAnnualDashboardData(year) {
 function FL_getWebAppUrl() {
   try {
     var svc = ScriptApp.getService();
-    return svc ? svc.getUrl() : null;
-  } catch (e) {
-    return null;
-  }
+    if (svc) return svc.getUrl();
+  } catch (e) {}
+  try {
+    return PropertiesService.getScriptProperties().getProperty('_WEB_APP_URL');
+  } catch (e) {}
+  return null;
 }
 
 /** Thai month label: '2026-01' → 'ม.ค. 2026' */
