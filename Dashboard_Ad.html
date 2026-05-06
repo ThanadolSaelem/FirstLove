@@ -552,8 +552,33 @@
     const roasSP = rows.map(r => r.sp.ad > 0 ? parseFloat((r.sp.sale / r.sp.ad).toFixed(2)) : null);
     const roasFB = rows.map(r => r.fb.ad > 0 ? parseFloat((r.fb.sale / r.fb.ad).toFixed(2)) : null);
 
+    // inline plugin — draws ROAS value labels above every visible point
+    const roasLabelPlugin = {
+      id: 'roasLabels',
+      afterDatasetsDraw(chart) {
+        const {ctx} = chart;
+        chart.data.datasets.forEach((ds, di) => {
+          const meta = chart.getDatasetMeta(di);
+          if (meta.hidden) return;
+          const isTotal = di === 0;
+          meta.data.forEach((pt, i) => {
+            const v = ds.data[i];
+            if (v === null || v === undefined) return;
+            ctx.save();
+            ctx.fillStyle = isTotal ? '#4c1d95' : ds.borderColor;
+            ctx.font = (isTotal ? 'bold 10px' : '9px') + ' Inter,sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(v + 'x', pt.x, pt.y - (isTotal ? 8 : 5));
+            ctx.restore();
+          });
+        });
+      }
+    };
+
     _chartRoas = new Chart(document.getElementById('chartRoas').getContext('2d'), {
       type: 'line',
+      plugins: [roasLabelPlugin],
       data: {
         labels,
         datasets: [
@@ -570,6 +595,7 @@
           legend: {position: 'bottom', labels: {font: {size: 11}, padding: 14, usePointStyle: true}},
           tooltip: {callbacks: {label: ctx => ctx.raw !== null ? '  ' + ctx.dataset.label + ': ' + ctx.raw + 'x' : null}},
         },
+        layout: {padding: {top: 24}},
         scales: {
           x: {grid: {display: false}, ticks: {font: {size: 11}}},
           y: {title: {display: true, text: 'ROAS (เท่า)', font: {size: 11}}, ticks: {callback: v => v + 'x'}, suggestedMin: 0, suggestedMax: 5}
@@ -675,6 +701,9 @@
     document.getElementById('inputMonth').value = cy + '-' + cm;
 
     const sel = document.getElementById('yearSelect');
+    const allOpt = document.createElement('option');
+    allOpt.value = ''; allOpt.textContent = 'ทั้งหมด';
+    sel.appendChild(allOpt);
     for (let y = cy + 1; y >= cy - 2; y--) {
       const o = document.createElement('option');
       o.value = String(y); o.textContent = 'ปี ' + y;
