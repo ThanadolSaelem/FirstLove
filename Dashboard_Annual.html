@@ -1810,11 +1810,11 @@
                 <!-- Ad Spend Line Chart (full width) -->
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
-                        <span class="card-ttl">ค่าโฆษณารายเดือน</span>
-                        <span class="tip" data-tip="ยอดค่าโฆษณารวมแต่ละเดือน กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา">ⓘ</span>
+                        <span class="card-ttl">ค่าโฆษณา</span>
+                        <span class="tip" data-tip="ยอดค่าโฆษณารวมแต่ละเดือน กรอกได้ที่หน้า ข้อมูลโฆษณา">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 16px;">
-                        <div id="adSpendAnnualBody" style="height:200px;"></div>
+                        <div id="adSpendAnnualBody" style="min-height:220px;"></div>
                     </div>
                 </div>
 
@@ -2023,9 +2023,24 @@ function onCompareYearChange() {
             const el = document.getElementById('adSpendAnnualBody');
             if (!el) return;
 
-            const hasData = (monthly || []).some(m => (m.adSpend || 0) > 0);
+            const totalAd = (monthly || []).reduce((s, m) => s + (m.adSpend || 0), 0);
+            const yearLbl = YEAR ? 'ปี ' + YEAR : '';
+
+            const hasData = totalAd > 0;
+
+            // Header row: big number + year label (always shown)
+            el.innerHTML = `
+                <div style="display:flex;align-items:baseline;gap:8px;padding:4px 0 8px;">
+                    <div style="font-size:22px;font-weight:800;color:#f59e0b;">฿${FMT(totalAd)}</div>
+                    <div style="font-size:11px;color:#9ca3af;">${yearLbl}</div>
+                </div>
+                <div id="chartAdSpendInner" style="width:100%;height:160px;"></div>`;
+
+            const chartEl = document.getElementById('chartAdSpendInner');
+            if (!chartEl) return;
+
             if (!hasData) {
-                el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">ยังไม่มีข้อมูลค่าโฆษณา — กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา</div>';
+                chartEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">ยังไม่มีข้อมูล — กรอกได้ที่หน้า ข้อมูลโฆษณา</div>';
                 return;
             }
 
@@ -2039,7 +2054,7 @@ function onCompareYearChange() {
                 dt.addRow([m.label ? m.label.split(' ')[0] : m.month, v || null, v > 0 ? FMT(Math.round(v)) : null]);
             });
 
-            new google.visualization.LineChart(el).draw(dt, {
+            new google.visualization.LineChart(chartEl).draw(dt, {
                 backgroundColor: 'transparent',
                 colors: ['#f59e0b'],
                 legend: 'none',
