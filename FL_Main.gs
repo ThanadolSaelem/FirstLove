@@ -188,12 +188,13 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
     ['shopee', 'tiktok', 'lazada'].forEach(p => {
       const g = sumField(targetMonth, p, 'gross');
       const f = sumField(targetMonth, p, 'platform_fees');
+      const t = sumField(targetMonth, p, 'transferred');
       byPlatform[p] = {
         gross:           g,
         platform_fees:   f,
-        transferred:     sumField(targetMonth, p, 'transferred'),
+        transferred:     t,
         seller_discount: sumField(targetMonth, p, 'seller_discount'),
-        feeRate:         g > 0 ? Math.abs(f) / g * 100 : 0,
+        feeRate:         (Math.abs(f) + t) > 0 ? Math.abs(f) / (Math.abs(f) + t) * 100 : 0,
       };
     });
 
@@ -308,7 +309,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       month:         targetMonth,
       prevMonth:     prevMonth,
       allMonths:     allMonths,
-      monthlyTarget: parseFloat(cfg.MONTHLY_TARGET) || 2000000,
+      monthlyTarget: (cfg.MONTHLY_TARGETS && cfg.MONTHLY_TARGETS[targetMonth]) || parseFloat(cfg.MONTHLY_TARGET) || 2000000,
       stockThreshold: parseFloat(cfg.STOCK_THRESHOLD) || 50,
       summary: {
         gross:         curGross,
@@ -509,13 +510,18 @@ function FL_getAnnualDashboardData(year) {
     ['shopee','tiktok','lazada'].forEach(p => {
       const pRows = yearRows.filter(r => r[1] === p);
       const pFees = Math.abs(pRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0));
-      const pGross = pRows.reduce((s,r) => s+(parseFloat(r[idx('gross')])||0), 0);
-      feeByPlatform[p] = { amount: pFees, rate: pGross > 0 ? Math.round(pFees / pGross * 1000) / 10 : 0 };
+      const pTransferred = pRows.reduce((s,r) => s+(parseFloat(r[idx('transferred')])||0), 0);
+      feeByPlatform[p] = { amount: pFees, rate: (pFees + pTransferred) > 0 ? Math.round(pFees / (pFees + pTransferred) * 1000) / 10 : 0 };
     });
 
-    // Ad Spend per month (annual) — total only
-    const adSpendMap = (typeof FL_getAdSpendAnnual === 'function') ? FL_getAdSpendAnnual(targetYear) : {};
-    monthly.forEach(m => { m.adSpend = adSpendMap[m.month] || 0; });
+    // Ad Spend + Ad Sales per month (annual)
+    const adSpendMap  = (typeof FL_getAdSpendAnnual === 'function') ? FL_getAdSpendAnnual(targetYear) : {};
+    const adDetailMap = (typeof FL_getAdSpendDetailAnnual === 'function') ? FL_getAdSpendDetailAnnual(targetYear) : {};
+    monthly.forEach(m => {
+      m.adSpend = adSpendMap[m.month] || 0;
+      const entries = adDetailMap[m.month] || [];
+      m.adSales = entries.reduce((s, e) => s + (e.sales_amount || 0), 0);
+    });
 
     const result = {
       year:          targetYear,

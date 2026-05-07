@@ -87,10 +87,11 @@ function FL_parseShopeeOrder(driveFile) {
 
   const hdr = FL_buildHeaderMap(rows[0]);
 
-  const COL_STATUS = FL_findCol(hdr, ['สถานะการสั่งซื้อ', 'Order Status', 'Status']);
-  const COL_SKU    = FL_findCol(hdr, ['เลขอ้างอิง SKU (SKU Reference No.)', 'เลขอ้างอิง SKU', 'SKU Reference No.', 'SKU']);
-  const COL_QTY    = FL_findCol(hdr, ['จำนวน', 'Quantity', 'Qty']);
-  const COL_PRICE  = FL_findCol(hdr, ['ราคาขาย', 'Unit Price', 'Price']);
+  const COL_STATUS  = FL_findCol(hdr, ['สถานะการสั่งซื้อ', 'Order Status', 'Status']);
+  const COL_SKU     = FL_findCol(hdr, ['เลขอ้างอิง SKU (SKU Reference No.)', 'เลขอ้างอิง SKU', 'SKU Reference No.', 'SKU']);
+  const COL_QTY     = FL_findCol(hdr, ['จำนวน', 'Quantity', 'Qty']);
+  const COL_PAYMENT = FL_findCol(hdr, ['ยอดชำระเงิน']);
+  const COL_PRICE   = FL_findCol(hdr, ['ราคาขาย', 'Unit Price', 'Price']);
 
   if (COL_STATUS < 0) throw new Error('Shopee Order: ไม่พบคอลัมน์ สถานะการสั่งซื้อ / Order Status');
   if (COL_SKU    < 0) throw new Error('Shopee Order: ไม่พบคอลัมน์ SKU Reference');
@@ -106,13 +107,18 @@ function FL_parseShopeeOrder(driveFile) {
 
     const skuRef = FL_normalizeSKU(row[COL_SKU] || '');
     const qty    = FL_toNum(row[COL_QTY]) || 1;
-    const price  = COL_PRICE >= 0 ? FL_toNum(row[COL_PRICE]) : 0;
 
     if (!skuMap[skuRef]) {
       skuMap[skuRef] = { skuRef, category: FL_getCategory(skuRef), units: 0, revenue: 0 };
     }
-    skuMap[skuRef].units   += 1;
-    skuMap[skuRef].revenue += price * qty;
+    skuMap[skuRef].units += 1;
+    if (COL_PAYMENT >= 0) {
+      // ยอดชำระเงิน = total payment for the order (VAT-inclusive); × 0.93 to remove 7% VAT
+      skuMap[skuRef].revenue += FL_toNum(row[COL_PAYMENT]) * 0.93;
+    } else {
+      const price = COL_PRICE >= 0 ? FL_toNum(row[COL_PRICE]) : 0;
+      skuMap[skuRef].revenue += price * qty;
+    }
   }
 
   return {

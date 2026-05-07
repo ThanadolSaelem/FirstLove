@@ -235,6 +235,11 @@
           <div class="form-cell"><input type="number" id="tt_gmvlive_ad" min="0" step="1" placeholder="0"></div>
           <div class="form-cell"><input type="number" id="tt_gmvlive_sale" min="0" step="1" placeholder="0"></div>
         </div>
+        <div class="form-row">
+          <div class="form-cell label-cell" style="padding-left:24px;">Info / Conversion</div>
+          <div class="form-cell"><input type="number" id="tt_info_ad" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_info_sale" min="0" step="1" placeholder="0"></div>
+        </div>
         <div class="form-row subtotal-row">
           <div class="form-cell label-cell" style="padding-left:24px;color:var(--text-sub);font-size:12px;">รวม TikTok</div>
           <div class="form-cell num" id="tt_total_ad_disp" style="color:var(--text-sub);">—</div>
@@ -335,9 +340,10 @@
               <th>ค่าโฆษณา (บาท)</th>
               <th>ยอดขาย (บาท)</th>
               <th>ROAS</th>
+              <th>ROI (%)</th>
             </tr>
           </thead>
-          <tbody id="annualBody"><tr><td colspan="4" style="padding:24px;text-align:center;color:var(--text-sub);">กำลังโหลด...</td></tr></tbody>
+          <tbody id="annualBody"><tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-sub);">กำลังโหลด...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -380,6 +386,7 @@
     {id:'tt_awareness', platform:'tiktok',   ad_type:'awareness'},
     {id:'tt_gmvmax',    platform:'tiktok',   ad_type:'gmv_max'},
     {id:'tt_gmvlive',   platform:'tiktok',   ad_type:'gmv_live'},
+    {id:'tt_info',      platform:'tiktok',   ad_type:'info'},
     {id:'sp',           platform:'shopee',   ad_type:''},
     {id:'fb',           platform:'facebook', ad_type:''},
   ];
@@ -387,8 +394,8 @@
   function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
 
   function updateTotals() {
-    const ttAd   = val('tt_awareness_ad') + val('tt_gmvmax_ad') + val('tt_gmvlive_ad');
-    const ttSale = val('tt_awareness_sale') + val('tt_gmvmax_sale') + val('tt_gmvlive_sale');
+    const ttAd   = val('tt_awareness_ad') + val('tt_gmvmax_ad') + val('tt_gmvlive_ad') + val('tt_info_ad');
+    const ttSale = val('tt_awareness_sale') + val('tt_gmvmax_sale') + val('tt_gmvlive_sale') + val('tt_info_sale');
     const grandAd   = ttAd + val('sp_ad') + val('fb_ad');
     const grandSale = ttSale + val('sp_sale') + val('fb_sale');
     document.getElementById('tt_total_ad_disp').textContent   = ttAd   > 0 ? fmt(ttAd)   : '—';
@@ -622,7 +629,7 @@
 
   function renderData(data) {
     const keys   = Object.keys(data || {}).sort();
-    const annual = {tt_aw:{ad:0,sale:0}, tt_gm:{ad:0,sale:0}, tt_gl:{ad:0,sale:0},
+    const annual = {tt_aw:{ad:0,sale:0}, tt_gm:{ad:0,sale:0}, tt_gl:{ad:0,sale:0}, tt_info:{ad:0,sale:0},
                     sp:{ad:0,sale:0}, fb:{ad:0,sale:0}, total:{ad:0,sale:0}};
 
     if (keys.length === 0) {
@@ -637,39 +644,49 @@
         const e = entries.find(x => x.platform === plat && x.ad_type === type);
         return e ? (e[field] || 0) : 0;
       }
-      const ttAw = {ad: g('tiktok','awareness','ad_amount'),  sale: g('tiktok','awareness','sales_amount')};
-      const ttGm = {ad: g('tiktok','gmv_max','ad_amount'),    sale: g('tiktok','gmv_max','sales_amount')};
-      const ttGl = {ad: g('tiktok','gmv_live','ad_amount'),   sale: g('tiktok','gmv_live','sales_amount')};
-      const sp   = {ad: g('shopee','','ad_amount'),            sale: g('shopee','','sales_amount')};
-      const fb   = {ad: g('facebook','','ad_amount'),          sale: g('facebook','','sales_amount')};
-      const totalAd   = ttAw.ad + ttGm.ad + ttGl.ad + sp.ad + fb.ad;
-      const totalSale = ttAw.sale + ttGm.sale + ttGl.sale + sp.sale + fb.sale;
+      const ttAw   = {ad: g('tiktok','awareness','ad_amount'), sale: g('tiktok','awareness','sales_amount')};
+      const ttGm   = {ad: g('tiktok','gmv_max','ad_amount'),   sale: g('tiktok','gmv_max','sales_amount')};
+      const ttGl   = {ad: g('tiktok','gmv_live','ad_amount'),  sale: g('tiktok','gmv_live','sales_amount')};
+      const ttInfo = {ad: g('tiktok','info','ad_amount'),       sale: g('tiktok','info','sales_amount')};
+      const sp     = {ad: g('shopee','','ad_amount'),           sale: g('shopee','','sales_amount')};
+      const fb     = {ad: g('facebook','','ad_amount'),         sale: g('facebook','','sales_amount')};
+      const totalAd   = ttAw.ad + ttGm.ad + ttGl.ad + ttInfo.ad + sp.ad + fb.ad;
+      const totalSale = ttAw.sale + ttGm.sale + ttGl.sale + ttInfo.sale + sp.sale + fb.sale;
       const roasNum   = totalAd > 0 ? parseFloat((totalSale / totalAd).toFixed(2)) : null;
 
-      ['tt_aw','tt_gm','tt_gl'].forEach((k, i) => {
-        const src = [ttAw, ttGm, ttGl][i];
+      ['tt_aw','tt_gm','tt_gl','tt_info'].forEach((k, i) => {
+        const src = [ttAw, ttGm, ttGl, ttInfo][i];
         annual[k].ad += src.ad; annual[k].sale += src.sale;
       });
       annual.sp.ad += sp.ad; annual.sp.sale += sp.sale;
       annual.fb.ad += fb.ad; annual.fb.sale += fb.sale;
       annual.total.ad += totalAd; annual.total.sale += totalSale;
 
-      return {ttAw, ttGm, ttGl, sp, fb, totalAd, totalSale, roasNum};
+      return {ttAw, ttGm, ttGl, ttInfo, sp, fb, totalAd, totalSale, roasNum};
     });
 
     renderAnnual(annual);
     renderCharts(keys, chartRows);
   }
 
+  function roiStr(ad, sale) {
+    if (!ad || ad <= 0) return '—';
+    return ((sale - ad) / ad * 100).toFixed(1) + '%';
+  }
+
   function renderAnnual(a) {
     const rows = [
-      {label:'TikTok Awareness', color:'var(--tiktok)',   d: a.tt_aw},
-      {label:'TikTok GMV Max',   color:'var(--tiktok)',   d: a.tt_gm},
-      {label:'TikTok GMV Live',  color:'var(--tiktok)',   d: a.tt_gl},
-      {label:'Shopee Ads',       color:'var(--shopee)',   d: a.sp},
-      {label:'Facebook Ads',     color:'var(--facebook)', d: a.fb},
+      {label:'TikTok Awareness',    color:'var(--tiktok)',   d: a.tt_aw},
+      {label:'TikTok GMV Max',      color:'var(--tiktok)',   d: a.tt_gm},
+      {label:'TikTok GMV Live',     color:'var(--tiktok)',   d: a.tt_gl},
+      {label:'TikTok Info / Conv.', color:'var(--tiktok)',   d: a.tt_info},
+      {label:'Shopee Ads',          color:'var(--shopee)',   d: a.sp},
+      {label:'Facebook Ads',        color:'var(--facebook)', d: a.fb},
     ];
-    const ttTotal = {ad: a.tt_aw.ad+a.tt_gm.ad+a.tt_gl.ad, sale: a.tt_aw.sale+a.tt_gm.sale+a.tt_gl.sale};
+    const ttTotal = {
+      ad:   a.tt_aw.ad   + a.tt_gm.ad   + a.tt_gl.ad   + a.tt_info.ad,
+      sale: a.tt_aw.sale + a.tt_gm.sale + a.tt_gl.sale + a.tt_info.sale,
+    };
     const ttRoas  = ttTotal.ad > 0 ? (ttTotal.sale / ttTotal.ad).toFixed(2) : null;
     const grRoas  = a.total.ad > 0 ? (a.total.sale / a.total.ad).toFixed(2) : null;
 
@@ -680,15 +697,18 @@
         <td style="color:${r.color};font-weight:600;">${r.label}</td>
         <td>${fmt(r.d.ad)}</td><td>${fmt(r.d.sale)}</td>
         <td class="${rc}">${roas ? roas + 'x' : '—'}</td>
+        <td>${roiStr(r.d.ad, r.d.sale)}</td>
       </tr>`;
     }).join('');
     html += `<tr style="background:var(--purple-50);font-weight:600;">
       <td>รวม TikTok</td><td>${fmt(ttTotal.ad)}</td><td>${fmt(ttTotal.sale)}</td>
       <td class="${roasClass(parseFloat(ttRoas))}">${ttRoas ? ttRoas + 'x' : '—'}</td>
+      <td>${roiStr(ttTotal.ad, ttTotal.sale)}</td>
     </tr>`;
     html += `<tr class="total-row">
       <td>รวมทั้งหมด</td><td>${fmt(a.total.ad)}</td><td>${fmt(a.total.sale)}</td>
       <td class="${roasClass(parseFloat(grRoas))}">${grRoas ? grRoas + 'x' : '—'}</td>
+      <td>${roiStr(a.total.ad, a.total.sale)}</td>
     </tr>`;
     document.getElementById('annualBody').innerHTML = html;
   }

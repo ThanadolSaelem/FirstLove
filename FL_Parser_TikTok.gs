@@ -128,12 +128,15 @@ function FL_parseTikTokOrder(driveFile) {
   // Row 1 = headers, Row 2 = description row (skip), Row 3+ = data
   const hdr = FL_buildHeaderMap(rows[0]);
 
-  const COL_STATUS = hdr['Order Status']                ?? FL_findCol(hdr, ['Status', 'สถานะ']);
-  const COL_SKU    = hdr['Seller SKU']                  ?? FL_findCol(hdr, ['SKU', 'Seller SKU']);
-  const COL_QTY    = hdr['Quantity']                    ?? FL_findCol(hdr, ['Qty', 'จำนวน']);
-  const COL_NET    = hdr['SKU Subtotal After Discount']  ?? FL_findCol(hdr, ['Revenue', 'ยอดขาย']);
-  const COL_PRICE  = hdr['SKU Unit Original Price']     ?? FL_findCol(hdr, ['Price', 'ราคา']);
-  const COL_DATE   = hdr['Created Time']                ?? FL_findCol(hdr, ['Paid Time', 'Date']);
+  const COL_STATUS      = hdr['Order Status']                ?? FL_findCol(hdr, ['Status', 'สถานะ']);
+  const COL_SKU         = hdr['Seller SKU']                  ?? FL_findCol(hdr, ['SKU', 'Seller SKU']);
+  const COL_QTY         = hdr['Quantity']                    ?? FL_findCol(hdr, ['Qty', 'จำนวน']);
+  const COL_NET         = hdr['SKU Subtotal After Discount']  ?? FL_findCol(hdr, ['Revenue', 'ยอดขาย']);
+  const COL_PRICE       = hdr['SKU Unit Original Price']     ?? FL_findCol(hdr, ['Price', 'ราคา']);
+  const COL_DATE        = hdr['Created Time']                ?? FL_findCol(hdr, ['Paid Time', 'Date']);
+  // M - O columns: platform discount is reimbursed to seller, only seller discount reduces revenue
+  const COL_SUBTOTAL_BEFORE = hdr['SKU Subtotal Before Discount'];
+  const COL_SELLER_DISC     = hdr['SKU Seller Discount'];
 
   // Determine data start row:
   // Standard TikTok OrderSKUList has a description row 2 (skip) → start at index 2
@@ -177,14 +180,20 @@ function FL_parseTikTokOrder(driveFile) {
 
     const skuRef = FL_normalizeSKU(rawSku);
     const qty    = FL_toNum(row[COL_QTY]) || 1;
-    const net    = FL_toNum(row[COL_NET]);
     const price  = FL_toNum(row[COL_PRICE]);
 
     if (!skuMap[skuRef]) {
       skuMap[skuRef] = { skuRef, category: FL_getCategory(skuRef), units: 0, revenue: 0 };
     }
-    skuMap[skuRef].units   += 1;
-    skuMap[skuRef].revenue += net !== 0 ? net : price * qty;
+    skuMap[skuRef].units += 1;
+    // Use Before Discount - Seller Discount (M - O) when available: platform discount is
+    // reimbursed by TikTok in the income file, so only seller-funded discount reduces revenue
+    if (COL_SUBTOTAL_BEFORE >= 0 && COL_SELLER_DISC >= 0) {
+      skuMap[skuRef].revenue += FL_toNum(row[COL_SUBTOTAL_BEFORE]) - FL_toNum(row[COL_SELLER_DISC]);
+    } else {
+      const net = FL_toNum(row[COL_NET]);
+      skuMap[skuRef].revenue += net !== 0 ? net : price * qty;
+    }
   }
 
   return {

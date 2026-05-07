@@ -16,8 +16,11 @@ const FL_DEFAULT_CONFIG = {
   // Auto‑scan interval configuration – default 1 hour
   triggerInterval: 1,
   triggerUnit: 'hours',
-  // เป้าหมายยอดโอนสุทธิรายเดือน (บาท) — แก้ได้จาก Index.html → Config
+  // เป้าหมายยอดโอนสุทธิรายเดือน (บาท) — ค่า default สำหรับเดือนที่ยังไม่ได้ตั้ง
   MONTHLY_TARGET: 2000000,
+  // เป้าหมายรายเดือนแบบแยก — key: 'YYYY-MM', value: ยอด (บาท)
+  // ถ้าเดือนไหนไม่มีใน MONTHLY_TARGETS จะใช้ MONTHLY_TARGET แทน
+  MONTHLY_TARGETS: {},
   // Stock low-stock threshold (REQ-05) — แก้ได้จาก Index.html → Config
   STOCK_THRESHOLD: 50,
 };
