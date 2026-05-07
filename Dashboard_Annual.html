@@ -1788,7 +1788,7 @@
                     </div>
                 </div>
 
-                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie -->
+                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie + Category Units -->
                 <div class="card">
                     <div class="card-head">
                         <span class="card-ttl">รายได้ตามแพลตฟอร์ม & สัดส่วนค่าธรรมเนียม</span>
@@ -1804,6 +1804,10 @@
                                 <div id="chartFeePie" style="height:200px;"></div>
                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
                             </div>
+                        </div>
+                        <div style="margin-top:20px;border-top:1px solid var(--purple-100);padding-top:14px;">
+                            <div class="pair-lbl">จำนวนกระปุก/ขวดจริงตามหมวดสินค้า (รวม bundle)</div>
+                            <div id="chartSkuBar" style="height:220px;"></div>
                         </div>
                     </div>
                 </div>
@@ -2016,6 +2020,10 @@ function onCompareYearChange() {
             renderHeatmap(PRIMARY_DATA.monthly);
             renderAdSpendAnnual(PRIMARY_DATA.monthly);
             renderQuadrant(PRIMARY_DATA.quadrant || []);
+            renderSkuBar(
+                PRIMARY_DATA.componentsByCategory || {},
+                (IS_COMP_MODE && COMPARE_DATA) ? (COMPARE_DATA.componentsByCategory || {}) : null
+            );
         }
 
         // ── Ad Spend dedicated line chart (Annual) ──
@@ -2285,17 +2293,12 @@ function onCompareYearChange() {
             }).join('');
         }
 
-        // REQ-8-2: BarChart → ColumnChart (vertical) + always-on annotations (REQ-07)
-        function renderSkuBar(pSku, cSku) {
+        // จำนวนกระปุก/ขวดจริงตามหมวดสินค้า — pCat/cCat = componentsByCategory from backend
+        function renderSkuBar(pCat, cCat) {
             const el = document.getElementById('chartSkuBar');
-            // Sum units per category (เพราะ pSku คือ Top10 SKUs จึงต้อง group เอง)
-            const sumByCat = (arr) => {
-                const m = {};
-                (arr || []).forEach(x => { m[x.category] = (m[x.category] || 0) + (x.units || 0); });
-                return m;
-            };
-            const pCat = sumByCat(pSku);
-            const cCat = cSku ? sumByCat(cSku) : null;
+            if (!el) return;
+            // pCat = { 'กลูต้า': { units: N }, 'วิตามินซี': { units: N }, ... }
+            const categories = ['กลูต้า', 'วิตามินซี', 'โปรไบโอติก'];
 
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Category');
@@ -2306,20 +2309,20 @@ function onCompareYearChange() {
                 dt.addColumn({ type: 'string', role: 'annotation' });
             }
 
-            const categories = ['กลูต้า', 'วิตามินซี', 'โปรไบโอติก'];
             categories.forEach(cat => {
-                const v1 = pCat[cat] || 0;
+                const v1 = ((pCat || {})[cat] || {}).units || 0;
                 const row = [cat, v1, FMT(v1)];
                 if (cCat) {
-                    const v2 = cCat[cat] || 0;
+                    const v2 = ((cCat || {})[cat] || {}).units || 0;
                     row.push(v2, FMT(v2));
                 }
                 dt.addRow(row);
             });
 
-            // Calculate yMax so annotations always have headroom above the tallest bar.
-            // Without this, Google Charts clips annotations inside tall bars.
-            const allVals = categories.flatMap(cat => cCat ? [pCat[cat] || 0, cCat[cat] || 0] : [pCat[cat] || 0]);
+            const allVals = categories.flatMap(cat =>
+                cCat ? [((pCat||{})[cat]||{}).units||0, ((cCat||{})[cat]||{}).units||0]
+                      : [((pCat||{})[cat]||{}).units||0]
+            );
             const yMax = Math.ceil(Math.max(...allVals) * 1.3) || 10;
 
             const options = {
@@ -2328,7 +2331,7 @@ function onCompareYearChange() {
                 chartArea: { left: 50, top: 32, right: 14, bottom: 40 },
                 legend: cCat ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
                 hAxis: { textStyle: { color: '#1e1b3a', fontSize: 11, bold: true }, gridlines: { count: 0 } },
-                vAxis: { title: 'Total Units Sold', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
+                vAxis: { title: 'กระปุก/ขวดจริง', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
                 bar: { groupWidth: '60%' },
                 annotations: { alwaysOutside: true, textStyle: { fontSize: 11, color: '#1e1b3a', bold: true }, stem: { length: 4 } },
                 tooltip: { textStyle: { fontSize: 11 } },

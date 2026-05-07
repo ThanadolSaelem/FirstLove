@@ -216,20 +216,21 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       net:      curNet,
     };
 
-    // Units by Category × Platform (grouped chart) — selected scope
+    // Units by Category × Platform — bundles decomposed into component products
     const iCatCol = skuIdx('category');
     const iSkuCol = skuIdx('sku_ref');
     const unitsByCategoryPlatform = {};
     targetSkuRows.forEach(row => {
-      const cat  = (row[iCatCol] || '').toString().trim();
-      const plat = (row[skuIdx('platform')] || '').toString().toLowerCase();
-      if (!cat || cat === 'เซต' || cat === 'อื่นๆ') return;
-      const u = parseFloat(row[skuIdx('units_sold')]) || 0;
-      if (!unitsByCategoryPlatform[cat]) {
-        unitsByCategoryPlatform[cat] = { shopee: 0, tiktok: 0, lazada: 0, total: 0 };
-      }
-      unitsByCategoryPlatform[cat].total += u;
-      if (['shopee','tiktok','lazada'].includes(plat)) unitsByCategoryPlatform[cat][plat] += u;
+      const skuRef = (row[iSkuCol] || '').toString().trim();
+      const plat   = (row[skuIdx('platform')] || '').toString().toLowerCase();
+      const u      = parseFloat(row[skuIdx('units_sold')]) || 0;
+      FL_getComponentData(skuRef, u).forEach(function(c) {
+        if (!unitsByCategoryPlatform[c.category]) {
+          unitsByCategoryPlatform[c.category] = { shopee: 0, tiktok: 0, lazada: 0, total: 0 };
+        }
+        unitsByCategoryPlatform[c.category].total += c.units;
+        if (['shopee','tiktok','lazada'].includes(plat)) unitsByCategoryPlatform[c.category][plat] += c.units;
+      });
     });
 
     // Ad Spend — sum across all months if isAllMode
@@ -470,6 +471,16 @@ function FL_getAnnualDashboardData(year) {
       });
       skuPerformance = Object.values(skuMap).sort((a,b) => b.units - a.units).slice(0, 10);
 
+      // Decompose all SKUs into actual product-level unit counts (bundles + standalone)
+      var componentsByCategory = {};
+      skRows.forEach(function(r) {
+        var u = parseFloat(r[iUnits]) || 0;
+        FL_getComponentData(r[iSku], u).forEach(function(c) {
+          if (!componentsByCategory[c.category]) componentsByCategory[c.category] = { units: 0 };
+          componentsByCategory[c.category].units += c.units;
+        });
+      });
+
       // Product Lifecycle Quadrant: units (x) × YoY growth % (y)
       quadrant = Object.values(skuMap).map(s => {
         const prev = prevSkuMap[s.sku] || 0;
@@ -520,6 +531,7 @@ function FL_getAnnualDashboardData(year) {
       monthly,
       skuPerformance,
       categoryPie,
+      componentsByCategory,
       feeByPlatform,
       quadrant,
       marginRanking,
