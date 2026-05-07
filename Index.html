@@ -2545,11 +2545,37 @@ https://matthewjamestaylor.com/responsive-attributes
 
                             <div class="field-group">
                                 <label class="field-label" for="monthlyTarget">
-                                    เป้าหมายรายเดือน (บาท)
+                                    เป้าหมายรายเดือน — ค่า default (บาท)
                                 </label>
                                 <input class="field-input" type="number" id="monthlyTarget" disabled
                                     min="0" step="10000" placeholder="2000000">
-                                <span class="field-hint">เป้าหมายยอดโอนสุทธิรายเดือน — แสดงใน Executive Dashboard</span>
+                                <span class="field-hint">ใช้เมื่อไม่ได้ตั้งค่าเฉพาะเดือน — แสดงใน Executive Dashboard</span>
+                            </div>
+
+                            <!-- Per-month targets -->
+                            <div class="field-group" style="grid-column:1/-1;">
+                                <label class="field-label">เป้าหมายรายเดือนแบบแยก</label>
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                    <span style="font-size:13px;color:var(--text-sub);">ปี</span>
+                                    <input class="field-input" type="number" id="mt_year" disabled
+                                        min="2024" max="2030" step="1" placeholder="2026"
+                                        style="width:90px;" onchange="reloadMonthlyTargets()">
+                                </div>
+                                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px 10px;">
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ม.ค.</label><input class="field-input mt-input" type="number" id="mt_01" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ก.พ.</label><input class="field-input mt-input" type="number" id="mt_02" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">มี.ค.</label><input class="field-input mt-input" type="number" id="mt_03" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">เม.ย.</label><input class="field-input mt-input" type="number" id="mt_04" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">พ.ค.</label><input class="field-input mt-input" type="number" id="mt_05" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">มิ.ย.</label><input class="field-input mt-input" type="number" id="mt_06" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ก.ค.</label><input class="field-input mt-input" type="number" id="mt_07" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ส.ค.</label><input class="field-input mt-input" type="number" id="mt_08" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ก.ย.</label><input class="field-input mt-input" type="number" id="mt_09" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ต.ค.</label><input class="field-input mt-input" type="number" id="mt_10" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">พ.ย.</label><input class="field-input mt-input" type="number" id="mt_11" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                    <div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:11px;color:var(--text-sub);">ธ.ค.</label><input class="field-input mt-input" type="number" id="mt_12" disabled min="0" step="10000" placeholder="default" style="font-size:12px;padding:4px 7px;"></div>
+                                </div>
+                                <span class="field-hint">ปล่อยว่าง = ใช้ค่า default ด้านบน; เปลี่ยนปีเพื่อตั้งค่าปีอื่น</span>
                             </div>
 
                             <div class="field-group">
@@ -2957,6 +2983,30 @@ https://matthewjamestaylor.com/responsive-attributes
                 .FL_addStockIn({ sku_ref: sku, quantity: qty, date: date, note: note });
         }
 
+        function populateMonthlyTargets(targets, year) {
+            for (let m = 1; m <= 12; m++) {
+                const mk = year + '-' + String(m).padStart(2, '0');
+                const el = document.getElementById('mt_' + String(m).padStart(2, '0'));
+                if (el) el.value = targets[mk] ? targets[mk] : '';
+            }
+        }
+        function reloadMonthlyTargets() {
+            const yr = document.getElementById('mt_year').value || new Date().getFullYear();
+            populateMonthlyTargets(originalConfig ? (originalConfig.MONTHLY_TARGETS || {}) : {}, yr);
+        }
+        function collectMonthlyTargets(existing) {
+            const yr = document.getElementById('mt_year').value || new Date().getFullYear();
+            const result = Object.assign({}, existing);
+            for (let m = 1; m <= 12; m++) {
+                const mk = yr + '-' + String(m).padStart(2, '0');
+                const el = document.getElementById('mt_' + String(m).padStart(2, '0'));
+                const val = el ? parseFloat(el.value) : NaN;
+                if (val > 0) { result[mk] = val; }
+                else { delete result[mk]; }
+            }
+            return result;
+        }
+
         function loadConfig() {
             showLoading(true, "กำลังโหลดตัวเลือก", "โปรดรอข้อมูล Config");
             google.script.run
@@ -2975,6 +3025,10 @@ https://matthewjamestaylor.com/responsive-attributes
                     document.getElementById('mcLogSheetId').value = config.MC_LOG_SHEET_ID || '';
                     document.getElementById('monthlyTarget').value = config.MONTHLY_TARGET || 2000000;
                     document.getElementById('stockThreshold').value = config.STOCK_THRESHOLD || 50;
+                    // Per-month targets
+                    const curYear = new Date().getFullYear();
+                    document.getElementById('mt_year').value = curYear;
+                    populateMonthlyTargets(config.MONTHLY_TARGETS || {}, curYear);
                     // Populate interval picker from stored triggerInterval / triggerUnit
                     ivSetFromConfig(config.triggerInterval || 1, config.triggerUnit || 'hours');
                     document.getElementById('editConfigBtn').disabled = false;
@@ -3045,6 +3099,7 @@ https://matthewjamestaylor.com/responsive-attributes
             document.getElementById('mcLogSheetId').value = originalConfig.MC_LOG_SHEET_ID || '';
             document.getElementById('monthlyTarget').value = originalConfig.MONTHLY_TARGET || 2000000;
             document.getElementById('stockThreshold').value = originalConfig.STOCK_THRESHOLD || 50;
+            populateMonthlyTargets(originalConfig.MONTHLY_TARGETS || {}, document.getElementById('mt_year').value || new Date().getFullYear());
             // Reset interval picker to original config
             ivSetFromConfig(originalConfig.triggerInterval || 1, originalConfig.triggerUnit || 'hours');
             document.getElementById('editConfigBtn').style.display = 'inline-flex';
@@ -3072,6 +3127,7 @@ https://matthewjamestaylor.com/responsive-attributes
                 OUTPUT_SHEET_ID: outSheet,
                 MC_LOG_SHEET_ID: document.getElementById('mcLogSheetId').value.trim(),
                 MONTHLY_TARGET: parseFloat(document.getElementById('monthlyTarget').value) || 2000000,
+                MONTHLY_TARGETS: collectMonthlyTargets(originalConfig.MONTHLY_TARGETS || {}),
                 STOCK_THRESHOLD: parseFloat(document.getElementById('stockThreshold').value) || 50,
                 triggerInterval: triggerInterval,
                 triggerUnit: triggerUnit

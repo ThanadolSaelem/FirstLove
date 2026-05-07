@@ -1752,7 +1752,7 @@
                             stroke="currentColor" stroke-width="2">
                             <path d="M12 20v-6M6 20V10M18 20V4" />
                         </svg></div>
-                    <div class="kpi-lbl">เฉลี่ยต่อเดือน</div>
+                    <div class="kpi-lbl">เฉลี่ยต่อเดือน (สุทธิ)</div>
                     <div class="kpi-num" id="kAvg">—</div>
                     <div class="kpi-trend" id="tAvg"></div>
                 </div>
@@ -2026,23 +2026,32 @@ function onCompareYearChange() {
             );
         }
 
-        // ── Ad Spend dedicated line chart (Annual) ──
+        // ── Ad Spend + Revenue grouped ColumnChart (Annual) ──
         function renderAdSpendAnnual(monthly) {
             const el = document.getElementById('adSpendAnnualBody');
             if (!el) return;
 
-            const totalAd = (monthly || []).reduce((s, m) => s + (m.adSpend || 0), 0);
-            const yearLbl = YEAR ? 'ปี ' + YEAR : '';
+            const totalAd    = (monthly || []).reduce((s, m) => s + (m.adSpend  || 0), 0);
+            const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales  || 0), 0);
+            const yearLbl    = YEAR ? 'ปี ' + YEAR : '';
 
-            const hasData = totalAd > 0;
+            const hasData = totalAd > 0 || totalSales > 0;
 
-            // Header row: big number + year label (always shown)
             el.innerHTML = `
-                <div style="display:flex;align-items:baseline;gap:8px;padding:4px 0 8px;">
-                    <div style="font-size:22px;font-weight:800;color:#f59e0b;">฿${FMT(totalAd)}</div>
+                <div style="display:flex;align-items:center;gap:18px;padding:4px 0 8px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:baseline;gap:6px;">
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0;"></span>
+                        <span style="font-size:11px;color:#9ca3af;">ค่าโฆษณา</span>
+                        <span style="font-size:18px;font-weight:800;color:#f59e0b;">฿${FMT(totalAd)}</span>
+                    </div>
+                    <div style="display:flex;align-items:baseline;gap:6px;">
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#7c3aed;flex-shrink:0;"></span>
+                        <span style="font-size:11px;color:#9ca3af;">รายได้จากโฆษณา</span>
+                        <span style="font-size:18px;font-weight:800;color:#7c3aed;">฿${FMT(totalSales)}</span>
+                    </div>
                     <div style="font-size:11px;color:#9ca3af;">${yearLbl}</div>
                 </div>
-                <div id="chartAdSpendInner" style="width:100%;height:160px;"></div>`;
+                <div id="chartAdSpendInner" style="width:100%;height:200px;"></div>`;
 
             const chartEl = document.getElementById('chartAdSpendInner');
             if (!chartEl) return;
@@ -2056,26 +2065,32 @@ function onCompareYearChange() {
             dt.addColumn('string', 'เดือน');
             dt.addColumn('number', 'ค่าโฆษณา');
             dt.addColumn({ type: 'string', role: 'annotation' });
+            dt.addColumn('number', 'รายได้จากโฆษณา');
+            dt.addColumn({ type: 'string', role: 'annotation' });
 
             (monthly || []).forEach(m => {
-                const v = m.adSpend || 0;
-                dt.addRow([m.label ? m.label.split(' ')[0] : m.month, v || null, v > 0 ? FMT(Math.round(v)) : null]);
+                const ad   = m.adSpend || 0;
+                const sale = m.adSales || 0;
+                dt.addRow([
+                    m.label ? m.label.split(' ')[0] : m.month,
+                    ad   || null, ad   > 0 ? FMT(Math.round(ad))   : null,
+                    sale || null, sale > 0 ? FMT(Math.round(sale)) : null,
+                ]);
             });
 
-            new google.visualization.LineChart(chartEl).draw(dt, {
+            new google.visualization.ColumnChart(chartEl).draw(dt, {
                 backgroundColor: 'transparent',
-                colors: ['#f59e0b'],
-                legend: 'none',
-                lineWidth: 2.5,
-                pointSize: 5,
+                colors: ['#f59e0b', '#7c3aed'],
+                legend: { position: 'none' },
+                bar: { groupWidth: '70%' },
                 hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
                 vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
                          gridlines: { color: '#f3f4f6' }, minValue: 0 },
                 chartArea: { left: 50, top: 20, right: 14, bottom: 28 },
                 annotations: {
                     alwaysOutside: true,
-                    textStyle: { fontSize: 10, bold: true, color: '#92400e' },
-                    stem: { length: 4 },
+                    textStyle: { fontSize: 9, bold: true },
+                    stem: { length: 3 },
                 },
                 tooltip: { textStyle: { fontSize: 11 } },
             });
