@@ -1,5 +1,5 @@
 # First Love Project — Full Context (Single File)
-> สร้าง 2026-05-01 | ใช้เป็น context ใน session ใหม่ได้ทันที
+> สร้าง 2026-05-01 | อัปเดตล่าสุด 2026-05-07 | ใช้เป็น context ใน session ใหม่ได้ทันที
 
 ---
 
@@ -21,13 +21,15 @@
 |---|---|
 | `FL_Main.gs` | doGet/doPost, `FL_getExecutiveDashboardData()`, `FL_getAnnualDashboardData()` |
 | `FL_DataStore.gs` | read/write sheets: monthly_summary, sku_monthly, stock_in, ad_spend |
-| `FL_Config.gs` | FL_SHEETS, FL_HEADERS constants; `FL_getConfig()` |
+| `FL_Config.gs` | FL_SHEETS, FL_HEADERS, FL_SKU_MAP, FL_BUNDLE_COMPOSITION constants; `FL_getConfig()` |
+| `FL_XmlParser.gs` | XLSX parsing utilities: `FL_readXlsxSheet()`, `FL_getCategory()`, `FL_normalizeSKU()`, `FL_getComponentData()` |
 | `FL_Parser_Shopee.gs` | parse Shopee Income + Order xlsx |
 | `FL_Parser_TikTok.gs` | parse TikTok Income + Order xlsx |
 | `FL_Parser_Lazada.gs` | parse Lazada Income + Order xlsx |
 | `Dashboard_Executive.html` | Executive dashboard |
 | `Dashboard_Annual.html` | Annual dashboard |
-| `Index.html` | Import + Admin (stock-in form, ad spend form, setup/scan) |
+| `Dashboard_Ad.html` | Ad Spend input + ROAS/ROI annual summary |
+| `Index.html` | Import + Admin + Config (stock-in form, setup/scan, per-month targets) |
 
 ---
 
@@ -35,13 +37,20 @@
 
 | Sheet | Columns |
 |---|---|
-| `monthly_summary` | month_key, platform, gross, seller_discount, net_revenue, platform_fees, transferred |
-| `sku_monthly` | month_key, platform, sku_ref, category, units_sold, revenue, year |
-| `stock_in` | date, sku_ref, quantity, note |
-| `ad_spend` | month_key, amount, recorded_at |
-| `processed_files` | fileId, fileName, platform, fileType, month_key |
-| `sku_master` | sku_ref, display_name, box_size, commission |
-| `error_log` | date, fileName, platform, error |
+| `monthly_summary` | month_key, platform, gross, seller_discount, net_revenue, platform_fees, transferred, imported_at, source_file |
+| `sku_monthly` | month_key, platform, sku_ref, category, units_sold, revenue, imported_at, source_file, year |
+| `stock_in` | date, sku_ref, quantity, note, recorded_at |
+| `ad_spend` | month_key, platform, ad_type, ad_amount, sales_amount, recorded_at |
+| `processed_files` | file_id, file_name, platform, file_type, month_key, imported_at |
+| `sku_master` | sku_ref, display_name, brand, category, box_size, commission_per_unit, updated_at |
+| `error_log` | timestamp, file_name, platform, error |
+| `product_names` | sku_ref, display_name, status, updated_at |
+
+**ad_spend schema (ปัจจุบัน):** แต่ละแถวเป็น platform×ad_type combination  
+- `platform`: `'tiktok'` / `'shopee'` / `'facebook'` / `'total'` (legacy)  
+- `ad_type`: `'awareness'` / `'gmv_max'` / `'gmv_live'` / `'info'` / `''` (Shopee/FB ใช้ค่าว่าง)  
+- `FL_getAdSpendDetail(monthKey)` คืน array ทุก row ของเดือนนั้น  
+- `FL_getAdSpendDetailAnnual(year)` คืน `{ 'YYYY-MM': [...entries] }` รวม `sales_amount` ด้วย
 
 ---
 
@@ -62,7 +71,7 @@ Google Drive folders (Shopee / TikTok / Lazada)
 
 ## 5. PARSER — การดึงค่าสำคัญ (ถูกต้อง ณ ปัจจุบัน)
 
-### TikTok (FL_Parser_TikTok.gs)
+### TikTok Income (FL_Parser_TikTok.gs)
 อ่านจาก sheet `Reports`:
 
 | field | keyword / วิธี |
@@ -73,19 +82,49 @@ Google Drive folders (Shopee / TikTok / Lazada)
 | `transferred` | `findValue(['Total settlement amount'])` |
 | `month_key` | อ่านจาก "Order settled time" ใน sheet **Order details** — ไม่ใช้ filename เพราะ filename = export date ≠ settle month |
 
-### Shopee (FL_Parser_Shopee.gs)
+ทั้ง `findValue` และ `findExact` มี numeric guard เหมือนกัน: `!/^-?\d+(\.\d+)?$/.test(val.toString().replace(/,/g,'').trim())`
+
+### TikTok Order (FL_Parser_TikTok.gs)
+Sheet: `OrderSKUList` (row 1=headers, row 2=descriptions ข้าม, row 3+=data)
+
+| column | header |
+|---|---|
+| `COL_SUBTOTAL_BEFORE` | `SKU Subtotal Before Discount` (col M) |
+| `COL_SELLER_DISC` | `SKU Seller Discount` (col O) |
+| `COL_NET` | `SKU Subtotal After Discount` (fallback) |
+
+**Revenue per order** = `SKU Subtotal Before Discount − SKU Seller Discount` (M−O)  
+เหตุผล: TikTok Platform discount (col N) ถูก reimburse คืนให้ seller ผ่าน income file แล้ว → ลด revenue แค่ seller-funded discount (O) เท่านั้น  
+สมการ: M−O = N+P (algebraically equivalent, verified)  
+Fallback เมื่อไม่มีคอลัมน์ M/O: ใช้ `COL_NET` แล้ว fallback `price × qty` เมื่อ net = 0 (ไม่ใช่ net > 0)
+
+**Multi-month guard:** TikTok export ครอบ 60–90 วัน → skip rows ที่ month_key ≠ เดือนแรกของไฟล์
+
+### Shopee Income (FL_Parser_Shopee.gs)
 อ่านจาก sheet `Summary`:
 
 | field | keyword / วิธี |
 |---|---|
 | `gross` | `findValue(['สินค้าราคาปกติ'])` |
-| `seller_discount` | `findValue(['ส่วนลดสินค้าจากผู้ขาย'])` |
+| `seller_discount` | `findValue(['ส่วนลดสินค้าจากผู้ขาย'])` (ค่าเป็น negative) |
 | `transferred` | `findValue(['จำนวนเงินทั้งหมดที่โอนแล้ว'])` |
 | `platform_fees` | `findValue(['ค่าธรรมเนียม'])` → col D = section total ← อ่านตรง ห้ามใช้ plug |
 | fallback fees | `transferred - gross - discount - shopee_subsidy` (ใช้เมื่อ label หาไม่เจอ) |
 | `month_key` | จากชื่อไฟล์ (Shopee filename มีวันที่ช่วงที่ถูกต้อง) |
+| `net_revenue` | `gross + discount` (discount เป็น negative อยู่แล้ว → บวก) |
 
 Shopee `findValue` มี guard พิเศษ: `!/^-?\d+(\.\d+)?$/.test(val)` เพราะ cell "3. จำนวน..." จะทำให้ parseFloat = 3
+
+### Shopee Order (FL_Parser_Shopee.gs)
+
+| column | header | หมายเหตุ |
+|---|---|---|
+| `COL_PAYMENT` | `ยอดชำระเงิน` | column Z ในไฟล์ลูกค้า — ยอดรวม VAT-inclusive ทั้ง order |
+| `COL_PRICE` | `ราคาขาย` | fallback เมื่อไม่มี COL_PAYMENT |
+
+**Revenue per order** = `ยอดชำระเงิน × 0.93` (หัก VAT 7%)  
+ห้ามคูณ qty — `ยอดชำระเงิน` คือยอดรวมทั้ง order แล้ว  
+**ต้อง re-import Shopee order files ทุกครั้งที่แก้ parser นี้** (ลบ processed_files rows → re-scan)
 
 ### Lazada Income (FL_Parser_Lazada.gs)
 อ่านจาก sheet `Income Overview` ระดับ transaction:
@@ -189,11 +228,68 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 
 ## 8. AD SPEND FEATURE
 
-- Sheet `ad_spend`: month_key, amount, recorded_at — upsert by month_key
-- บันทึก: Index.html → `FL_saveAdSpend(monthKey, amount)`
-- อ่าน: `FL_getAdSpend(monthKey)` / `FL_getAdSpendAnnual(year)`
-- Executive ROW 4 right: แสดง ROAS = transferred / adSpend
-- Annual: ComboChart line series overlay บน chartMonthBar
+Sheet `ad_spend` schema ปัจจุบัน (ดูหัวข้อ 3 สำหรับ columns เต็ม)
+
+**Dashboard_Ad.html** — หน้าแยกต่างหาก (`?page=ad`)
+- Form บันทึก ad spend รายเดือน แยก platform × campaign type:
+  - TikTok: Awareness, GMV Max, GMV Live, **Info / Conversion** (เพิ่มใหม่ 2026-05-07)
+  - Shopee Ads, Facebook Ads
+- Annual summary table แสดง: ค่าโฆษณา | ยอดขาย | ROAS | **ROI (%)** (เพิ่มใหม่ 2026-05-07)
+  - ROI formula: `(sale - ad) / ad × 100`
+- ROAS line chart แยก platform
+
+**FIELDS array ปัจจุบัน:**
+```javascript
+{id:'tt_awareness', platform:'tiktok',   ad_type:'awareness'}
+{id:'tt_gmvmax',    platform:'tiktok',   ad_type:'gmv_max'}
+{id:'tt_gmvlive',   platform:'tiktok',   ad_type:'gmv_live'}
+{id:'tt_info',      platform:'tiktok',   ad_type:'info'}      // ← เพิ่มใหม่
+{id:'sp',           platform:'shopee',   ad_type:''}
+{id:'fb',           platform:'facebook', ad_type:''}
+```
+
+**Annual Dashboard (Dashboard_Annual.html):**
+- `monthly[m].adSpend` = `FL_getAdSpendAnnual(year)[m]` (total ad_amount)
+- `monthly[m].adSales` = sum ของ `sales_amount` จาก `FL_getAdSpendDetailAnnual(year)[m]` (เพิ่มใหม่ 2026-05-07)
+- กราฟ Ad Spend: **grouped ColumnChart** 2 series (ค่าโฆษณา amber / รายได้จากโฆษณา purple) — เดิมเป็น LineChart ซีรี่ส์เดียว
+- header แสดง total ทั้ง 2 ค่า
+
+**Executive:**
+- ROW 4 right: ROAS = `transferred / adSpend`
+
+---
+
+## 8b. FEE RATE FORMULA (สำคัญมาก)
+
+**ปัญหาเดิม:** `feeRate = fees / gross × 100` → TikTok ≈ 7.8% (ผิด)
+
+**สาเหตุ:** TikTok `gross` = "Subtotal before discounts" ≈ 290,000 ซึ่ง **รวม platform-funded promotions** ทำให้ตัวหารพองผิด
+
+**สูตรที่ถูกต้อง:** `feeRate = |fees| / (|fees| + transferred) × 100` → TikTok ≈ 18.8% (ถูก)
+
+ใน `FL_Main.gs`:
+- Executive (`byPlatform` object): `feeRate: (Math.abs(f) + t) > 0 ? Math.abs(f) / (Math.abs(f) + t) * 100 : 0`
+- Annual (`feeByPlatform` object): `rate: (pFees + pTransferred) > 0 ? Math.round(pFees / (pFees + pTransferred) * 1000) / 10 : 0`
+
+**ห้าม** กลับไปใช้ `fees / gross` ไม่ว่า platform ไหน
+
+---
+
+## 8c. BUNDLE DECOMPOSITION (PR #28, 2026-04)
+
+**ปัญหาเดิม:** Bundle SKU (เช่น Bundle_Gluta2+VitC1) ถูกนับเป็น category 'เซต' → filter ออกจากกราฟ → units กลูต้า/วิตซีต่ำกว่าจริง
+
+**แนวทาง:**
+- `FL_BUNDLE_COMPOSITION` ใน `FL_Config.gs` → map bundle SKU → `{ category: pieces_per_order }`
+- `FL_getComponentData(skuRef, units)` ใน `FL_XmlParser.gs` → แตก bundle เป็น component units
+
+**ผล:**
+- Executive `unitsByCategoryPlatform`: ใช้ `FL_getComponentData()` แทน filter เซตออก
+- Annual `componentsByCategory`: `{ 'กลูต้า': { units: N }, ... }` ส่งไป dashboard แทน `skuPerformance`
+- `renderSkuBar()` ใน Annual อ่าน `componentsByCategory` โดยตรง
+
+**Standalone SKU:** GlutaX9-2 → 2 กลูต้า (regex `-(\d+)$` ดึงตัวเลขจากชื่อ)  
+**Bundle_Capsule_*:** ข้ามไป (ไม่ทราบส่วนประกอบ)
 
 ---
 
@@ -208,6 +304,27 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 | Area chart / chartLine (Annual) | Phase A |
 | Month pills buttons | เปลี่ยนเป็น dropdown แล้ว |
 | feeTrend chart (6 เดือน stacked) | เปลี่ยนเป็น grouped bar เดือนที่เลือก |
+
+---
+
+## 9b. CONFIG — PER-MONTH TARGETS (เพิ่มใหม่ 2026-05-07)
+
+**FL_Config.gs:**
+```javascript
+MONTHLY_TARGET: 2000000,    // default เมื่อไม่มี per-month target
+MONTHLY_TARGETS: {},        // per-month: { '2026-01': 2500000, '2026-02': 1800000, ... }
+```
+
+**FL_Main.gs** — helper:
+```javascript
+function FL_getMonthTarget(cfg, monthKey) {
+  return (cfg.MONTHLY_TARGETS && cfg.MONTHLY_TARGETS[monthKey]) || cfg.MONTHLY_TARGET || 2000000;
+}
+```
+ใช้ใน `FL_getExecutiveDashboardData`: `monthlyTarget: (cfg.MONTHLY_TARGETS && cfg.MONTHLY_TARGETS[targetMonth]) || ...`
+
+**Index.html (Config page):** UI grid 12 ช่อง (mt_01..mt_12) + mt_year selector  
+Functions: `populateMonthlyTargets()`, `reloadMonthlyTargets()`, `collectMonthlyTargets()`
 
 ---
 
@@ -227,7 +344,7 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 
 ---
 
-## 11. CALCULATION BUGS & FIXES — ประวัติบั๊ก 9 ตัว
+## 11. CALCULATION BUGS & FIXES — ประวัติบั๊ก + meeting fixes
 
 ### BUG 1 — TikTok fees ผิด (Plug Method)
 **อาการ:** fees สูงเกิน 10,282 บาท
@@ -284,6 +401,24 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 **แก้:** ใช้ HTML `<div id="feeRateRow">` ใต้กราฟแสดง % rate แทน annotation
 **อุทาหรณ์:** ต้องการ custom text บน Google Charts → ใช้ HTML overlay ดีกว่าพยายาม hack annotation
 
+### BUG 10 — Fee Rate แสดง 7.8% แทน ~20% (meeting fix 2026-05-07)
+**อาการ:** Dashboard Fee Rate TikTok ≈ 7.8% แต่ค่าจริง ≈ 19–20%
+**สาเหตุ:** ตัวหารใช้ `gross` (≈290,000) ซึ่งรวม platform-funded promotions ทำให้ denominator พองผิด
+**แก้:** เปลี่ยนเป็น `|fees| / (|fees| + transferred)` — ดูหัวข้อ 8b สำหรับรายละเอียด
+**อุทาหรณ์:** gross ≠ basis สำหรับคำนวณ fee rate บน TikTok
+
+### BUG 11 — Shopee Order Revenue ใช้ราคาต่อชิ้นแทนยอดรวม (meeting fix 2026-05-07)
+**อาการ:** Shopee SKU revenue ต่ำกว่าความเป็นจริงในบาง order
+**สาเหตุ:** parser ใช้ `ราคาขาย × qty` แต่ลูกค้าระบุว่าต้องใช้ column Z `ยอดชำระเงิน` (ยอดจ่ายจริงรวม VAT)
+**แก้:** `COL_PAYMENT = FL_findCol(hdr, ['ยอดชำระเงิน'])` → `revenue += FL_toNum(row[COL_PAYMENT]) * 0.93`
+**อุทาหรณ์:** ต้อง re-import Shopee order files ทุกครั้งที่แก้สูตร revenue (ลบ processed_files → re-scan)
+
+### BUG 12 — TikTok Order Revenue ไม่แยก Platform vs Seller Discount (meeting fix 2026-05-07)
+**อาการ:** TikTok SKU revenue อาจสูงหรือต่ำเกินเพราะรวม platform discount ที่ถูก reimburse
+**สาเหตุ:** ใช้ `SKU Subtotal After Discount` (ซึ่งหัก **ทั้ง** platform+seller discount แล้ว)
+**แก้:** ใช้ `SKU Subtotal Before Discount (M) − SKU Seller Discount (O)` เพื่อให้ platform discount ไม่ลด revenue
+**อุทาหรณ์:** Platform discount ถูก reimburse ผ่าน income file แล้ว → ลดแค่ seller discount เท่านั้น
+
 ---
 
 ## 12. IMPORTANT CAVEATS
@@ -292,6 +427,8 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 - **Cache:** CacheService 5 นาที — ต้อง clear หรือรอก่อน debug ตัวเลข
 - **`FL_repairTikTokIncomeMonthKeys()`:** รันครั้งเดียวจาก Apps Script editor เพื่อซ่อม month_key เก่าของ TikTok
 - **`FL_backfillSkuMonthlyYear()`:** รันครั้งเดียวเพื่อเติม year column ใน sku_monthly rows เก่า
+- **Shopee order re-import (2026-05-07):** หลัง BUG 11 fix ต้องลบ processed_files rows ของ Shopee order ทั้งหมด แล้ว re-run `FL_scanNow()` เพื่อให้ revenue คำนวณด้วย `ยอดชำระเงิน × 0.93`
+- **Waterfall 3-tier:** ลูกค้า (Mike) ยังไม่ได้ยืนยันสูตรกับทีมบัญชี — ห้าม implement จนกว่าจะได้รับข้อมูล
 
 ---
 
@@ -305,3 +442,16 @@ Card 4: Product Lifecycle Quadrant (กรอง เซต/Bundle ออก)
 6. **เปลี่ยน response shape → ตรวจทุก consumer** — Executive + Annual dashboard
 7. **HTML elements ต้องไม่อยู่ใน hidden container** — grep ก่อน/หลังแก้ layout
 8. **Google Charts annotation ไม่รองรับ multiline** — HTML overlay แทน
+9. **Fee rate ใช้ `|fees|/(|fees|+transferred)` ไม่ใช่ `fees/gross`** — gross พองเพราะ platform promotions
+10. **Shopee `ยอดชำระเงิน` = total VAT-inclusive ต่อ order** — คูณ 0.93 ห้ามคูณ qty ซ้ำ
+11. **TikTok order revenue ใช้ M−O** — platform discount (N) ถูก reimburse แล้ว; ลดแค่ seller discount (O)
+12. **Waterfall 3-tier รอ client confirm** — ห้าม implement ก่อนได้รับสูตรจากทีมบัญชี
+
+---
+
+## 14. PR HISTORY
+
+| PR | เนื้อหา | สถานะ |
+|---|---|---|
+| #28 | Bundle decomposition — แตก bundle เป็น component units สำหรับกราฟ | merged |
+| #29 | Meeting fixes FIX 1–8 (fee rate, Shopee/TikTok revenue, per-month targets, ad chart, ROI, Info field) | merged 2026-05-07 |
