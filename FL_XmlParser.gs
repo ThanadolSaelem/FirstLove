@@ -321,6 +321,26 @@ function FL_getCategory(skuRef) {
   return FL_CATEGORY_MAP[skuRef] || 'อื่นๆ';
 }
 
+/**
+ * Decompose a SKU into its component product categories and actual unit counts.
+ * - Bundle SKUs: split per FL_BUNDLE_COMPOSITION (e.g. Bundle_Gluta2+VitC1 × 5 orders → กลูต้า 10, วิตซี 5)
+ * - Standalone SKUs: extract quantity from SKU name via regex (GlutaX9-2 × 11 → กลูต้า 22)
+ * Returns [] for unknown bundles or uncategorised SKUs.
+ */
+function FL_getComponentData(skuRef, units) {
+  const comp = FL_BUNDLE_COMPOSITION[skuRef];
+  if (comp) {
+    return Object.entries(comp).map(function(e) {
+      return { category: e[0], units: e[1] * units };
+    });
+  }
+  const cat = FL_getCategory(skuRef);
+  if (!cat || cat === 'เซต' || cat === 'อื่นๆ') return [];
+  const m   = skuRef.match(/-(\d+)$/);
+  const qty = m ? parseInt(m[1], 10) : 1;
+  return [{ category: cat, units: qty * units }];
+}
+
 /** Parse float, return 0 if NaN */
 function FL_toNum(v) {
   if (v === null || v === undefined || v === '') return 0;

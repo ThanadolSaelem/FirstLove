@@ -123,6 +123,20 @@ const FL_SKU_MAP = {
   'ตลับวิตามิน 3':   'Bundle_Capsule_3',
 };
 
+// ─── Bundle Composition Map ───────────────────────────────────
+// Maps bundle SKU → { category: pieces_per_order }
+// Used by FL_getComponentData() to decompose bundle sales into individual product counts.
+// Add new entries here when new bundle products are introduced.
+// Bundle_Capsule_* omitted — composition unknown.
+const FL_BUNDLE_COMPOSITION = {
+  'Bundle_Gluta2+VitC1':      { 'กลูต้า': 2, 'วิตามินซี': 1 },
+  'Bundle_Gluta1+VitC1':      { 'กลูต้า': 1, 'วิตามินซี': 1 },
+  'Bundle_Gluta4+VitC2':      { 'กลูต้า': 4, 'วิตามินซี': 2 },
+  'Bundle_Triple':            { 'กลูต้า': 2, 'วิตามินซี': 1, 'โปรไบโอติก': 1 },
+  'Bundle_Triple_Bottle':     { 'กลูต้า': 2, 'วิตามินซี': 1, 'โปรไบโอติก': 1 },
+  'Bundle_Gluta2+Probiotic1': { 'กลูต้า': 2, 'โปรไบโอติก': 1 },
+};
+
 // ─── Lazada-specific SKU map ──────────────────────────────────
 const FL_LAZADA_SKU_MAP = {
   'BDS49520254': 'Bundle_Gluta2+VitC1',   // Set 1 เดือน กลูต้า2+วิตซี1
