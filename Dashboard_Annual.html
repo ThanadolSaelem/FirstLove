@@ -2010,8 +2010,8 @@ function onCompareYearChange() {
             updateKPI('Avg', p.avgMonthly, c ? c.avgMonthly : null, '฿', p.yoy);
             updateKPI('Units', p.totalUnits, c ? c.totalUnits : null, '', p.yoy);
 
-            const feePct = p.totalGross > 0 ? (p.totalFees / p.totalGross * 100).toFixed(1) : null;
-            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `${feePct}% of gross` : null);
+            const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
+            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `${feePct}% of net` : null);
 
             renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
             renderMargin(PRIMARY_DATA.marginRanking || []);
@@ -2312,7 +2312,7 @@ function onCompareYearChange() {
                     <span class="plat-tag pt-${key}">${r[0]}</span>
                     <span style="font-size:12px;font-weight:700;color:#1e1b3a;">฿${FMTK(r[1])}</span>
                     <span style="font-size:11px;color:#6b7280;">${pct}%</span>
-                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of gross)</span>` : ''}
+                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of net)</span>` : ''}
                 </div>`;
             }).join('');
         }
