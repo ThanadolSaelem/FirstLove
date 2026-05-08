@@ -1801,7 +1801,7 @@
                             </div>
                             <div>
                                 <div class="pair-lbl">สัดส่วนค่าธรรมเนียมแพลตฟอร์ม</div>
-                                <div id="chartFeePie" style="height:200px;"></div>
+                                <div id="chartFeePie" style="height:280px;"></div>
                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
                             </div>
                         </div>
@@ -2277,14 +2277,23 @@ function onCompareYearChange() {
 
             dt.addRows(rows);
 
+            const _pieTotal = rows.reduce((s, r) => s + r[1], 0);
+            const _slices = {};
+            rows.forEach((r, i) => {
+                if (_pieTotal && r[1] / _pieTotal * 100 < 5) {
+                    _slices[i] = { textStyle: { color: 'transparent' } };
+                }
+            });
+
             const options = {
                 backgroundColor: 'transparent',
-                pieHole: 0.55,
+                pieHole: 0.52,
                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
                 legend: 'none',
-                chartArea: { width: '85%', height: '85%' },
+                chartArea: { width: '80%', height: '88%' },
                 pieSliceText: 'percentage',
-                pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
+                pieSliceTextStyle: { fontSize: 12, bold: true, color: '#fff' },
+                slices: _slices,
                 tooltip: { textStyle: { fontSize: 12 } }
             };
 
@@ -2414,12 +2423,12 @@ function onCompareYearChange() {
             dt.addColumn('number', 'Lazada');
             dt.addColumn({ type: 'string', role: 'annotation' });
             monthly.forEach(m => {
-                const total = (m.shopee || 0) + (m.tiktok || 0) + (m.lazada || 0);
+                const ANNOT_MIN = 8000;
                 dt.addRow([
                     m.label.substring(0, 3),
-                    m.shopee || 0, m.shopee ? FMTK(m.shopee) : null,
-                    m.tiktok || 0, m.tiktok ? FMTK(m.tiktok) : null,
-                    m.lazada || 0, m.lazada ? FMTK(m.lazada) : null,
+                    m.shopee || 0, (m.shopee >= ANNOT_MIN) ? FMTK(m.shopee) : null,
+                    m.tiktok || 0, (m.tiktok >= ANNOT_MIN) ? FMTK(m.tiktok) : null,
+                    m.lazada || 0, (m.lazada >= ANNOT_MIN) ? FMTK(m.lazada) : null,
                 ]);
             });
             new google.visualization.ColumnChart(el).draw(dt, {

@@ -2098,7 +2098,7 @@
                                 <!-- Left: Donut -->
                                 <div style="flex:0 0 42%;min-width:0;">
                                     <div style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">สัดส่วนยอดขาย</div>
-                                    <div id="chartDonut" style="height:170px;"></div>
+                                    <div id="chartDonut" style="height:240px;"></div>
                                     <div class="plat-val-row" id="platValRow"></div>
                                 </div>
                                 <!-- Right: Fee Bar -->
@@ -2501,7 +2501,7 @@
 
             // If no platform has data → noData
             if (total <= 0) {
-                el.innerHTML = noData(170);
+                el.innerHTML = noData(240);
                 if (vRow) vRow.innerHTML = '';
                 return;
             }
@@ -2513,14 +2513,22 @@
             dt.addColumn('number', 'Net');
             activePlats.forEach(p => dt.addRow([PLBL[p], byP[p].transferred]));
 
+            const _donutTotal = activePlats.reduce((s, p) => s + (byP[p]?.transferred || 0), 0);
+            const _donutSlices = {};
+            activePlats.forEach((p, i) => {
+                const pct = _donutTotal ? (byP[p]?.transferred || 0) / _donutTotal * 100 : 0;
+                if (pct < 5) _donutSlices[i] = { textStyle: { color: 'transparent' } };
+            });
+
             new google.visualization.PieChart(el).draw(dt, {
                 pieHole: .46,
                 colors: activePlats.map(p => PCOL[p]),
                 backgroundColor: 'transparent',
                 legend: 'none',
                 pieSliceText: 'percentage',
-                pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
-                chartArea: { left: 8, top: 8, width: '84%', height: '84%' },
+                pieSliceTextStyle: { fontSize: 12, bold: true, color: '#fff' },
+                chartArea: { left: 8, top: 8, width: '84%', height: '88%' },
+                slices: _donutSlices,
                 tooltip: { textStyle: { fontSize: 11 } },
             });
 
