@@ -1999,7 +1999,7 @@
                         <div class="card-body">
                             <div class="metric-box">
                                 <div>
-                                    <div class="metric-box-lbl">ยอดขายรวม (Gross)</div>
+                                    <div class="metric-box-lbl">ยอดขายรวม</div>
                                     <div><span class="metric-box-val" id="kGross">—</span><span class="metric-box-unit">บาท</span></div>
                                 </div>
                                 <span class="badge b-neu" id="bGross" style="display:none"></span>
@@ -2353,7 +2353,7 @@
             const plat = PLATFORM;
             const platforms = plat === 'all' ? ['tiktok', 'shopee', 'lazada'] : [plat];
 
-            const fGross = platforms.reduce((s, p) => s + (byP[p]?.gross || 0), 0);
+            const fGross = platforms.reduce((s, p) => s + (byP[p]?.orderRevenue || 0), 0);
             const fFees = platforms.reduce((s, p) => s + Math.abs(byP[p]?.platform_fees || 0), 0);
             const fNet = platforms.reduce((s, p) => s + (byP[p]?.transferred || 0), 0);
 
@@ -2363,7 +2363,7 @@
             document.getElementById('kNet').innerText   = FMT(fNet);
 
             const isAllMode = DATA.isAllMode || MONTH_KEY === 'all';
-            setMomBadge('bGross', (!isAllMode && plat === 'all') ? sum.momGross : null);
+            setMomBadge('bGross', (!isAllMode && plat === 'all') ? sum.momOrderRev : null);
             setMomBadge('bNet',   (!isAllMode && plat === 'all') ? sum.momNet   : null);
 
             // Sec 5 — Revenue vs Target

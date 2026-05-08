@@ -195,6 +195,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         transferred:     t,
         seller_discount: sumField(targetMonth, p, 'seller_discount'),
         feeRate:         (Math.abs(f) + t) > 0 ? Math.abs(f) / (Math.abs(f) + t) * 100 : 0,
+        orderRevenue:    0, // filled after sku loop
       };
     });
 
@@ -312,6 +313,36 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       skuPerformanceMap[key].revenue += rev;
     });
 
+    // Fill orderRevenue into byPlatform and build order-based revenue totals
+    const orderRevByPlat = {};
+    targetSkuRows.forEach(row => {
+      const plat = (row[skuIdx('platform')] || '').toLowerCase();
+      const rev  = parseFloat(row[skuIdx('revenue')]) || 0;
+      orderRevByPlat[plat] = (orderRevByPlat[plat] || 0) + rev;
+    });
+    const totalOrderRev = Object.values(orderRevByPlat).reduce((s, v) => s + v, 0);
+    ['shopee', 'tiktok', 'lazada'].forEach(p => {
+      if (byPlatform[p]) byPlatform[p].orderRevenue = orderRevByPlat[p] || 0;
+    });
+
+    // MoM for orderRevenue — re-filter skuRows for prevMonth
+    const prevOrderRevByPlat = {};
+    if (!isAllMode && prevMonth) {
+      skuRows.slice(1).filter(r => {
+        let m = r[0];
+        if (m instanceof Date) m = Utilities.formatDate(m, Session.getScriptTimeZone(), 'yyyy-MM');
+        m = String(m).replace(/^'/, '');
+        return m === prevMonth;
+      }).forEach(row => {
+        const plat = (row[skuIdx('platform')] || '').toLowerCase();
+        const rev  = parseFloat(row[skuIdx('revenue')]) || 0;
+        prevOrderRevByPlat[plat] = (prevOrderRevByPlat[plat] || 0) + rev;
+      });
+    }
+    const prevTotalOrderRev = Object.values(prevOrderRevByPlat).reduce((s, v) => s + v, 0);
+    const momOrderRev = prevTotalOrderRev > 0
+      ? Math.round((totalOrderRev - prevTotalOrderRev) / prevTotalOrderRev * 100)
+      : null;
 
     const result = {
       month:         targetMonth,
@@ -326,6 +357,8 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         logistics:     boxCounts,
         momGross:      momGross,
         momNet:        momNet,
+        orderRevenue:  totalOrderRev,
+        momOrderRev:   momOrderRev,
       },
       byPlatform:               byPlatform,
       feeTrend:                 feeTrend,
