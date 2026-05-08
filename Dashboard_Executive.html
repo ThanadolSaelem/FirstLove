@@ -2413,10 +2413,9 @@
             renderCatPlatformChart(DATA.unitsByCategoryPlatform, platFilter);
             renderTopTable(topSkus);
             const filteredWaterfall = platFilter ? {
-                gross:    byP[platFilter]?.gross    || 0,
-                discount: Math.abs(byP[platFilter]?.seller_discount || 0),
-                fees:     Math.abs(byP[platFilter]?.platform_fees   || 0),
-                net:      byP[platFilter]?.transferred || 0,
+                gross: byP[platFilter]?.orderRevenue || 0,
+                fees:  Math.abs(byP[platFilter]?.platform_fees || 0),
+                net:   byP[platFilter]?.transferred || 0,
             } : DATA.waterfall;
             renderWaterfall(filteredWaterfall);
             renderStock(DATA.stockStatus, DATA.stockThreshold);
@@ -2430,10 +2429,9 @@
             if (!el) return;
             if (!wf || !wf.gross) { el.innerHTML = noData(200); return; }
             const stages = [
-                { label: 'Gross',   value: wf.gross,           color: '#7c3aed', isTotal: true },
-                { label: '−ส่วนลด', value: -(wf.discount || 0), color: '#ef4444' },
-                { label: '−Fee',    value: -(wf.fees || 0),     color: '#f59e0b' },
-                { label: 'Net',     value: wf.net,             color: '#10b981', isTotal: true },
+                { label: 'ยอดขายรวม',    value: wf.gross,        color: '#7c3aed', isTotal: true },
+                { label: '−ค่าธรรมเนียม', value: -(wf.fees || 0), color: '#f59e0b' },
+                { label: 'รายรับจริง',   value: wf.net,          color: '#10b981', isTotal: true },
             ];
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Stage');
