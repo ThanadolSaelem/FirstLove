@@ -517,6 +517,42 @@
             color: var(--text-sub);
         }
 
+        .metric-box {
+            background: #fff;
+            border-radius: 14px;
+            padding: 13px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 5px rgba(124,58,237,.07);
+            border: 1px solid #f0edfb;
+            margin-bottom: 10px;
+        }
+        .metric-box:last-of-type { margin-bottom: 14px; }
+        .metric-box-lbl {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .metric-box-val {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text);
+        }
+        .metric-box-unit {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+            margin-left: 3px;
+        }
+        .metric-box-net {
+            background: var(--purple-50);
+            border-color: #ddd6fe;
+        }
+        .metric-box-net .metric-box-val { color: var(--purple-700); }
+
         .badge {
             display: inline-flex;
             align-items: center;
@@ -1961,22 +1997,27 @@
                             <span class="tip" data-tip="ยอดสรุปรายได้รวม ค่าธรรมเนียม และรายรับสุทธิของช่วงที่เลือก">ⓘ</span>
                         </div>
                         <div class="card-body">
-                            <div class="kpi-row">
-                                <div class="kpi-lbl">ค่าธรรมเนียมรวม</div>
-                                <div class="kpi-val-row">
-                                    <span class="kpi-val" id="kFees">—</span>
-                                    <span class="kpi-unit">บาท</span>
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-box-lbl">ยอดขายรวม (Gross)</div>
+                                    <div><span class="metric-box-val" id="kGross">—</span><span class="metric-box-unit">บาท</span></div>
+                                </div>
+                                <span class="badge b-neu" id="bGross" style="display:none"></span>
+                            </div>
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-box-lbl">ค่าธรรมเนียมรวม</div>
+                                    <div><span class="metric-box-val" id="kFees">—</span><span class="metric-box-unit">บาท</span></div>
                                 </div>
                             </div>
-                            <div class="kpi-row">
-                                <div class="kpi-lbl">ยอดขายรวม (โอนเงินสำเร็จ)</div>
-                                <div class="kpi-val-row">
-                                    <span class="kpi-val" id="kNet">—</span>
-                                    <span class="kpi-unit">บาท</span>
-                                    <span class="badge b-neu" id="bNet" style="display:none"></span>
+                            <div class="metric-box metric-box-net">
+                                <div>
+                                    <div class="metric-box-lbl">รายรับจริง (Net)</div>
+                                    <div><span class="metric-box-val" id="kNet">—</span><span class="metric-box-unit">บาท</span></div>
                                 </div>
+                                <span class="badge b-neu" id="bNet" style="display:none"></span>
                             </div>
-                            <div style="border-top:1px solid #e5e7eb;margin-top:14px;padding-top:10px;">
+                            <div style="border-top:1px solid #e5e7eb;padding-top:10px;">
                                 <div style="font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.3px;margin-bottom:4px;">กระแสรายได้สุทธิ</div>
                                 <div id="chartWaterfall" style="height:180px;"></div>
                             </div>
@@ -2317,11 +2358,13 @@
             const fNet = platforms.reduce((s, p) => s + (byP[p]?.transferred || 0), 0);
 
             // Section 1: KPIs
-            document.getElementById('kFees').innerText = FMT(fFees);
-            document.getElementById('kNet').innerText = FMT(fNet);
+            document.getElementById('kGross').innerText = FMT(fGross);
+            document.getElementById('kFees').innerText  = FMT(fFees);
+            document.getElementById('kNet').innerText   = FMT(fNet);
 
             const isAllMode = DATA.isAllMode || MONTH_KEY === 'all';
-            setMomBadge('bNet', (!isAllMode && plat === 'all') ? sum.momNet : null);
+            setMomBadge('bGross', (!isAllMode && plat === 'all') ? sum.momGross : null);
+            setMomBadge('bNet',   (!isAllMode && plat === 'all') ? sum.momNet   : null);
 
             // Sec 5 — Revenue vs Target
             const lbl = isAllMode ? 'ทั้งหมด' : thLbl(MONTH_KEY);
