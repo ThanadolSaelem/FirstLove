@@ -209,15 +209,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       lazada: Math.abs(sumField(m, 'lazada', 'platform_fees')),
     }));
 
-    // Waterfall
-    const curDiscount = sumField(targetMonth, null, 'seller_discount');
-    const waterfall = {
-      gross:    curGross,
-      discount: Math.abs(curDiscount),
-      fees:     Math.abs(curFees),
-      net:      curNet,
-    };
-
+    // Waterfall (computed after totalOrderRev — uses order file source)
     // Units by Category × Platform — bundles decomposed into component products
     const iCatCol = skuIdx('category');
     const iSkuCol = skuIdx('sku_ref');
@@ -343,6 +335,12 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
     const momOrderRev = prevTotalOrderRev > 0
       ? Math.round((totalOrderRev - prevTotalOrderRev) / prevTotalOrderRev * 100)
       : null;
+
+    const waterfall = {
+      gross: totalOrderRev,
+      fees:  Math.abs(curFees),
+      net:   curNet,
+    };
 
     const result = {
       month:         targetMonth,

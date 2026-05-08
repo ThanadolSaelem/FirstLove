@@ -2371,20 +2371,20 @@
             document.getElementById('revMonthLbl').textContent = isAllMode
                 ? 'ยอดขายสะสม (ทุกเดือน)'
                 : `ยอดขายรายเดือน (${lbl})`;
-            document.getElementById('revBig').textContent = FMT(fNet) + ' บาท';
-            setMomBadge('revMomBadge', (!isAllMode && plat === 'all') ? sum.momNet : null);
+            document.getElementById('revBig').textContent = FMT(fGross) + ' บาท';
+            setMomBadge('revMomBadge', (!isAllMode && plat === 'all') ? sum.momOrderRev : null);
 
             if (isAllMode) {
                 document.getElementById('tgtBadge').style.display = 'none';
                 document.getElementById('tgtNote').textContent = 'ยอดสะสมจากทุกเดือนที่มีข้อมูล';
             } else {
-                const pct = Math.round(fNet / TARGET_MONTHLY * 100);
+                const pct = Math.round(fGross / TARGET_MONTHLY * 100);
                 const tgtBadge = document.getElementById('tgtBadge');
                 tgtBadge.style.display = 'inline-flex';
                 tgtBadge.textContent = pct + '% of Target';
                 tgtBadge.className = 'badge ' + (pct >= 100 ? 'b-tgt' : 'b-neu');
                 document.getElementById('tgtNote').textContent =
-                    fNet >= TARGET_MONTHLY ? ' บรรลุเป้าหมายแล้ว!' : `ยังขาดอีก ฿${FMT(TARGET_MONTHLY - fNet)}`;
+                    fGross >= TARGET_MONTHLY ? ' บรรลุเป้าหมายแล้ว!' : `ยังขาดอีก ฿${FMT(TARGET_MONTHLY - fGross)}`;
             }
 
             document.getElementById('dashSub').textContent = isAllMode
@@ -2413,14 +2413,13 @@
             renderCatPlatformChart(DATA.unitsByCategoryPlatform, platFilter);
             renderTopTable(topSkus);
             const filteredWaterfall = platFilter ? {
-                gross:    byP[platFilter]?.gross    || 0,
-                discount: Math.abs(byP[platFilter]?.seller_discount || 0),
-                fees:     Math.abs(byP[platFilter]?.platform_fees   || 0),
-                net:      byP[platFilter]?.transferred || 0,
+                gross: byP[platFilter]?.orderRevenue || 0,
+                fees:  Math.abs(byP[platFilter]?.platform_fees || 0),
+                net:   byP[platFilter]?.transferred || 0,
             } : DATA.waterfall;
             renderWaterfall(filteredWaterfall);
             renderStock(DATA.stockStatus, DATA.stockThreshold);
-            renderInsights(DATA, sum, plat, fNet);
+            renderInsights(DATA, sum, plat, fGross);
             renderAdSpend(DATA.adSpend, fNet);
         }
 
@@ -2430,10 +2429,9 @@
             if (!el) return;
             if (!wf || !wf.gross) { el.innerHTML = noData(200); return; }
             const stages = [
-                { label: 'Gross',   value: wf.gross,           color: '#7c3aed', isTotal: true },
-                { label: '−ส่วนลด', value: -(wf.discount || 0), color: '#ef4444' },
-                { label: '−Fee',    value: -(wf.fees || 0),     color: '#f59e0b' },
-                { label: 'Net',     value: wf.net,             color: '#10b981', isTotal: true },
+                { label: 'ยอดขายรวม',    value: wf.gross,        color: '#7c3aed', isTotal: true },
+                { label: '−ค่าธรรมเนียม', value: -(wf.fees || 0), color: '#f59e0b' },
+                { label: 'รายรับจริง',   value: wf.net,          color: '#10b981', isTotal: true },
             ];
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Stage');
@@ -2497,7 +2495,7 @@
         function renderDonut(platforms, byP) {
             const el = document.getElementById('chartDonut');
             const vRow = document.getElementById('platValRow');
-            const total = platforms.reduce((s, p) => s + (byP[p]?.transferred || 0), 0);
+            const total = platforms.reduce((s, p) => s + (byP[p]?.orderRevenue || 0), 0);
 
             // If no platform has data → noData
             if (total <= 0) {
@@ -2507,16 +2505,16 @@
             }
 
             // Show ONLY platforms with data in pie (avoid empty slices), but legend shows all 3
-            const activePlats = platforms.filter(p => (byP[p]?.transferred || 0) > 0);
+            const activePlats = platforms.filter(p => (byP[p]?.orderRevenue || 0) > 0);
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Platform');
-            dt.addColumn('number', 'Net');
-            activePlats.forEach(p => dt.addRow([PLBL[p], byP[p].transferred]));
+            dt.addColumn('number', 'ยอดขาย');
+            activePlats.forEach(p => dt.addRow([PLBL[p], byP[p].orderRevenue]));
 
-            const _donutTotal = activePlats.reduce((s, p) => s + (byP[p]?.transferred || 0), 0);
+            const _donutTotal = activePlats.reduce((s, p) => s + (byP[p]?.orderRevenue || 0), 0);
             const _donutSlices = {};
             activePlats.forEach((p, i) => {
-                const pct = _donutTotal ? (byP[p]?.transferred || 0) / _donutTotal * 100 : 0;
+                const pct = _donutTotal ? (byP[p]?.orderRevenue || 0) / _donutTotal * 100 : 0;
                 if (pct < 5) _donutSlices[i] = { textStyle: { color: 'transparent' } };
             });
 
@@ -2535,7 +2533,7 @@
             // Value legend rows — show all 3 platforms with feeRate
             if (vRow) {
                 vRow.innerHTML = platforms.map(p => {
-                    const v       = byP[p]?.transferred || 0;
+                    const v       = byP[p]?.orderRevenue || 0;
                     const pct     = total ? Math.round(v / total * 100) : 0;
                     const rate    = byP[p]?.feeRate ? Math.round(byP[p].feeRate * 10) / 10 : 0;
                     const dim     = v > 0 ? '' : 'opacity:.45;';
@@ -2789,9 +2787,9 @@
                 if (top) ins.push({ i: '⭐', t: `${top.displayName} ขายดีสุดเดือนนี้ — ${FMT(top.units)} ชิ้น ยอด ฿${FMT(top.revenue)}` });
             }
 
-            if (sum.gross > 0 && sum.fees !== null && !isNaN(sum.fees)) {
-                const fr = Math.round(Math.abs(sum.fees) / sum.gross * 100);
-                ins.push({ i: '→', t: `ค่าธรรมเนียม Platform รวม ${fr}% ของยอดขาย Gross` });
+            if (sum.orderRevenue > 0 && sum.platform_fees) {
+                const fr = Math.round(Math.abs(sum.platform_fees) / sum.orderRevenue * 100);
+                ins.push({ i: '→', t: `ค่าธรรมเนียม Platform รวม ${fr}% ของยอดขาย` });
             }
 
             if (fNet !== null && !isNaN(fNet) && fNet >= TARGET_MONTHLY)
