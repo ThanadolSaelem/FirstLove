@@ -2102,8 +2102,9 @@ function onCompareYearChange() {
             if (!el) return;
             if (!monthly || !monthly.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-light)">ไม่มีข้อมูล</div>'; return; }
             const platforms = ['shopee', 'tiktok', 'lazada'];
+            const ordField  = { shopee: 'orderShopee', tiktok: 'orderTiktok', lazada: 'orderLazada' };
             let max = 0;
-            monthly.forEach(m => platforms.forEach(p => { if ((m[p] || 0) > max) max = m[p]; }));
+            monthly.forEach(m => platforms.forEach(p => { if ((m[ordField[p]] || 0) > max) max = m[ordField[p]]; }));
             const cell = (v) => {
                 const r = max ? (v / max) : 0;
                 const bg = v > 0 ? `rgba(124, 58, 237, ${0.08 + r * 0.82})` : '#f8fafc';
@@ -2116,7 +2117,7 @@ function onCompareYearChange() {
             html += '</tr></thead><tbody>';
             platforms.forEach(p => {
                 html += `<tr><td style="font-size:11px;font-weight:700;padding:4px 8px;color:var(--text);"><span class="plat-tag pt-${p}" style="padding:3px 8px;">${PLBL[p]}</span></td>`;
-                monthly.forEach(m => { html += cell(m[p] || 0); });
+                monthly.forEach(m => { html += cell(m[ordField[p]] || 0); });
                 html += '</tr>';
             });
             html += '</tbody></table></div>';
@@ -2222,10 +2223,10 @@ function onCompareYearChange() {
 
             pMonths.forEach((m, i) => {
                 const row = [m.label.split(' ')[0]];
-                row.push(m.net || 0);
-                row.push(m.net ? FMTK(m.net) : null);
+                row.push(m.orderRevenue || 0);
+                row.push(m.orderRevenue ? FMTK(m.orderRevenue) : null);
                 if (IS_COMP_MODE && COMPARE_DATA) {
-                    const cn = cMonths[i] ? cMonths[i].net : 0;
+                    const cn = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
                     row.push(cn);
                     row.push(cn ? FMTK(cn) : null);
                 }
@@ -2378,10 +2379,10 @@ function onCompareYearChange() {
 
             const monthVals = [];
             pMonths.forEach((m, i) => {
-                const v1 = m.net || 0;
+                const v1 = m.orderRevenue || 0;
                 const row = [m.label.split(' ')[0], v1, v1 ? FMTK(v1) : ''];
                 if (cMonths) {
-                    const v2 = cMonths[i] ? cMonths[i].net : 0;
+                    const v2 = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
                     row.push(v2, v2 ? FMTK(v2) : '');
                     monthVals.push(v2);
                 }
@@ -2409,7 +2410,7 @@ function onCompareYearChange() {
         function renderPlatformBar(monthly) {
             const el = document.getElementById('chartPlatformBar');
             if (!el) return;
-            const filled = (monthly || []).filter(m => m.shopee || m.tiktok || m.lazada);
+            const filled = (monthly || []).filter(m => m.orderShopee || m.orderTiktok || m.orderLazada);
             if (!filled.length) {
                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูล</div>';
                 return;
@@ -2426,9 +2427,9 @@ function onCompareYearChange() {
                 const ANNOT_MIN = 8000;
                 dt.addRow([
                     m.label.substring(0, 3),
-                    m.shopee || 0, (m.shopee >= ANNOT_MIN) ? FMTK(m.shopee) : null,
-                    m.tiktok || 0, (m.tiktok >= ANNOT_MIN) ? FMTK(m.tiktok) : null,
-                    m.lazada || 0, (m.lazada >= ANNOT_MIN) ? FMTK(m.lazada) : null,
+                    m.orderShopee || 0, (m.orderShopee >= ANNOT_MIN) ? FMTK(m.orderShopee) : null,
+                    m.orderTiktok || 0, (m.orderTiktok >= ANNOT_MIN) ? FMTK(m.orderTiktok) : null,
+                    m.orderLazada || 0, (m.orderLazada >= ANNOT_MIN) ? FMTK(m.orderLazada) : null,
                 ]);
             });
             new google.visualization.ColumnChart(el).draw(dt, {

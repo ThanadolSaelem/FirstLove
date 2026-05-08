@@ -415,20 +415,48 @@ function FL_getAnnualDashboardData(year) {
     const idx = (col) => headers.indexOf(col);
     const rowsForYear = (y) => allRows.filter(r => String(r[0]).startsWith(y));
 
+    // Pre-compute monthly order revenue from SKU_MONTHLY (order file, สำเร็จ status)
+    const orderRevByMonth = {};
+    const orderRevByPlatMonth = {};
+    if (skSheet) {
+      const _skTmp = skSheet.getDataRange().getValues();
+      const _hdr   = _skTmp[0];
+      const _iYr   = _hdr.indexOf('year');
+      const _iPlat = _hdr.indexOf('platform');
+      const _iRev  = _hdr.indexOf('revenue');
+      _skTmp.slice(1)
+        .filter(r => _iYr >= 0 ? String(r[_iYr]) === targetYear : String(r[0]).startsWith(targetYear))
+        .forEach(r => {
+          let mk = r[0];
+          if (mk instanceof Date) mk = Utilities.formatDate(mk, Session.getScriptTimeZone(), 'yyyy-MM');
+          mk = String(mk).replace(/^'/, '');
+          const plat = String(r[_iPlat] || '').toLowerCase();
+          const rev  = parseFloat(r[_iRev]) || 0;
+          orderRevByMonth[mk] = (orderRevByMonth[mk] || 0) + rev;
+          if (!orderRevByPlatMonth[mk]) orderRevByPlatMonth[mk] = { shopee: 0, tiktok: 0, lazada: 0 };
+          if (plat in orderRevByPlatMonth[mk]) orderRevByPlatMonth[mk][plat] += rev;
+        });
+    }
+
     // Monthly series (all 12 months, zeros where no data)
     const months  = ['01','02','03','04','05','06','07','08','09','10','11','12'];
     const monthly = months.map(m => {
       const key  = `${targetYear}-${m}`;
       const mRows = allRows.filter(r => r[0] === key);
+      const oPlatM = orderRevByPlatMonth[key] || {};
       return {
-        month:  key,
-        label:  FL_monthLabel(key),
-        gross:  mRows.reduce((s,r) => s+(parseFloat(r[idx('gross')])||0), 0),
-        fees:   Math.abs(mRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0)),
-        net:    mRows.reduce((s,r) => s+(parseFloat(r[idx('transferred')])||0), 0),
-        shopee: mRows.filter(r=>r[1]==='shopee').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
-        tiktok: mRows.filter(r=>r[1]==='tiktok').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
-        lazada: mRows.filter(r=>r[1]==='lazada').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
+        month:        key,
+        label:        FL_monthLabel(key),
+        gross:        mRows.reduce((s,r) => s+(parseFloat(r[idx('gross')])||0), 0),
+        fees:         Math.abs(mRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0)),
+        net:          mRows.reduce((s,r) => s+(parseFloat(r[idx('transferred')])||0), 0),
+        shopee:       mRows.filter(r=>r[1]==='shopee').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
+        tiktok:       mRows.filter(r=>r[1]==='tiktok').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
+        lazada:       mRows.filter(r=>r[1]==='lazada').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
+        orderRevenue: orderRevByMonth[key] || 0,
+        orderShopee:  oPlatM.shopee || 0,
+        orderTiktok:  oPlatM.tiktok || 0,
+        orderLazada:  oPlatM.lazada || 0,
       };
     });
 
