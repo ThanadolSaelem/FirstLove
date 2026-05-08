@@ -253,24 +253,32 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
     // Ad spend trend: total per month — include months with ad spend even if no revenue yet
     const adTrendYears = [...new Set(allMonths.map(m => m.substring(0, 4)))];
     const adSpendByYr  = {};
+    const adDetailByYr = {};
     adTrendYears.forEach(yr => {
       if (typeof FL_getAdSpendAnnual === 'function')
         adSpendByYr[yr] = FL_getAdSpendAnnual(yr);
+      if (typeof FL_getAdSpendDetailAnnual === 'function')
+        adDetailByYr[yr] = FL_getAdSpendDetailAnnual(yr);
     });
-    // Also fetch ad spend for years not in allMonths (e.g. current year with no revenue yet)
-    if (typeof FL_getAdSpendAnnual === 'function') {
-      const curYr = new Date().getFullYear().toString();
-      if (!adSpendByYr[curYr]) adSpendByYr[curYr] = FL_getAdSpendAnnual(curYr);
-    }
+    const curYr = new Date().getFullYear().toString();
+    if (typeof FL_getAdSpendAnnual === 'function' && !adSpendByYr[curYr])
+      adSpendByYr[curYr] = FL_getAdSpendAnnual(curYr);
+    if (typeof FL_getAdSpendDetailAnnual === 'function' && !adDetailByYr[curYr])
+      adDetailByYr[curYr] = FL_getAdSpendDetailAnnual(curYr);
+
     const trendMonthSet = new Set(allMonths);
     Object.keys(adSpendByYr).forEach(yr =>
       Object.keys(adSpendByYr[yr]).forEach(mk => trendMonthSet.add(mk))
     );
-    const adTrend = [...trendMonthSet].sort().map(m => ({
-      month: m,
-      label: FL_monthLabel(m),
-      total: (adSpendByYr[m.substring(0, 4)] || {})[m] || 0,
-    }));
+    const adTrend = [...trendMonthSet].sort().map(m => {
+      const entries = (adDetailByYr[m.substring(0, 4)] || {})[m] || [];
+      return {
+        month: m,
+        label: FL_monthLabel(m),
+        total: (adSpendByYr[m.substring(0, 4)] || {})[m] || 0,
+        sales: entries.reduce((s, e) => s + (e.sales_amount || 0), 0),
+      };
+    });
 
     const adSpend = {
       total: adSpendAmount,
