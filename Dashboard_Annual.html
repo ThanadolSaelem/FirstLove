@@ -1604,6 +1604,66 @@
             .ov-card {
                 padding: 28px 20px !important;
             }
+        /* ── fee-sku-grid: Fee Pie + SKU Bar ── */
+        .fee-sku-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 900px) {
+            .fee-sku-grid {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+        }
+
+        /* ── card-head: flex for tip icon ── */
+        .card-head {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+
+        .card-ttl {
+            flex: 1 !important;
+        }
+
+        /* ── Tooltip .tip / .tt ── */
+        .tip {
+            cursor: help;
+            color: rgba(139, 92, 246, .45);
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: color .2s;
+            line-height: 1;
+        }
+
+        .tip:hover {
+            color: #7c3aed;
+        }
+
+        .tt {
+            position: fixed;
+            background: rgba(30, 0, 56, .93);
+            color: #fff;
+            padding: 7px 12px;
+            border-radius: 10px;
+            font-size: 11.5px;
+            max-width: 260px;
+            line-height: 1.55;
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity .15s, transform .15s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
+            font-family: inherit;
+        }
+
+        .tt.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -1752,22 +1812,24 @@
                             stroke="currentColor" stroke-width="2">
                             <path d="M12 20v-6M6 20V10M18 20V4" />
                         </svg></div>
-                    <div class="kpi-lbl">เฉลี่ยต่อเดือน (สุทธิ)</div>
+                    <div class="kpi-lbl">เฉลี่ยสุทธิ/เดือน</div>
                     <div class="kpi-num" id="kAvg">—</div>
                     <div class="kpi-trend" id="tAvg"></div>
                 </div>
             </div>
 
             <div class="grid">
-                <!-- Main Chart + Margin Ranking (side by side) -->
+                <!-- Card 1: ภาพรวมรายได้สุทธิ — Stacked Platform Net + Margin Ranking -->
                 <div class="card">
                     <div class="card-head">
-                        <span class="card-ttl">ภาพรวมรายได้รายเดือน</span>
+                        <span class="card-ttl">ภาพรวมรายได้สุทธิ</span>
+                        <span class="tip" data-tip="รายได้สุทธิแยกตามแพลตฟอร์ม (Shopee / TikTok / Lazada) รายเดือน และ Contribution Margin Ranking Top 10 สินค้า">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 13px;">
                         <div class="chart-pair-equal">
                             <div>
-                                <div id="chartMonthBar" style="height:290px;"></div>
+                                <div class="pair-lbl">รายได้สุทธิตามแพลตฟอร์มรายเดือน (Stacked)</div>
+                                <div id="chartPlatformBar" style="height:290px;"></div>
                             </div>
                             <div>
                                 <div class="pair-lbl">Contribution Margin Ranking (Top 10)</div>
@@ -1777,7 +1839,7 @@
                     </div>
                 </div>
 
-                <!-- Ad Spend Line Chart (full width) -->
+                <!-- Card 2: Ad Spend (full width) -->
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
                         <span class="card-ttl">ค่าโฆษณา</span>
@@ -1788,26 +1850,23 @@
                     </div>
                 </div>
 
-                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie + Category Units -->
+                <!-- Card 3: สัดส่วนค่าธรรมเนียม + จำนวนกระปุก (responsive: 2col PC / 1col Mobile) -->
                 <div class="card">
                     <div class="card-head">
-                        <span class="card-ttl">รายได้ตามแพลตฟอร์ม & สัดส่วนค่าธรรมเนียม</span>
+                        <span class="card-ttl">สัดส่วนค่าธรรมเนียมแพลตฟอร์ม & จำนวนสินค้า</span>
+                        <span class="tip" data-tip="สัดส่วนค่าธรรมเนียมที่แต่ละแพลตฟอร์มหัก และจำนวนกระปุก/ขวดจริงแยกตามหมวดสินค้า (รวม bundle)">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 13px;">
-                        <div class="chart-pair-equal">
-                            <div>
-                                <div class="pair-lbl">รายได้ตามแพลตฟอร์มรายเดือน (Stacked)</div>
-                                <div id="chartPlatformBar" style="height:260px;"></div>
-                            </div>
-                            <div>
-                                <div class="pair-lbl">สัดส่วนค่าธรรมเนียมแพลตฟอร์ม</div>
-                                <div id="chartFeePie" style="height:280px;"></div>
+                        <div class="fee-sku-grid">
+                            <div class="fee-sku-left">
+                                <div class="pair-lbl">สัดส่วนค่าธรรมเนียม (ตามรายได้รวม)</div>
+                                <div id="chartFeePie" style="height:220px;"></div>
                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
                             </div>
-                        </div>
-                        <div style="margin-top:20px;border-top:1px solid var(--purple-100);padding-top:14px;">
-                            <div class="pair-lbl">จำนวนกระปุก/ขวดจริงตามหมวดสินค้า (รวม bundle)</div>
-                            <div id="chartSkuBar" style="height:220px;"></div>
+                            <div class="fee-sku-right">
+                                <div class="pair-lbl">จำนวนกระปุก/ขวดจริงตามหมวดสินค้า (รวม bundle)</div>
+                                <div id="chartSkuBar" style="height:220px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1815,7 +1874,8 @@
                 <!-- Heatmap Row (full width) -->
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
-                        <span class="card-ttl">Heatmap: รายได้ตามเดือน × แพลตฟอร์ม</span>
+                        <span class="card-ttl">Heatmap: รายได้สุทธิตามเดือน × แพลตฟอร์ม</span>
+                        <span class="tip" data-tip="ตารางสีแสดงความเข้มของรายได้สุทธิ (ยอดโอนจริง) สีเข้มขึ้น = ยอดสูงขึ้น ช่วยมองเห็น pattern รายได้แต่ละเดือน">ⓘ</span>
                     </div>
                     <div class="card-body">
                         <div id="chartHeatmap" style="padding:6px 2px;"></div>
@@ -1826,6 +1886,7 @@
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
                         <span class="card-ttl">Product Lifecycle — จำนวน × การเติบโต %</span>
+                        <span class="tip" data-tip="Bubble chart: แกน X = จำนวนชิ้นขาย, แกน Y = % การเติบโต vs ปีก่อน, ขนาดฟอง = ยอดรายได้ (ราคาขายหักค่าธรรมเนียมแพลตฟอร์ม)">ⓘ</span>
                     </div>
                     <div class="card-body">
                         <div id="chartQuadrant" style="height:400px;"></div>
@@ -1834,6 +1895,9 @@
             </div>
         </main>
     </div>
+
+    <!-- ════ Tooltip Box ════ -->
+    <div class="tt" id="ttBox"></div>
 
     <!-- ════ New-SKU Modal ════ -->
     <div class="sku-modal-overlay" id="skuModalOverlay" onclick="handleSkuOverlayClick(event)">
@@ -1860,6 +1924,32 @@
             <small style="color:var(--text-sub);">กำลังประมวลผลข้อมูลรายปี...</small>
         </div>
     </div>
+
+    <script>
+        // ══════════════════════════════
+        //  TOOLTIP ENGINE
+        // ══════════════════════════════
+        ;(function () {
+            const box = document.getElementById('ttBox');
+            if (!box) return;
+            document.addEventListener('mouseover', function (e) {
+                const t = e.target.closest('[data-tip]');
+                if (t) { box.textContent = t.dataset.tip; box.classList.add('show'); }
+            });
+            document.addEventListener('mouseout', function (e) {
+                if (e.target.closest('[data-tip]')) box.classList.remove('show');
+            });
+            document.addEventListener('mousemove', function (e) {
+                if (!box.classList.contains('show')) return;
+                var l = e.clientX - box.offsetWidth / 2;
+                var t = e.clientY - box.offsetHeight - 12;
+                l = Math.max(6, Math.min(l, innerWidth - box.offsetWidth - 6));
+                if (t < 6) t = e.clientY + 14;
+                box.style.left = l + 'px';
+                box.style.top  = t + 'px';
+            });
+        })();
+    </script>
 
     <script>
         google.charts.load('current', { packages: ['corechart', 'bar'] });
@@ -2013,9 +2103,8 @@ function onCompareYearChange() {
             const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
             updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `${feePct}% of net` : null);
 
-            renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
-            renderMargin(PRIMARY_DATA.marginRanking || []);
             renderPlatformBar(PRIMARY_DATA.monthly);
+            renderMargin(PRIMARY_DATA.marginRanking || []);
             renderFeePie(PRIMARY_DATA.feeByPlatform);
             renderHeatmap(PRIMARY_DATA.monthly);
             renderAdSpendAnnual(PRIMARY_DATA.monthly);
@@ -2288,12 +2377,12 @@ function onCompareYearChange() {
 
             const options = {
                 backgroundColor: 'transparent',
-                pieHole: 0.52,
+                pieHole: 0.35,
                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
                 legend: 'none',
-                chartArea: { width: '80%', height: '88%' },
+                chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
                 pieSliceText: 'percentage',
-                pieSliceTextStyle: { fontSize: 12, bold: true, color: '#fff' },
+                pieSliceTextStyle: { fontSize: 10, bold: true, color: '#fff' },
                 slices: _slices,
                 tooltip: { textStyle: { fontSize: 12 } }
             };
@@ -2406,43 +2495,65 @@ function onCompareYearChange() {
             new google.visualization.ColumnChart(el).draw(dt, options);
         }
 
-        // REQ-NEW: Stacked bar — revenue by platform per month
+        // Stacked bar — net revenue by platform per month
         function renderPlatformBar(monthly) {
             const el = document.getElementById('chartPlatformBar');
             if (!el) return;
-            const filled = (monthly || []).filter(m => m.orderShopee || m.orderTiktok || m.orderLazada);
+
+            // ใช้ *_net fields ถ้ามี, fallback ไป order* fields
+            const getShopee = m => m.shopee_net != null ? (m.shopee_net || 0) : (m.orderShopee || 0);
+            const getTiktok = m => m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0);
+            const getLazada = m => m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0);
+
+            const filled = (monthly || []).filter(m => getShopee(m) || getTiktok(m) || getLazada(m));
             if (!filled.length) {
                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูล</div>';
                 return;
             }
+
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'เดือน');
             dt.addColumn('number', 'Shopee');
-            dt.addColumn({ type: 'string', role: 'annotation' });
+            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
             dt.addColumn('number', 'TikTok');
-            dt.addColumn({ type: 'string', role: 'annotation' });
+            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
             dt.addColumn('number', 'Lazada');
-            dt.addColumn({ type: 'string', role: 'annotation' });
+            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
+
+            const allVals = [];
             monthly.forEach(m => {
-                const ANNOT_MIN = 8000;
+                const s = getShopee(m), t = getTiktok(m), l = getLazada(m);
+                allVals.push(s + t + l);
+                const tip = (name, val) =>
+                    `<div style="padding:8px 12px;font-size:12px;"><b>${name}</b><br>รายได้สุทธิ: <b>฿${FMT(val)}</b></div>`;
                 dt.addRow([
-                    m.label.substring(0, 3),
-                    m.orderShopee || 0, (m.orderShopee >= ANNOT_MIN) ? FMTK(m.orderShopee) : null,
-                    m.orderTiktok || 0, (m.orderTiktok >= ANNOT_MIN) ? FMTK(m.orderTiktok) : null,
-                    m.orderLazada || 0, (m.orderLazada >= ANNOT_MIN) ? FMTK(m.orderLazada) : null,
+                    m.label ? m.label.substring(0, 3) : m.month,
+                    s || null, tip('Shopee', s),
+                    t || null, tip('TikTok', t),
+                    l || null, tip('Lazada', l),
                 ]);
             });
+
+            const yMax = Math.ceil(Math.max(...allVals, 0) * 1.2) || 10;
+
             new google.visualization.ColumnChart(el).draw(dt, {
                 isStacked: true,
                 colors: [PCOL.shopee, PCOL.tiktok, PCOL.lazada],
                 backgroundColor: 'transparent',
                 legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } },
-                bar: { groupWidth: '62%' },
+                bar: { groupWidth: '65%' },
                 hAxis: { textStyle: { fontSize: 10, color: '#9ca3af' }, gridlines: { count: 0 } },
-                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short', gridlines: { color: '#f3e8ff' }, minValue: 0 },
-                chartArea: { left: 44, top: 36, width: '90%', height: '64%' },
-                annotations: { alwaysOutside: false, textStyle: { fontSize: 9, color: '#fff', bold: true } },
-                tooltip: { textStyle: { fontSize: 11 } },
+                vAxis: {
+                    title: 'รายได้สุทธิ (฿)',
+                    titleTextStyle: { fontSize: 10, italic: false, color: '#9ca3af' },
+                    textStyle: { fontSize: 9, color: '#9ca3af' },
+                    format: 'short',
+                    gridlines: { color: '#f3e8ff' },
+                    minValue: 0,
+                    viewWindow: { min: 0, max: yMax }
+                },
+                chartArea: { left: 54, top: 36, right: 14, bottom: 32, height: '66%' },
+                tooltip: { isHtml: true, textStyle: { fontSize: 11 } },
             });
         }
 
