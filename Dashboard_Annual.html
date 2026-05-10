@@ -2447,24 +2447,31 @@
         function renderSkuBar(pCat, cCat) {
             const el = document.getElementById('chartSkuBar');
             if (!el) return;
-            // pCat = { 'กลูต้า': { units: N }, 'วิตามินซี': { units: N }, ... }
             const categories = ['กลูต้า', 'วิตามินซี', 'โปรไบโอติก'];
+            const catColors = {
+                'กลูต้า': '#a78bfa',      // ม่วงอ่อน
+                'วิตามินซี': '#fb923c',    // ส้มอ่อน
+                'โปรไบโอติก': '#60a5fa'   // ฟ้า
+            };
 
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Category');
             dt.addColumn('number', YEAR);
+            dt.addColumn({ type: 'string', role: 'style' });
             dt.addColumn({ type: 'string', role: 'annotation' });
             if (cCat) {
                 dt.addColumn('number', COMP_YEAR);
+                dt.addColumn({ type: 'string', role: 'style' });
                 dt.addColumn({ type: 'string', role: 'annotation' });
             }
 
             categories.forEach(cat => {
                 const v1 = ((pCat || {})[cat] || {}).units || 0;
-                const row = [cat, v1, FMT(v1)];
+                const clr = catColors[cat] || '#8b5cf6';
+                const row = [cat, v1, clr, FMT(v1)];
                 if (cCat) {
                     const v2 = ((cCat || {})[cat] || {}).units || 0;
-                    row.push(v2, FMT(v2));
+                    row.push(v2, clr + '66', FMT(v2));
                 }
                 dt.addRow(row);
             });
@@ -2477,7 +2484,6 @@
 
             const options = {
                 backgroundColor: 'transparent',
-                colors: ['#8b5cf6', '#d8b4fe'],
                 chartArea: { left: 50, top: 32, right: 14, bottom: 40 },
                 legend: cCat ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
                 hAxis: { textStyle: { color: '#1e1b3a', fontSize: 11, bold: true }, gridlines: { count: 0 } },
