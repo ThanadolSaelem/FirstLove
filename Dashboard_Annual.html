@@ -541,6 +541,18 @@
             }
         }
 
+        .row-card-pair {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 1024px) {
+            .row-card-pair {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         .row-stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -1817,35 +1829,39 @@
             </div>
 
             <div class="grid">
-                <!-- Card 1: ภาพรวมรายได้สุทธิ — Stacked Platform Net + Margin Ranking -->
+                <!-- Card 1: รายได้สุทธิตามแพลตฟอร์ม — FULL WIDTH -->
                 <div class="card">
                     <div class="card-head">
-                        <span class="card-ttl">ภาพรวมรายได้สุทธิ</span>
+                        <span class="card-ttl">รายได้สุทธิตามแพลตฟอร์มรายเดือน</span>
                         <span class="tip"
-                            data-tip="รายได้สุทธิแยกตามแพลตฟอร์ม (Shopee / TikTok / Lazada) รายเดือน และ Contribution Margin Ranking Top 10 สินค้า">ⓘ</span>
+                            data-tip="รายได้สุทธิแยกตามแพลตฟอร์ม (Shopee / TikTok / Lazada) รายเดือน — กรองเฉพาะเดือนที่มีข้อมูล">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 13px;">
-                        <div class="chart-pair-equal">
-                            <div>
-                                <div class="pair-lbl">รายได้สุทธิตามแพลตฟอร์มรายเดือน (Stacked)</div>
-                                <div id="chartPlatformBar" style="height:290px;"></div>
-                            </div>
-                            <div>
-                                <div class="pair-lbl">Contribution Margin Ranking (Top 10)</div>
-                                <div id="chartMargin" style="height:270px;overflow-y:auto;"></div>
-                            </div>
-                        </div>
+                        <div id="chartPlatformBar" style="height:340px;"></div>
                     </div>
                 </div>
 
-                <!-- Card 2: Ad Spend (full width) -->
-                <div class="card" style="margin-top:11px;">
-                    <div class="card-head">
-                        <span class="card-ttl">ค่าโฆษณา</span>
-                        <span class="tip" data-tip="ยอดค่าโฆษณารวมแต่ละเดือน กรอกได้ที่หน้า ข้อมูลโฆษณา">ⓘ</span>
+                <!-- Card 2: Margin Ranking + ค่าโฆษณา — 2-col (PC) / 1-col (Mobile) -->
+                <div class="row-card-pair">
+                    <div class="card">
+                        <div class="card-head">
+                            <span class="card-ttl">Contribution Margin Ranking (Top 10)</span>
+                            <span class="tip"
+                                data-tip="Top 10 สินค้าที่มี Contribution Margin สูงสุด">ⓘ</span>
+                        </div>
+                        <div class="card-body" style="padding:8px 13px 13px;">
+                            <div id="chartMargin" style="height:280px;overflow-y:auto;"></div>
+                        </div>
                     </div>
-                    <div class="card-body" style="padding:8px 13px 16px;">
-                        <div id="adSpendAnnualBody" style="min-height:220px;"></div>
+                    <div class="card">
+                        <div class="card-head">
+                            <span class="card-ttl">ค่าโฆษณา</span>
+                            <span class="tip"
+                                data-tip="ยอดค่าโฆษณารวมแต่ละเดือน กรอกได้ที่หน้า ข้อมูลโฆษณา">ⓘ</span>
+                        </div>
+                        <div class="card-body" style="padding:8px 13px 16px;">
+                            <div id="adSpendAnnualBody" style="min-height:220px;"></div>
+                        </div>
                     </div>
                 </div>
 
