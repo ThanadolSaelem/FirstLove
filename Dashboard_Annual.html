@@ -2257,7 +2257,7 @@
             if (!quad || !quad.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูลปีก่อนสำหรับเปรียบเทียบ</div>'; return; }
             const filtered = quad.filter(s => s.category !== 'เซต' && s.category !== 'Bundle');
             const top = [...filtered].sort((a, b) => b.revenue - a.revenue).slice(0, 25);
-            const catCol = { 'กลูต้า': '#7c3aed', 'เซต': '#5b4a9e', 'วิตามินซี': '#f59e0b', 'โปรไบโอติก': '#10b981' };
+            const catCol = { 'กลูต้า': '#8F00FF', 'เซต': '#5b4a9e', 'วิตามินซี': '#fb923c', 'โปรไบโอติก': '#60a5fa' };
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'ID');
             dt.addColumn('number', 'จำนวน');
@@ -2465,7 +2465,7 @@
                 
                 // Explicit color mapping
                 let clr = '#8b5cf6'; // Default purple
-                if (cat.includes('กลูต้า')) clr = '#a78bfa';      // ม่วงอ่อน
+                if (cat.includes('กลูต้า')) clr = '#8F00FF';      // ม่วงไฟฟ้า
                 else if (cat.includes('วิตามิน') || cat.includes('วิตซี')) clr = '#fb923c'; // ส้มอ่อน
                 else if (cat.includes('โปรไบโอติก')) clr = '#60a5fa'; // ฟ้า
                 
