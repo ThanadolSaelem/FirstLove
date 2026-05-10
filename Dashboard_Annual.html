@@ -2543,10 +2543,22 @@
             const getTiktok = m => m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0);
             const getLazada = m => m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0);
 
+            const getMonthAbbr = (label) => {
+                if (!label) return '';
+                const m = label.split(' ')[0];
+                const mapping = {
+                    'มกราคม': 'ม.ค.', 'กุมภาพันธ์': 'ก.พ.', 'มีนาคม': 'มี.ค.',
+                    'เมษายน': 'เม.ย.', 'พฤษภาคม': 'พ.ค.', 'มิถุนายน': 'มิ.ย.',
+                    'กรกฎาคม': 'ก.ค.', 'สิงหาคม': 'ส.ค.', 'กันยายน': 'ก.ย.',
+                    'ตุลาคม': 'ต.ค.', 'พฤศจิกายน': 'พ.ย.', 'ธันวาคม': 'ธ.ค.'
+                };
+                return mapping[m] || m;
+            };
+
             // Only months with data
             const data = (monthly || [])
                 .map(m => ({
-                    m: m.label ? m.label.substring(0, 3) : (m.month || ''),
+                    m: m.label ? getMonthAbbr(m.label) : (m.month || ''),
                     shopee: getShopee(m), tiktok: getTiktok(m), lazada: getLazada(m),
                 }))
                 .filter(d => (d.shopee + d.tiktok + d.lazada) > 0);
@@ -2660,8 +2672,8 @@
             if (remaining.length) {
                 const lbl = remaining[0];
                 const llbl = remaining[remaining.length-1];
-                const rs = lbl.label ? lbl.label.substring(0,3) : lbl.month;
-                const re = llbl.label ? llbl.label.substring(0,3) : llbl.month;
+                const rs = lbl.label ? getMonthAbbr(lbl.label) : lbl.month;
+                const re = llbl.label ? getMonthAbbr(llbl.label) : llbl.month;
                 s += `<text x="${W-PAD.r}" y="${baseY+17}" text-anchor="end" font-size="9.5" fill="#c4b5fd">${rs}–${re} ยังไม่มีข้อมูล</text>`;
             }
 
