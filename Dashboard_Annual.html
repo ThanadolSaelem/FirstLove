@@ -2507,118 +2507,190 @@
             const el = document.getElementById('chartPlatformBar');
             if (!el) return;
 
-            // Same field-resolution logic as before (net preferred, order* fallback)
             const getShopee = m => m.shopee_net != null ? (m.shopee_net || 0) : (m.orderShopee || 0);
             const getTiktok = m => m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0);
             const getLazada = m => m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0);
 
-            const data = (monthly || []).map(m => ({
-                m: m.label ? m.label.substring(0, 3) : (m.month || ''),
-                shopee: getShopee(m),
-                tiktok: getTiktok(m),
-                lazada: getLazada(m),
-            }));
-            const totalOf = d => (d.shopee || 0) + (d.tiktok || 0) + (d.lazada || 0);
+            // Only months with data
+            const data = (monthly || [])
+                .map(m => ({
+                    m: m.label ? m.label.substring(0, 3) : (m.month || ''),
+                    shopee: getShopee(m), tiktok: getTiktok(m), lazada: getLazada(m),
+                }))
+                .filter(d => (d.shopee + d.tiktok + d.lazada) > 0);
 
-            if (!data.some(d => totalOf(d) > 0)) {
+            if (!data.length) {
                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูล</div>';
                 return;
             }
 
-            // ── Layout constants ────────────────────────────────────────────
-            const PORDER = ['shopee', 'tiktok', 'lazada']; // bottom → top
-            const W = 1040, H = 380;
-            const PAD = { l: 56, r: 28, t: 36, b: 30 };
+            const PORDER = ['shopee', 'tiktok', 'lazada'];
+            const totalOf = d => (d.shopee || 0) + (d.tiktok || 0) + (d.lazada || 0);
+
+            // ── Adaptive sizing based on month count ──────────────────────
+            const n = data.length;
+            const W = 1040, H = 290;
+            const PAD = { l: 54, r: 52, t: 20, b: 28 };
             const innerW = W - PAD.l - PAD.r;
             const innerH = H - PAD.t - PAD.b;
-            const colW = innerW / data.length;
+            const colW = innerW / n;
+            // barRatio narrows as months increase
+            const barRatio = n <= 3 ? 0.52 : n <= 6 ? 0.46 : n <= 9 ? 0.40 : 0.36;
+            const barW = colW * barRatio;
+            // minimum segment height to show inline label
+            const inlineMinH = n <= 4 ? 20 : n <= 8 ? 24 : 30;
+            // callout font size shrinks for many months
+            const calloutFs = n <= 6 ? 10.5 : 9.5;
+            const inlineFs = n <= 6 ? 11.5 : 10;
 
-            // Tweakables (final values from the design canvas)
-            const BAR_RATIO = 0.36; // bar width as fraction of column width
-            const INLINE_MIN_H = 30;   // px — segment must be at least this tall to inline-label
-            const CALLOUT_GAP = 15;   // px — min vertical gap between two callout labels
-
-            const barW = colW * BAR_RATIO;
-            const yMaxRaw = Math.max(...data.map(totalOf), 0) * 1.2;
+            const allVals = data.map(totalOf);
+            const yMaxRaw = Math.max(...allVals, 0) * 1.25;
             const yMax = niceMax(yMaxRaw) || 10;
             const yToPx = v => PAD.t + innerH - (v / yMax) * innerH;
-
-            // Y axis ticks: 4 nice levels
             const ticks = niceTicks(yMax, 4);
+            const baseY = yToPx(0);
 
-            // ── Build SVG ───────────────────────────────────────────────────
-            let svg = '';
-            svg += `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">`;
+            // ── Build SVG string ──────────────────────────────────────────
+            let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">`;
 
-            // Y axis title
-            svg += `<text x="14" y="${PAD.t + innerH / 2}" transform="rotate(-90 14 ${PAD.t + innerH / 2})" text-anchor="middle" font-size="10" fill="#9ca3af">รายได้สุทธิ (฿)</text>`;
+            // Legend
+            let lx = W - PAD.r;
+            [...PORDER].reverse().forEach(p => {
+                const lw = PLBL[p].length * 5.8 + 18;
+                lx -= lw;
+                s += `<rect x="${lx}" y="5" width="9" height="9" rx="1.5" fill="${PCOL[p]}"/>`;
+                s += `<text x="${lx+13}" y="13" font-size="10" font-weight="500" fill="#6b7280">${PLBL[p]}</text>`;
+            });
 
-            // Gridlines + Y labels
+            // Y gridlines + labels
             ticks.forEach(t => {
                 const y = yToPx(t);
-                svg += `<line x1="${PAD.l}" x2="${W - PAD.r}" y1="${y}" y2="${y}" stroke="#f3e8ff" stroke-width="1"/>`;
-                svg += `<text x="${PAD.l - 8}" y="${y + 3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${t === 0 ? '0' : FMTK(t)}</text>`;
+                s += `<line x1="${PAD.l}" x2="${W-PAD.r}" y1="${y}" y2="${y}" stroke="#f3e8ff" stroke-width="1"/>`;
+                s += `<text x="${PAD.l-7}" y="${y+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${t===0?'0':FMTK(t)}</text>`;
             });
+            s += `<line x1="${PAD.l}" x2="${W-PAD.r}" y1="${baseY}" y2="${baseY}" stroke="#e5e7eb" stroke-width="1"/>`;
 
-            // X axis labels
-            data.forEach((d, i) => {
-                const cx = PAD.l + colW * (i + 0.5);
-                svg += `<text x="${cx}" y="${PAD.t + innerH + 18}" text-anchor="middle" font-size="10" fill="#9ca3af">${escapeXML(d.m)}</text>`;
-            });
+            // Y axis title
+            s += `<text x="14" y="${PAD.t+innerH/2}" transform="rotate(-90 14 ${PAD.t+innerH/2})" text-anchor="middle" font-size="10" fill="#9ca3af">รายได้สุทธิ (฿)</text>`;
 
             // Bars + labels
             data.forEach((d, i) => {
                 const total = totalOf(d);
-                if (!total) return;
                 const x = PAD.l + colW * i + (colW - barW) / 2;
-                const baseY = yToPx(0);
-
-                // Build segments bottom → top
                 let yCursor = baseY;
-                const segs = [];
-                PORDER.forEach(p => {
-                    const v = d[p] || 0;
-                    if (!v) return;
-                    const h = (v / yMax) * innerH;
-                    yCursor -= h;
-                    segs.push({ p, v, y: yCursor, h, midY: yCursor + h / 2 });
+                const segs = PORDER.map(p => {
+                    const v = d[p] || 0; if (!v) return null;
+                    const h = (v / yMax) * innerH; yCursor -= h;
+                    return { p, v, y: yCursor, h, midY: yCursor + h / 2 };
+                }).filter(Boolean);
+
+                // Bar rects
+                segs.forEach(seg => {
+                    s += `<rect x="${x}" y="${seg.y}" width="${barW}" height="${seg.h}" fill="${PCOL[seg.p]}"/>`;
+                });
+                // Rounded top cap
+                if (segs.length) {
+                    const top = segs[segs.length - 1];
+                    s += `<rect x="${x}" y="${top.y}" width="${barW}" height="${Math.min(4, top.h)}" rx="2" fill="${PCOL[top.p]}"/>`;
+                }
+
+                // Inline labels
+                const callouts = [];
+                segs.forEach(seg => {
+                    if (seg.h >= inlineMinH) {
+                        s += `<text x="${x+barW/2}" y="${seg.y+seg.h/2+4}" text-anchor="middle" font-size="${inlineFs}" font-weight="700" fill="#fff">${FMTK(seg.v)}</text>`;
+                    } else {
+                        callouts.push(seg);
+                    }
                 });
 
-                // Render segment rects
-                segs.forEach(s => {
-                    svg += `<rect x="${x}" y="${s.y}" width="${barW}" height="${s.h}" fill="${PCOL[s.p]}"/>`;
-                });
-
-                // Inline labels for segments tall enough
-                const inline = segs.filter(s => s.h >= INLINE_MIN_H);
-                const callouts = segs.filter(s => s.h < INLINE_MIN_H);
-
-                inline.forEach(s => {
-                    svg += `<text x="${x + barW / 2}" y="${s.y + s.h / 2 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${FMTK(s.v)}</text>`;
-                });
-
-                // Callouts in right gutter — stack vertically with min gap, no overlap with next column's bar
-                const gutterStart = x + barW + 3;
-                const sorted = callouts.slice().sort((a, b) => a.midY - b.midY);
+                // Callouts for tiny segments (stacked, no overlap)
                 let lastY = -Infinity;
-                sorted.forEach(s => {
-                    let labelY = s.midY;
-                    if (labelY - lastY < CALLOUT_GAP) labelY = lastY + CALLOUT_GAP;
-                    labelY = Math.min(labelY, baseY + 12);
-                    lastY = labelY;
-                    // connector
-                    svg += `<line x1="${x + barW}" y1="${s.midY}" x2="${gutterStart}" y2="${labelY}" stroke="${PCOL[s.p]}" stroke-width="1" opacity="0.5"/>`;
-                    // dot
-                    svg += `<circle cx="${gutterStart + 2}" cy="${labelY}" r="2" fill="${PCOL[s.p]}"/>`;
-                    // text
-                    svg += `<text x="${gutterStart + 6}" y="${labelY + 3.5}" font-size="10" font-weight="700" fill="${PCOL[s.p]}">${FMTK(s.v)}</text>`;
+                callouts.sort((a, b) => a.midY - b.midY).forEach(seg => {
+                    let ly = seg.midY;
+                    if (ly - lastY < 14) ly = lastY + 14;
+                    ly = Math.min(ly, baseY + 10); lastY = ly;
+                    const gx = x + barW + 3;
+                    s += `<line x1="${x+barW}" y1="${seg.midY}" x2="${gx}" y2="${ly}" stroke="${PCOL[seg.p]}" stroke-width="1" opacity="0.5"/>`;
+                    s += `<circle cx="${gx+2}" cy="${ly}" r="2" fill="${PCOL[seg.p]}"/>`;
+                    s += `<text x="${gx+6}" y="${ly+3.5}" font-size="${calloutFs}" font-weight="700" fill="${PCOL[seg.p]}">${FMTK(seg.v)}</text>`;
+                });
+
+                // X axis label
+                s += `<text x="${x+barW/2}" y="${baseY+17}" text-anchor="middle" font-size="${n>9?9:10}" font-weight="600" fill="#4b5563">${d.m}</text>`;
+
+                // Invisible hover rect per column (used for tooltip targeting)
+                s += `<rect class="fl-hover-col" data-idx="${i}" x="${PAD.l+colW*i}" y="${PAD.t}" width="${colW}" height="${innerH+24}" fill="transparent" style="cursor:default"/>`;
+            });
+
+            // Upcoming months note
+            const remaining = (monthly||[]).filter(m => !(getShopee(m)+getTiktok(m)+getLazada(m)));
+            if (remaining.length) {
+                const lbl = remaining[0];
+                const llbl = remaining[remaining.length-1];
+                const rs = lbl.label ? lbl.label.substring(0,3) : lbl.month;
+                const re = llbl.label ? llbl.label.substring(0,3) : llbl.month;
+                s += `<text x="${W-PAD.r}" y="${baseY+17}" text-anchor="end" font-size="9.5" fill="#c4b5fd">${rs}–${re} ยังไม่มีข้อมูล</text>`;
+            }
+
+            s += '</svg>';
+            el.innerHTML = s;
+
+            // ── Hover tooltip ─────────────────────────────────────────────
+            // Build a floating div tooltip (absolute, over the chart container)
+            el.style.position = 'relative';
+            const tip = document.createElement('div');
+            tip.style.cssText = [
+                'position:absolute;pointer-events:none;display:none;',
+                'background:#fff;border:1px solid #ede9fe;border-radius:10px;',
+                'padding:10px 14px;box-shadow:0 4px 16px rgba(91,74,158,.15);',
+                'font-family:\'Noto Sans Thai\',\'Inter\',sans-serif;font-size:12px;',
+                'color:#1e1b3a;min-width:160px;z-index:100;',
+            ].join('');
+            el.appendChild(tip);
+
+            el.querySelectorAll('.fl-hover-col').forEach(rect => {
+                const idx = parseInt(rect.getAttribute('data-idx'));
+                const d = data[idx];
+                const total = totalOf(d);
+
+                rect.addEventListener('mouseenter', function (e) {
+                    const rows = PORDER.map(p => {
+                        const v = d[p] || 0;
+                        const pct = total ? (v / total * 100).toFixed(0) : 0;
+                        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:3px 0;">
+                            <span style="display:flex;align-items:center;gap:5px;">
+                                <span style="width:8px;height:8px;border-radius:2px;background:${PCOL[p]};display:inline-block;"></span>
+                                <span style="font-weight:600;color:#6b7280;">${PLBL[p]}</span>
+                            </span>
+                            <span style="font-weight:700;">฿${FMT(v)}<span style="font-size:10px;color:#9ca3af;margin-left:4px;">${pct}%</span></span>
+                        </div>`;
+                    }).join('');
+                    tip.innerHTML = `
+                        <div style="font-weight:800;font-size:13px;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #ede9fe;">${d.m}</div>
+                        ${rows}
+                        <div style="margin-top:8px;padding-top:7px;border-top:1px solid #ede9fe;display:flex;justify-content:space-between;">
+                            <span style="font-weight:600;color:#6b7280;">รวม</span>
+                            <span style="font-weight:800;font-size:13px;color:#5b4a9e;">฿${FMT(total)}</span>
+                        </div>`;
+                    tip.style.display = 'block';
+                });
+
+                rect.addEventListener('mousemove', function (e) {
+                    const rect2 = el.getBoundingClientRect();
+                    const tipW = tip.offsetWidth || 180;
+                    let left = e.clientX - rect2.left + 12;
+                    if (left + tipW > rect2.width - 8) left = e.clientX - rect2.left - tipW - 12;
+                    tip.style.left = left + 'px';
+                    tip.style.top = (e.clientY - rect2.top - 10) + 'px';
+                });
+
+                rect.addEventListener('mouseleave', function () {
+                    tip.style.display = 'none';
                 });
             });
 
-            svg += '</svg>';
-            el.innerHTML = svg;
-
-            // ── helpers ─────────────────────────────────────────────────────
+            // ── helpers ───────────────────────────────────────────────────
             function niceMax(v) {
                 if (v <= 0) return 0;
                 const pow = Math.pow(10, Math.floor(Math.log10(v)));
@@ -2629,12 +2701,7 @@
             function niceTicks(max, count) {
                 if (max <= 0) return [0];
                 const step = max / count;
-                const out = [];
-                for (let i = 0; i <= count; i++) out.push(Math.round(step * i));
-                return out;
-            }
-            function escapeXML(s) {
-                return String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
+                return Array.from({ length: count + 1 }, (_, i) => Math.round(step * i));
             }
         }
 
