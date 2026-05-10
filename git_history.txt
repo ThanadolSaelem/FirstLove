@@ -1,0 +1,2178 @@
+﻿commit 0eb101990a65ccdf7198cb907c57cfcf19038ac3
+Author: Thanadol <firstqpmasterchief@gmail.com>
+Date:   Sun May 10 05:33:53 2026 +0700
+
+    style: Reduce pieHole further and decrease font size to fix label overlap
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index f2cf1f4..441423b 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -2250,12 +2250,12 @@
+ 
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.45,
++                pieHole: 0.35,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+                 chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
+                 pieSliceText: 'percentage',
+-                pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
++                pieSliceTextStyle: { fontSize: 10, bold: true, color: '#fff' },
+                 tooltip: { textStyle: { fontSize: 12 } }
+             };
+ 
+
+commit 2ea061e38982e69981f70347ab81b91fe8c97cd2
+Author: Thanadol <firstqpmasterchief@gmail.com>
+Date:   Sun May 10 05:30:55 2026 +0700
+
+    fix: Reapply pie chart sizing
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 7e4c1bf..f2cf1f4 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -2250,10 +2250,10 @@
+ 
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.55,
++                pieHole: 0.45,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+-                chartArea: { width: '85%', height: '85%' },
++                chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
+                 pieSliceText: 'percentage',
+                 pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
+                 tooltip: { textStyle: { fontSize: 12 } }
+
+commit d953e8fc630d2445d87d5f1511f86690ea8b180d
+Author: Thanadol <firstqpmasterchief@gmail.com>
+Date:   Sun May 10 05:25:12 2026 +0700
+
+    refactor: Replace inline NET/GROSS badges with natural language in titles
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index a2d084e..7e4c1bf 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -1762,7 +1762,6 @@
+                     <div class="kpi-lbl">α╕úα╕▓α╕óα╕úα╕▒α╕Üα╕¬α╕╕α╕ùα╕ÿα╕┤</div>
+                     <div class="kpi-num" id="kNet">ΓÇö</div>
+                     <div class="kpi-trend" id="tNet"></div>
+-                    <div style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;letter-spacing:.3px;">NET ΓÇö α╕óα╕¡α╕öα╣éα╕¡α╕Öα╕êα╕úα╕┤α╕ç (transferred)</div>
+                 </div>
+                 <div class="kpi-card" id="cardFees">
+                     <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+@@ -1772,7 +1771,6 @@
+                     <div class="kpi-lbl">α╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</div>
+                     <div class="kpi-num" id="kFees">ΓÇö</div>
+                     <div class="kpi-trend" id="tFees"></div>
+-                    <div style="font-size:9.5px;color:#f59e0b;font-weight:700;margin-top:4px;letter-spacing:.3px;">of GROSS (platform_fees)</div>
+                 </div>
+                 <div class="kpi-card" id="cardUnits">
+                     <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+@@ -1788,10 +1786,9 @@
+                             stroke="currentColor" stroke-width="2">
+                             <path d="M12 20v-6M6 20V10M18 20V4" />
+                         </svg></div>
+-                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö</div>
++                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕¬α╕╕α╕ùα╕ÿα╕┤/α╣Çα╕öα╕╖α╕¡α╕Ö</div>
+                     <div class="kpi-num" id="kAvg">ΓÇö</div>
+                     <div class="kpi-trend" id="tAvg"></div>
+-                    <div style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;letter-spacing:.3px;">NET / α╣Çα╕öα╕╖α╕¡α╕Ö</div>
+                 </div>
+             </div>
+ 
+@@ -1805,11 +1802,11 @@
+                     <div class="card-body" style="padding:8px 13px 13px;">
+                         <div class="chart-pair-equal">
+                             <div>
+-                                <div class="pair-lbl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤α╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö (Stacked) <span style="color:#10b981;font-weight:700;">[NET = transferred]</span></div>
++                                <div class="pair-lbl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤α╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö</div>
+                                 <div id="chartPlatformBar" style="height:270px;"></div>
+                             </div>
+                             <div>
+-                                <div class="pair-lbl">Contribution Margin Ranking (Top 10) <span style="color:#9ca3af;font-weight:400;">ΓÇö revenue = α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕óα╕üα╣êα╕¡α╕Öα╕½α╕▒α╕ü fee</span></div>
++                                <div class="pair-lbl">Contribution Margin Ranking (Top 10)</div>
+                                 <div id="chartMargin" style="height:270px;overflow-y:auto;"></div>
+                             </div>
+                         </div>
+@@ -1825,7 +1822,7 @@
+                     <div class="card-body" style="padding:8px 13px 13px;">
+                         <div class="chart-pair-equal">
+                             <div>
+-                                <div class="pair-lbl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í <span style="color:#f59e0b;font-weight:700;">[of GROSS]</span></div>
++                                <div class="pair-lbl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í (α╕êα╕▓α╕üα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕ºα╕í)</div>
+                                 <div id="chartFeePie" style="height:200px;"></div>
+                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
+                             </div>
+@@ -1836,9 +1833,8 @@
+                 <!-- Heatmap Row (full width) -->
+                 <div class="card" style="margin-top:11px;">
+                     <div class="card-head">
+-                        <span class="card-ttl">Heatmap: α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣Çα╕öα╕╖α╕¡α╕Ö ├ù α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</span>
+-                        <span style="font-size:10px;color:#10b981;font-weight:700;background:#d1fae5;border-radius:4px;padding:1px 6px;">NET</span>
+-                        <span class="tip" data-tip="α╕òα╕▓α╕úα╕▓α╕çα╕¬α╕╡α╣üα╕¬α╕öα╕çα╕äα╕ºα╕▓α╕íα╣Çα╕éα╣ëα╕íα╕éα╕¡α╕çα╕úα╕▓α╕óα╣äα╕öα╣ë α╕¬α╕╡α╣Çα╕éα╣ëα╕íα╕éα╕╢α╣ëα╕Ö = α╕óα╕¡α╕öα╕¬α╕╣α╕çα╕éα╕╢α╣ëα╕Ö α╕èα╣êα╕ºα╕óα╕íα╕¡α╕çα╣Çα╕½α╣çα╕Ö pattern α╕úα╕▓α╕óα╣äα╕öα╣ëα╣üα╕òα╣êα╕Ñα╕░α╣Çα╕öα╕╖α╕¡α╕Ö (α╕òα╕▒α╕ºα╣Çα╕Ñα╕é = NET transferred α╕òα╣êα╕¡α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í)">&#x24d8;</span>
++                        <span class="card-ttl">Heatmap: α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤α╕òα╕▓α╕íα╣Çα╕öα╕╖α╕¡α╕Ö ├ù α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</span>
++                        <span class="tip" data-tip="α╕òα╕▓α╕úα╕▓α╕çα╕¬α╕╡α╣üα╕¬α╕öα╕çα╕äα╕ºα╕▓α╕íα╣Çα╕éα╣ëα╕íα╕éα╕¡α╕çα╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤ (α╕óα╕¡α╕öα╣éα╕¡α╕Öα╕êα╕úα╕┤α╕ç) α╕¬α╕╡α╣Çα╕éα╣ëα╕íα╕éα╕╢α╣ëα╕Ö = α╕óα╕¡α╕öα╕¬α╕╣α╕çα╕éα╕╢α╣ëα╕Ö α╕èα╣êα╕ºα╕óα╕íα╕¡α╕çα╣Çα╕½α╣çα╕Ö pattern α╕úα╕▓α╕óα╣äα╕öα╣ëα╣üα╕òα╣êα╕Ñα╕░α╣Çα╕öα╕╖α╕¡α╕Ö">&#x24d8;</span>
+                     </div>
+                     <div class="card-body">
+                         <div id="chartHeatmap" style="padding:6px 2px;"></div>
+@@ -1849,8 +1845,7 @@
+                 <div class="card" style="margin-top:11px;">
+                     <div class="card-head">
+                         <span class="card-ttl">Product Lifecycle ΓÇö α╕êα╕│α╕Öα╕ºα╕Ö ├ù α╕üα╕▓α╕úα╣Çα╕òα╕┤α╕Üα╣éα╕ò %</span>
+-                        <span style="font-size:10px;color:#9ca3af;font-weight:600;background:#f3f4f6;border-radius:4px;padding:1px 6px;">α╕úα╕▓α╕óα╣äα╕öα╣ë = α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó</span>
+-                        <span class="tip" data-tip="Bubble chart: α╣üα╕üα╕Ö X = α╕êα╕│α╕Öα╕ºα╕Öα╕èα╕┤α╣ëα╕Öα╕éα╕▓α╕ó, α╣üα╕üα╕Ö Y = % α╕üα╕▓α╕úα╣Çα╕òα╕┤α╕Üα╣éα╕ò vs α╕¢α╕╡α╕üα╣êα╕¡α╕Ö, α╕éα╕Öα╕▓α╕öα╕ƒα╕¡α╕ç = revenue (α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕óα╕üα╣êα╕¡α╕Öα╕½α╕▒α╕ü platform fee) Γëá NET transferred">Γôÿ</span>
++                        <span class="tip" data-tip="Bubble chart: α╣üα╕üα╕Ö X = α╕êα╕│α╕Öα╕ºα╕Öα╕èα╕┤α╣ëα╕Öα╕éα╕▓α╕ó, α╣üα╕üα╕Ö Y = % α╕üα╕▓α╕úα╣Çα╕òα╕┤α╕Üα╣éα╕ò vs α╕¢α╕╡α╕üα╣êα╕¡α╕Ö, α╕éα╕Öα╕▓α╕öα╕ƒα╕¡α╕ç = α╕óα╕¡α╕öα╕éα╕▓α╕ó (α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó α╕óα╕▒α╕çα╣äα╕íα╣êα╕½α╕▒α╕üα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í)">Γôÿ</span>
+                     </div>
+                     <div class="card-body">
+                         <div id="chartQuadrant" style="height:400px;"></div>
+@@ -2255,10 +2250,10 @@
+ 
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.45,
++                pieHole: 0.55,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+-                chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
++                chartArea: { width: '85%', height: '85%' },
+                 pieSliceText: 'percentage',
+                 pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
+                 tooltip: { textStyle: { fontSize: 12 } }
+
+commit a8162b55cd783f37948fa2b12b596a72f2027f6a
+Author: Thanadol <firstqpmasterchief@gmail.com>
+Date:   Sun May 10 05:13:57 2026 +0700
+
+    style: Resize pie charts to prevent label overlap
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 21a2eb5..a2d084e 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -2255,10 +2255,10 @@
+ 
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.55,
++                pieHole: 0.45,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+-                chartArea: { width: '85%', height: '85%' },
++                chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
+                 pieSliceText: 'percentage',
+                 pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
+                 tooltip: { textStyle: { fontSize: 12 } }
+
+commit 1ecc829a88a644257075587e95e5815a87470f25
+Author: Thanadol <firstqpmasterchief@gmail.com>
+Date:   Sun May 10 05:08:47 2026 +0700
+
+    feat: Add tooltip system to Annual Dashboard and clarify NET/GROSS revenue metrics
+    
+    1. Copied '.tip' and '.tt' tooltip system from Executive to Annual Dashboard.
+    
+    2. Added explanatory tooltips to all Annual Dashboard cards.
+    
+    3. Added explicit '(NET)' and '(of GROSS)' labels to KPI numbers in both dashboards to prevent confusion.
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index ec7f9ed..21a2eb5 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -483,12 +483,51 @@
+             padding: 12px 16px;
+             border-bottom: 1px solid rgba(139, 92, 246, .1);
+             background: linear-gradient(90deg, #fdfcff 0%, #f8f5ff 100%);
++            display: flex;
++            align-items: center;
++            gap: 6px;
+         }
+ 
+         .card-ttl {
+             font-size: 13px;
+             font-weight: 700;
+             color: var(--purple-900);
++            flex: 1;
++        }
++
++        /* ΓöÇΓöÇ Tooltip ΓöÇΓöÇ */
++        .tip {
++            cursor: help;
++            color: var(--text-light, #9ca3af);
++            font-size: 11px;
++            transition: color .2s;
++            flex-shrink: 0;
++        }
++
++        .tip:hover {
++            color: var(--brand, #8b5cf6);
++        }
++
++        .tt {
++            position: fixed;
++            background: rgba(30, 27, 58, .92);
++            color: #fff;
++            padding: 6px 10px;
++            border-radius: 8px;
++            font-size: 11px;
++            max-width: 240px;
++            line-height: 1.5;
++            pointer-events: none;
++            z-index: 9999;
++            opacity: 0;
++            transform: translateY(-5px);
++            transition: opacity .15s, transform .15s;
++            box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
++        }
++
++        .tt.show {
++            opacity: 1;
++            transform: translateY(0);
+         }
+ 
+         .card-body {
+@@ -1636,11 +1675,6 @@
+                         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                         <polyline points="16 7 22 7 22 13" />
+                     </svg></span>α╕íα╕╕α╕íα╕íα╕¡α╕çα╕úα╕▓α╕óα╕¢α╕╡</a>
+-            <a href="#" class="nav-item" onclick="navTo('ad');return false"><span class="nav-icon"><svg width="14"
+-                        height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+-                        stroke-linecap="round" stroke-linejoin="round">
+-                        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+-                    </svg></span>α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓</a>
+             <div class="nav-label">α╕úα╕░α╕Üα╕Ü</div>
+             <a href="#" class="nav-item" onclick="navTo('import');return false"><span class="nav-icon"><svg width="14"
+                         height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+@@ -1716,7 +1750,7 @@
+                         <option value="">(α╣äα╕íα╣êα╕íα╕╡)</option>
+                     </select>
+ 
+-<button class="btn-sm" onclick="initLoad()">Γå╗ α╕úα╕╡α╣Çα╕ƒα╕úα╕è</button>
++                    <button class="btn-sm" onclick="initLoad()">Γå╗ α╕úα╕╡α╣Çα╕ƒα╕úα╕è</button>
+                     <button class="btn-sm" onclick="downloadDebugData()">Γ¼ç∩╕Å α╣éα╕½α╕Ñα╕öα╕éα╣ëα╕¡α╕íα╕╣α╕Ñ Debug</button>
+                 </div>
+             </div>
+@@ -1728,6 +1762,7 @@
+                     <div class="kpi-lbl">α╕úα╕▓α╕óα╕úα╕▒α╕Üα╕¬α╕╕α╕ùα╕ÿα╕┤</div>
+                     <div class="kpi-num" id="kNet">ΓÇö</div>
+                     <div class="kpi-trend" id="tNet"></div>
++                    <div style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;letter-spacing:.3px;">NET ΓÇö α╕óα╕¡α╕öα╣éα╕¡α╕Öα╕êα╕úα╕┤α╕ç (transferred)</div>
+                 </div>
+                 <div class="kpi-card" id="cardFees">
+                     <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+@@ -1737,6 +1772,7 @@
+                     <div class="kpi-lbl">α╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</div>
+                     <div class="kpi-num" id="kFees">ΓÇö</div>
+                     <div class="kpi-trend" id="tFees"></div>
++                    <div style="font-size:9.5px;color:#f59e0b;font-weight:700;margin-top:4px;letter-spacing:.3px;">of GROSS (platform_fees)</div>
+                 </div>
+                 <div class="kpi-card" id="cardUnits">
+                     <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+@@ -1752,63 +1788,48 @@
+                             stroke="currentColor" stroke-width="2">
+                             <path d="M12 20v-6M6 20V10M18 20V4" />
+                         </svg></div>
+-                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö (α╕¬α╕╕α╕ùα╕ÿα╕┤)</div>
++                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö</div>
+                     <div class="kpi-num" id="kAvg">ΓÇö</div>
+                     <div class="kpi-trend" id="tAvg"></div>
++                    <div style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;letter-spacing:.3px;">NET / α╣Çα╕öα╕╖α╕¡α╕Ö</div>
+                 </div>
+             </div>
+ 
+             <div class="grid">
+-                <!-- Main Chart + Margin Ranking (side by side) -->
++                <!-- Main Chart (Stacked Platform Net) + Margin Ranking (side by side) -->
+                 <div class="card">
+                     <div class="card-head">
+-                        <span class="card-ttl">α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö</span>
++                        <span class="card-ttl">α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤</span>
++                        <span class="tip" data-tip="α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤α╣üα╕óα╕üα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í (Shopee / TikTok / Lazada) α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö α╣üα╕Ñα╕░ Contribution Margin Ranking Top 10 α╕¬α╕┤α╕Öα╕äα╣ëα╕▓">Γôÿ</span>
+                     </div>
+                     <div class="card-body" style="padding:8px 13px 13px;">
+                         <div class="chart-pair-equal">
+                             <div>
+-                                <div id="chartMonthBar" style="height:290px;"></div>
++                                <div class="pair-lbl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤α╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö (Stacked) <span style="color:#10b981;font-weight:700;">[NET = transferred]</span></div>
++                                <div id="chartPlatformBar" style="height:270px;"></div>
+                             </div>
+                             <div>
+-                                <div class="pair-lbl">Contribution Margin Ranking (Top 10)</div>
++                                <div class="pair-lbl">Contribution Margin Ranking (Top 10) <span style="color:#9ca3af;font-weight:400;">ΓÇö revenue = α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕óα╕üα╣êα╕¡α╕Öα╕½α╕▒α╕ü fee</span></div>
+                                 <div id="chartMargin" style="height:270px;overflow-y:auto;"></div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+ 
+-                <!-- Ad Spend Line Chart (full width) -->
+-                <div class="card" style="margin-top:11px;">
+-                    <div class="card-head">
+-                        <span class="card-ttl">α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓</span>
+-                        <span class="tip" data-tip="α╕óα╕¡α╕öα╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕ºα╕íα╣üα╕òα╣êα╕Ñα╕░α╣Çα╕öα╕╖α╕¡α╕Ö α╕üα╕úα╕¡α╕üα╣äα╕öα╣ëα╕ùα╕╡α╣êα╕½α╕Öα╣ëα╕▓ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓">Γôÿ</span>
+-                    </div>
+-                    <div class="card-body" style="padding:8px 13px 16px;">
+-                        <div id="adSpendAnnualBody" style="min-height:220px;"></div>
+-                    </div>
+-                </div>
+-
+-                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie + Category Units -->
++                <!-- Fee Pie (full width) -->
+                 <div class="card">
+                     <div class="card-head">
+-                        <span class="card-ttl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í & α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í</span>
++                        <span class="card-ttl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</span>
++                        <span class="tip" data-tip="α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╕ùα╕╡α╣êα╣üα╕òα╣êα╕Ñα╕░α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕íα╕½α╕▒α╕ü α╕äα╕│α╕Öα╕ºα╕ôα╕êα╕▓α╕ü feeByPlatform α╕ùα╕╡α╣ê backend α╕¬α╣êα╕çα╕íα╕▓">Γôÿ</span>
+                     </div>
+                     <div class="card-body" style="padding:8px 13px 13px;">
+                         <div class="chart-pair-equal">
+                             <div>
+-                                <div class="pair-lbl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö (Stacked)</div>
+-                                <div id="chartPlatformBar" style="height:260px;"></div>
+-                            </div>
+-                            <div>
+-                                <div class="pair-lbl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</div>
+-                                <div id="chartFeePie" style="height:280px;"></div>
++                                <div class="pair-lbl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í <span style="color:#f59e0b;font-weight:700;">[of GROSS]</span></div>
++                                <div id="chartFeePie" style="height:200px;"></div>
+                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
+                             </div>
+                         </div>
+-                        <div style="margin-top:20px;border-top:1px solid var(--purple-100);padding-top:14px;">
+-                            <div class="pair-lbl">α╕êα╕│α╕Öα╕ºα╕Öα╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕çα╕òα╕▓α╕íα╕½α╕íα╕ºα╕öα╕¬α╕┤α╕Öα╕äα╣ëα╕▓ (α╕úα╕ºα╕í bundle)</div>
+-                            <div id="chartSkuBar" style="height:220px;"></div>
+-                        </div>
+                     </div>
+                 </div>
+ 
+@@ -1816,6 +1837,8 @@
+                 <div class="card" style="margin-top:11px;">
+                     <div class="card-head">
+                         <span class="card-ttl">Heatmap: α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣Çα╕öα╕╖α╕¡α╕Ö ├ù α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</span>
++                        <span style="font-size:10px;color:#10b981;font-weight:700;background:#d1fae5;border-radius:4px;padding:1px 6px;">NET</span>
++                        <span class="tip" data-tip="α╕òα╕▓α╕úα╕▓α╕çα╕¬α╕╡α╣üα╕¬α╕öα╕çα╕äα╕ºα╕▓α╕íα╣Çα╕éα╣ëα╕íα╕éα╕¡α╕çα╕úα╕▓α╕óα╣äα╕öα╣ë α╕¬α╕╡α╣Çα╕éα╣ëα╕íα╕éα╕╢α╣ëα╕Ö = α╕óα╕¡α╕öα╕¬α╕╣α╕çα╕éα╕╢α╣ëα╕Ö α╕èα╣êα╕ºα╕óα╕íα╕¡α╕çα╣Çα╕½α╣çα╕Ö pattern α╕úα╕▓α╕óα╣äα╕öα╣ëα╣üα╕òα╣êα╕Ñα╕░α╣Çα╕öα╕╖α╕¡α╕Ö (α╕òα╕▒α╕ºα╣Çα╕Ñα╕é = NET transferred α╕òα╣êα╕¡α╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í)">&#x24d8;</span>
+                     </div>
+                     <div class="card-body">
+                         <div id="chartHeatmap" style="padding:6px 2px;"></div>
+@@ -1826,6 +1849,8 @@
+                 <div class="card" style="margin-top:11px;">
+                     <div class="card-head">
+                         <span class="card-ttl">Product Lifecycle ΓÇö α╕êα╕│α╕Öα╕ºα╕Ö ├ù α╕üα╕▓α╕úα╣Çα╕òα╕┤α╕Üα╣éα╕ò %</span>
++                        <span style="font-size:10px;color:#9ca3af;font-weight:600;background:#f3f4f6;border-radius:4px;padding:1px 6px;">α╕úα╕▓α╕óα╣äα╕öα╣ë = α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó</span>
++                        <span class="tip" data-tip="Bubble chart: α╣üα╕üα╕Ö X = α╕êα╕│α╕Öα╕ºα╕Öα╕èα╕┤α╣ëα╕Öα╕éα╕▓α╕ó, α╣üα╕üα╕Ö Y = % α╕üα╕▓α╕úα╣Çα╕òα╕┤α╕Üα╣éα╕ò vs α╕¢α╕╡α╕üα╣êα╕¡α╕Ö, α╕éα╕Öα╕▓α╕öα╕ƒα╕¡α╕ç = revenue (α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕óα╕üα╣êα╕¡α╕Öα╕½α╕▒α╕ü platform fee) Γëá NET transferred">Γôÿ</span>
+                     </div>
+                     <div class="card-body">
+                         <div id="chartQuadrant" style="height:400px;"></div>
+@@ -1835,6 +1860,9 @@
+         </main>
+     </div>
+ 
++    <!-- ΓòÉΓòÉΓòÉΓòÉ Tooltip ΓòÉΓòÉΓòÉΓòÉ -->
++    <div class="tt" id="ttBox"></div>
++
+     <!-- ΓòÉΓòÉΓòÉΓòÉ New-SKU Modal ΓòÉΓòÉΓòÉΓòÉ -->
+     <div class="sku-modal-overlay" id="skuModalOverlay" onclick="handleSkuOverlayClick(event)">
+         <div class="sku-modal">
+@@ -1861,6 +1889,30 @@
+         </div>
+     </div>
+ 
++    <script>
++        // ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
++        //  TOOLTIP
++        // ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
++        ;(function () {
++            const box = document.getElementById('ttBox');
++            document.addEventListener('mouseover', e => {
++                const t = e.target.closest('[data-tip]');
++                if (t) { box.textContent = t.dataset.tip; box.classList.add('show'); }
++            });
++            document.addEventListener('mouseout', e => {
++                if (e.target.closest('[data-tip]')) box.classList.remove('show');
++            });
++            document.addEventListener('mousemove', e => {
++                if (!box.classList.contains('show')) return;
++                let l = e.clientX - box.offsetWidth / 2;
++                let t = e.clientY - box.offsetHeight - 12;
++                l = Math.max(6, Math.min(l, innerWidth - box.offsetWidth - 6));
++                if (t < 6) t = e.clientY + 14;
++                box.style.left = l + 'px'; box.style.top = t + 'px';
++            });
++        })();
++    </script>
++
+     <script>
+         google.charts.load('current', { packages: ['corechart', 'bar'] });
+         google.charts.setOnLoadCallback(initLoad);
+@@ -1951,7 +2003,7 @@
+             fetchPrimary();
+         }
+ 
+-function onCompareYearChange() {
++        function onCompareYearChange() {
+             COMP_YEAR = document.getElementById('selCompareYear').value;
+             if (COMP_YEAR) {
+                 IS_COMP_MODE = true;
+@@ -2010,90 +2062,14 @@ function onCompareYearChange() {
+             updateKPI('Avg', p.avgMonthly, c ? c.avgMonthly : null, 'α╕┐', p.yoy);
+             updateKPI('Units', p.totalUnits, c ? c.totalUnits : null, '', p.yoy);
+ 
+-            const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
+-            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, 'α╕┐', null, feePct ? `${feePct}% of net` : null);
++            const feePct = p.totalGross > 0 ? (p.totalFees / p.totalGross * 100).toFixed(1) : null;
++            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, 'α╕┐', null, feePct ? `${feePct}% of gross` : null);
+ 
+-            renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
++            renderPlatformBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
+             renderMargin(PRIMARY_DATA.marginRanking || []);
+-            renderPlatformBar(PRIMARY_DATA.monthly);
+             renderFeePie(PRIMARY_DATA.feeByPlatform);
+             renderHeatmap(PRIMARY_DATA.monthly);
+-            renderAdSpendAnnual(PRIMARY_DATA.monthly);
+             renderQuadrant(PRIMARY_DATA.quadrant || []);
+-            renderSkuBar(
+-                PRIMARY_DATA.componentsByCategory || {},
+-                (IS_COMP_MODE && COMPARE_DATA) ? (COMPARE_DATA.componentsByCategory || {}) : null
+-            );
+-        }
+-
+-        // ΓöÇΓöÇ Ad Spend + Revenue grouped ColumnChart (Annual) ΓöÇΓöÇ
+-        function renderAdSpendAnnual(monthly) {
+-            const el = document.getElementById('adSpendAnnualBody');
+-            if (!el) return;
+-
+-            const totalAd    = (monthly || []).reduce((s, m) => s + (m.adSpend  || 0), 0);
+-            const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales  || 0), 0);
+-            const yearLbl    = YEAR ? 'α╕¢α╕╡ ' + YEAR : '';
+-
+-            const hasData = totalAd > 0 || totalSales > 0;
+-
+-            el.innerHTML = `
+-                <div style="display:flex;align-items:center;gap:18px;padding:4px 0 8px;flex-wrap:wrap;">
+-                    <div style="display:flex;align-items:baseline;gap:6px;">
+-                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0;"></span>
+-                        <span style="font-size:11px;color:#9ca3af;">α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓</span>
+-                        <span style="font-size:18px;font-weight:800;color:#f59e0b;">α╕┐${FMT(totalAd)}</span>
+-                    </div>
+-                    <div style="display:flex;align-items:baseline;gap:6px;">
+-                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#7c3aed;flex-shrink:0;"></span>
+-                        <span style="font-size:11px;color:#9ca3af;">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕êα╕▓α╕üα╣éα╕åα╕⌐α╕ôα╕▓</span>
+-                        <span style="font-size:18px;font-weight:800;color:#7c3aed;">α╕┐${FMT(totalSales)}</span>
+-                    </div>
+-                    <div style="font-size:11px;color:#9ca3af;">${yearLbl}</div>
+-                </div>
+-                <div id="chartAdSpendInner" style="width:100%;height:200px;"></div>`;
+-
+-            const chartEl = document.getElementById('chartAdSpendInner');
+-            if (!chartEl) return;
+-
+-            if (!hasData) {
+-                chartEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">α╕óα╕▒α╕çα╣äα╕íα╣êα╕íα╕╡α╕éα╣ëα╕¡α╕íα╕╣α╕Ñ ΓÇö α╕üα╕úα╕¡α╕üα╣äα╕öα╣ëα╕ùα╕╡α╣êα╕½α╕Öα╣ëα╕▓ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓</div>';
+-                return;
+-            }
+-
+-            const dt = new google.visualization.DataTable();
+-            dt.addColumn('string', 'α╣Çα╕öα╕╖α╕¡α╕Ö');
+-            dt.addColumn('number', 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓');
+-            dt.addColumn({ type: 'string', role: 'annotation' });
+-            dt.addColumn('number', 'α╕úα╕▓α╕óα╣äα╕öα╣ëα╕êα╕▓α╕üα╣éα╕åα╕⌐α╕ôα╕▓');
+-            dt.addColumn({ type: 'string', role: 'annotation' });
+-
+-            (monthly || []).forEach(m => {
+-                const ad   = m.adSpend || 0;
+-                const sale = m.adSales || 0;
+-                dt.addRow([
+-                    m.label ? m.label.split(' ')[0] : m.month,
+-                    ad   || null, ad   > 0 ? FMT(Math.round(ad))   : null,
+-                    sale || null, sale > 0 ? FMT(Math.round(sale)) : null,
+-                ]);
+-            });
+-
+-            new google.visualization.ColumnChart(chartEl).draw(dt, {
+-                backgroundColor: 'transparent',
+-                colors: ['#f59e0b', '#7c3aed'],
+-                legend: { position: 'none' },
+-                bar: { groupWidth: '70%' },
+-                hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
+-                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+-                         gridlines: { color: '#f3f4f6' }, minValue: 0 },
+-                chartArea: { left: 50, top: 20, right: 14, bottom: 28 },
+-                annotations: {
+-                    alwaysOutside: true,
+-                    textStyle: { fontSize: 9, bold: true },
+-                    stem: { length: 3 },
+-                },
+-                tooltip: { textStyle: { fontSize: 11 } },
+-            });
+         }
+ 
+         // ΓöÇΓöÇ Heatmap (Month ├ù Platform) ΓÇö pure HTML/CSS ΓöÇΓöÇ
+@@ -2102,9 +2078,8 @@ function onCompareYearChange() {
+             if (!el) return;
+             if (!monthly || !monthly.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-light)">α╣äα╕íα╣êα╕íα╕╡α╕éα╣ëα╕¡α╕íα╕╣α╕Ñ</div>'; return; }
+             const platforms = ['shopee', 'tiktok', 'lazada'];
+-            const ordField  = { shopee: 'orderShopee', tiktok: 'orderTiktok', lazada: 'orderLazada' };
+             let max = 0;
+-            monthly.forEach(m => platforms.forEach(p => { if ((m[ordField[p]] || 0) > max) max = m[ordField[p]]; }));
++            monthly.forEach(m => platforms.forEach(p => { if ((m[p] || 0) > max) max = m[p]; }));
+             const cell = (v) => {
+                 const r = max ? (v / max) : 0;
+                 const bg = v > 0 ? `rgba(124, 58, 237, ${0.08 + r * 0.82})` : '#f8fafc';
+@@ -2117,7 +2092,7 @@ function onCompareYearChange() {
+             html += '</tr></thead><tbody>';
+             platforms.forEach(p => {
+                 html += `<tr><td style="font-size:11px;font-weight:700;padding:4px 8px;color:var(--text);"><span class="plat-tag pt-${p}" style="padding:3px 8px;">${PLBL[p]}</span></td>`;
+-                monthly.forEach(m => { html += cell(m[ordField[p]] || 0); });
++                monthly.forEach(m => { html += cell(m[p] || 0); });
+                 html += '</tr>';
+             });
+             html += '</tbody></table></div>';
+@@ -2223,10 +2198,10 @@ function onCompareYearChange() {
+ 
+             pMonths.forEach((m, i) => {
+                 const row = [m.label.split(' ')[0]];
+-                row.push(m.orderRevenue || 0);
+-                row.push(m.orderRevenue ? FMTK(m.orderRevenue) : null);
++                row.push(m.net || 0);
++                row.push(m.net ? FMTK(m.net) : null);
+                 if (IS_COMP_MODE && COMPARE_DATA) {
+-                    const cn = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
++                    const cn = cMonths[i] ? cMonths[i].net : 0;
+                     row.push(cn);
+                     row.push(cn ? FMTK(cn) : null);
+                 }
+@@ -2278,23 +2253,14 @@ function onCompareYearChange() {
+ 
+             dt.addRows(rows);
+ 
+-            const _pieTotal = rows.reduce((s, r) => s + r[1], 0);
+-            const _slices = {};
+-            rows.forEach((r, i) => {
+-                if (_pieTotal && r[1] / _pieTotal * 100 < 5) {
+-                    _slices[i] = { textStyle: { color: 'transparent' } };
+-                }
+-            });
+-
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.52,
++                pieHole: 0.55,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+-                chartArea: { width: '80%', height: '88%' },
++                chartArea: { width: '85%', height: '85%' },
+                 pieSliceText: 'percentage',
+-                pieSliceTextStyle: { fontSize: 12, bold: true, color: '#fff' },
+-                slices: _slices,
++                pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
+                 tooltip: { textStyle: { fontSize: 12 } }
+             };
+ 
+@@ -2313,17 +2279,22 @@ function onCompareYearChange() {
+                     <span class="plat-tag pt-${key}">${r[0]}</span>
+                     <span style="font-size:12px;font-weight:700;color:#1e1b3a;">α╕┐${FMTK(r[1])}</span>
+                     <span style="font-size:11px;color:#6b7280;">${pct}%</span>
+-                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of net)</span>` : ''}
++                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of gross)</span>` : ''}
+                 </div>`;
+             }).join('');
+         }
+ 
+-        // α╕êα╕│α╕Öα╕ºα╕Öα╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕çα╕òα╕▓α╕íα╕½α╕íα╕ºα╕öα╕¬α╕┤α╕Öα╕äα╣ëα╕▓ ΓÇö pCat/cCat = componentsByCategory from backend
+-        function renderSkuBar(pCat, cCat) {
++        // REQ-8-2: BarChart ΓåÆ ColumnChart (vertical) + always-on annotations (REQ-07)
++        function renderSkuBar(pSku, cSku) {
+             const el = document.getElementById('chartSkuBar');
+-            if (!el) return;
+-            // pCat = { 'α╕üα╕Ñα╕╣α╕òα╣ëα╕▓': { units: N }, 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡': { units: N }, ... }
+-            const categories = ['α╕üα╕Ñα╕╣α╕òα╣ëα╕▓', 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡', 'α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü'];
++            // Sum units per category (α╣Çα╕₧α╕úα╕▓α╕░ pSku α╕äα╕╖α╕¡ Top10 SKUs α╕êα╕╢α╕çα╕òα╣ëα╕¡α╕ç group α╣Çα╕¡α╕ç)
++            const sumByCat = (arr) => {
++                const m = {};
++                (arr || []).forEach(x => { m[x.category] = (m[x.category] || 0) + (x.units || 0); });
++                return m;
++            };
++            const pCat = sumByCat(pSku);
++            const cCat = cSku ? sumByCat(cSku) : null;
+ 
+             const dt = new google.visualization.DataTable();
+             dt.addColumn('string', 'Category');
+@@ -2334,20 +2305,20 @@ function onCompareYearChange() {
+                 dt.addColumn({ type: 'string', role: 'annotation' });
+             }
+ 
++            const categories = ['α╕üα╕Ñα╕╣α╕òα╣ëα╕▓', 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡', 'α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü'];
+             categories.forEach(cat => {
+-                const v1 = ((pCat || {})[cat] || {}).units || 0;
++                const v1 = pCat[cat] || 0;
+                 const row = [cat, v1, FMT(v1)];
+                 if (cCat) {
+-                    const v2 = ((cCat || {})[cat] || {}).units || 0;
++                    const v2 = cCat[cat] || 0;
+                     row.push(v2, FMT(v2));
+                 }
+                 dt.addRow(row);
+             });
+ 
+-            const allVals = categories.flatMap(cat =>
+-                cCat ? [((pCat||{})[cat]||{}).units||0, ((cCat||{})[cat]||{}).units||0]
+-                      : [((pCat||{})[cat]||{}).units||0]
+-            );
++            // Calculate yMax so annotations always have headroom above the tallest bar.
++            // Without this, Google Charts clips annotations inside tall bars.
++            const allVals = categories.flatMap(cat => cCat ? [pCat[cat] || 0, cCat[cat] || 0] : [pCat[cat] || 0]);
+             const yMax = Math.ceil(Math.max(...allVals) * 1.3) || 10;
+ 
+             const options = {
+@@ -2356,7 +2327,7 @@ function onCompareYearChange() {
+                 chartArea: { left: 50, top: 32, right: 14, bottom: 40 },
+                 legend: cCat ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
+                 hAxis: { textStyle: { color: '#1e1b3a', fontSize: 11, bold: true }, gridlines: { count: 0 } },
+-                vAxis: { title: 'α╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕ç', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
++                vAxis: { title: 'Total Units Sold', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
+                 bar: { groupWidth: '60%' },
+                 annotations: { alwaysOutside: true, textStyle: { fontSize: 11, color: '#1e1b3a', bold: true }, stem: { length: 4 } },
+                 tooltip: { textStyle: { fontSize: 11 } },
+@@ -2365,9 +2336,10 @@ function onCompareYearChange() {
+             new google.visualization.ColumnChart(el).draw(dt, options);
+         }
+ 
+-        // REQ-07: always-on annotations on monthly net chart (revenue only)
++        // REQ-07: always-on annotations on monthly net chart
+         function renderMonthBar(pMonths, cMonths) {
+             const el = document.getElementById('chartMonthBar');
++            const hasAdSpend = (pMonths || []).some(m => m.adSpend > 0);
+             const dt = new google.visualization.DataTable();
+             dt.addColumn('string', 'Month');
+             dt.addColumn('number', YEAR);
+@@ -2376,62 +2348,90 @@ function onCompareYearChange() {
+                 dt.addColumn('number', COMP_YEAR);
+                 dt.addColumn({ type: 'string', role: 'annotation' });
+             }
++            if (hasAdSpend) {
++                dt.addColumn('number', 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓');
++            }
+ 
+             const monthVals = [];
+             pMonths.forEach((m, i) => {
+-                const v1 = m.orderRevenue || 0;
++                const v1 = m.net || 0;
+                 const row = [m.label.split(' ')[0], v1, v1 ? FMTK(v1) : ''];
+                 if (cMonths) {
+-                    const v2 = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
++                    const v2 = cMonths[i] ? cMonths[i].net : 0;
+                     row.push(v2, v2 ? FMTK(v2) : '');
+                     monthVals.push(v2);
+                 }
++                if (hasAdSpend) row.push(m.adSpend || null);
+                 monthVals.push(v1);
+                 dt.addRow(row);
+             });
+ 
+             const yMaxM = Math.ceil(Math.max(...monthVals, 0) * 1.3) || 10;
+ 
++            // Series config: bars first, then line for adSpend
++            const seriesConfig = {};
++            let adSpendSeriesIdx = cMonths ? 2 : 1;
++            if (hasAdSpend) {
++                seriesConfig[adSpendSeriesIdx] = { type: 'line', color: '#f59e0b', lineWidth: 2, pointSize: 5 };
++            }
++
+             const options = {
+                 backgroundColor: 'transparent',
+-                colors: cMonths ? ['#8b5cf6', '#4c1d95'] : ['#8b5cf6'],
++                colors: cMonths ? ['#8b5cf6', '#4c1d95', '#f59e0b'] : ['#8b5cf6', '#f59e0b'],
++                seriesType: 'bars',
++                series: seriesConfig,
+                 chartArea: { left: 50, top: 32, right: 14, bottom: 36 },
+-                legend: cMonths ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
++                legend: (cMonths || hasAdSpend) ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
+                 hAxis: { textStyle: { color: '#9ca3af', fontSize: 10 } },
+                 vAxis: { textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3f4f6' }, viewWindow: { min: 0, max: yMaxM } },
+                 annotations: { alwaysOutside: true, textStyle: { fontSize: 9.5, color: '#1e1b3a', bold: true }, stem: { length: 3 } },
+                 tooltip: { textStyle: { fontSize: 11 } },
+             };
+ 
+-            new google.visualization.ColumnChart(el).draw(dt, options);
++            new google.visualization.ComboChart(el).draw(dt, options);
+         }
+ 
+-        // REQ-NEW: Stacked bar ΓÇö revenue by platform per month
+-        function renderPlatformBar(monthly) {
++        // Stacked bar ΓÇö net revenue by platform per month (now in Card 1)
++        function renderPlatformBar(pMonths, cMonths) {
+             const el = document.getElementById('chartPlatformBar');
+             if (!el) return;
+-            const filled = (monthly || []).filter(m => m.orderShopee || m.orderTiktok || m.orderLazada);
++            const monthly = pMonths || [];
++            const filled = monthly.filter(m => (m.shopee_net || m.shopee || 0) + (m.tiktok_net || m.tiktok || 0) + (m.lazada_net || m.lazada || 0) > 0);
+             if (!filled.length) {
+                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">α╣äα╕íα╣êα╕íα╕╡α╕éα╣ëα╕¡α╕íα╕╣α╕Ñ</div>';
+                 return;
+             }
++
++            // Support both net-specific fields and fallback to general platform fields
++            const getNet = (m, p) => m[p + '_net'] !== undefined ? (m[p + '_net'] || 0) : (m[p] || 0);
++
+             const dt = new google.visualization.DataTable();
+             dt.addColumn('string', 'α╣Çα╕öα╕╖α╕¡α╕Ö');
+             dt.addColumn('number', 'Shopee');
+-            dt.addColumn({ type: 'string', role: 'annotation' });
++            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
+             dt.addColumn('number', 'TikTok');
+-            dt.addColumn({ type: 'string', role: 'annotation' });
++            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
+             dt.addColumn('number', 'Lazada');
+-            dt.addColumn({ type: 'string', role: 'annotation' });
++            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
++
++            const allVals = [];
+             monthly.forEach(m => {
+-                const ANNOT_MIN = 8000;
++                const sp = getNet(m, 'shopee');
++                const tt = getNet(m, 'tiktok');
++                const lz = getNet(m, 'lazada');
++                const total = sp + tt + lz;
++                allVals.push(total);
++                const tip = (lbl, v) => `<div style="padding:6px 10px;font-size:11px"><b>${lbl}</b>: α╕┐${FMT(v)}</div>`;
+                 dt.addRow([
+                     m.label.substring(0, 3),
+-                    m.orderShopee || 0, (m.orderShopee >= ANNOT_MIN) ? FMTK(m.orderShopee) : null,
+-                    m.orderTiktok || 0, (m.orderTiktok >= ANNOT_MIN) ? FMTK(m.orderTiktok) : null,
+-                    m.orderLazada || 0, (m.orderLazada >= ANNOT_MIN) ? FMTK(m.orderLazada) : null,
++                    sp, tip('Shopee (α╕¬α╕╕α╕ùα╕ÿα╕┤)', sp),
++                    tt, tip('TikTok (α╕¬α╕╕α╕ùα╕ÿα╕┤)', tt),
++                    lz, tip('Lazada (α╕¬α╕╕α╕ùα╕ÿα╕┤)', lz),
+                 ]);
+             });
++
++            const yMax = Math.ceil(Math.max(...allVals, 0) * 1.2) || 10;
++
+             new google.visualization.ColumnChart(el).draw(dt, {
+                 isStacked: true,
+                 colors: [PCOL.shopee, PCOL.tiktok, PCOL.lazada],
+@@ -2439,10 +2439,17 @@ function onCompareYearChange() {
+                 legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } },
+                 bar: { groupWidth: '62%' },
+                 hAxis: { textStyle: { fontSize: 10, color: '#9ca3af' }, gridlines: { count: 0 } },
+-                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short', gridlines: { color: '#f3e8ff' }, minValue: 0 },
+-                chartArea: { left: 44, top: 36, width: '90%', height: '64%' },
+-                annotations: { alwaysOutside: false, textStyle: { fontSize: 9, color: '#fff', bold: true } },
+-                tooltip: { textStyle: { fontSize: 11 } },
++                vAxis: {
++                    title: 'α╕úα╕▓α╕óα╣äα╕öα╣ëα╕¬α╕╕α╕ùα╕ÿα╕┤ (α╕┐)',
++                    titleTextStyle: { fontSize: 10, italic: false, color: '#9ca3af' },
++                    textStyle: { fontSize: 9, color: '#9ca3af' },
++                    format: 'short',
++                    gridlines: { color: '#f3e8ff' },
++                    minValue: 0,
++                    viewWindow: { min: 0, max: yMax }
++                },
++                chartArea: { left: 52, top: 36, width: '88%', height: '62%' },
++                tooltip: { isHtml: true, textStyle: { fontSize: 11 } },
+             });
+         }
+ 
+
+commit b920d44b70a52dd7b081ee5668d92a45625ec17c
+Author: ThanadolSaelem <firstqpmasterchief@gmail.com>
+Date:   Fri May 8 23:47:31 2026 +0700
+
+    fix(annual): α╕üα╕úα╕▓α╕ƒα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Öα╣âα╕èα╣ë order revenue α╣üα╕ùα╕Ö transferred (#39)
+    
+    Annual dashboard α╕íα╕╡α╕üα╕úα╕▓α╕ƒ 4 α╕êα╕╕α╕öα╕ùα╕╡α╣êα╕óα╕▒α╕çα╣âα╕èα╣ë transferred (income file) α╕ùα╕▒α╣ëα╕çα╕ùα╕╡α╣ê
+    α╕äα╕ºα╕úα╣üα╕¬α╕öα╕ç "α╕óα╕¡α╕öα╕éα╕▓α╕ó" α╕êα╕▓α╕ü order file (α╕¬α╕│α╣Çα╕úα╣çα╕ê) α╕òα╕▓α╕íα╣Çα╕çα╕╖α╣êα╕¡α╕Öα╣äα╕éα╣Çα╕öα╕╡α╕óα╕ºα╕üα╕▒α╕Ü Executive dashboard
+    
+    - FL_Main.gs: α╣Çα╕₧α╕┤α╣êα╕í orderRevenue, orderShopee/Tiktok/Lazada α╣âα╕Ö monthly array
+      α╣éα╕öα╕ó pre-compute α╕êα╕▓α╕ü SKU_MONTHLY sheet α╕üα╣êα╕¡α╕Ö monthly series loop
+    - Dashboard_Annual.html:
+      - Monthly area chart ΓåÆ m.orderRevenue (α╣üα╕ùα╕Ö m.net)
+      - renderMonthBar column chart ΓåÆ m.orderRevenue
+      - renderPlatformBar stacked ΓåÆ m.orderShopee/Tiktok/Lazada
+      - renderHeatmap ΓåÆ ordField mapping α╣âα╕èα╣ë orderShopee/Tiktok/Lazada
+    
+    α╣äα╕íα╣êα╣Çα╕¢α╕Ñα╕╡α╣êα╕óα╕Ö: KPI "Net" α╣üα╕Ñα╕░ "Avg" α╕óα╕▒α╕çα╣âα╕èα╣ë transferred (α╕ûα╕╣α╕üα╕òα╣ëα╕¡α╕çα╕¬α╕│α╕½α╕úα╕▒α╕Ü "α╕óα╕¡α╕öα╣éα╕¡α╕Öα╕êα╕úα╕┤α╕çα╕ùα╕▒α╣ëα╕çα╕¢α╕╡")
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 26ecb15..ec7f9ed 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -2102,8 +2102,9 @@ function onCompareYearChange() {
+             if (!el) return;
+             if (!monthly || !monthly.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-light)">α╣äα╕íα╣êα╕íα╕╡α╕éα╣ëα╕¡α╕íα╕╣α╕Ñ</div>'; return; }
+             const platforms = ['shopee', 'tiktok', 'lazada'];
++            const ordField  = { shopee: 'orderShopee', tiktok: 'orderTiktok', lazada: 'orderLazada' };
+             let max = 0;
+-            monthly.forEach(m => platforms.forEach(p => { if ((m[p] || 0) > max) max = m[p]; }));
++            monthly.forEach(m => platforms.forEach(p => { if ((m[ordField[p]] || 0) > max) max = m[ordField[p]]; }));
+             const cell = (v) => {
+                 const r = max ? (v / max) : 0;
+                 const bg = v > 0 ? `rgba(124, 58, 237, ${0.08 + r * 0.82})` : '#f8fafc';
+@@ -2116,7 +2117,7 @@ function onCompareYearChange() {
+             html += '</tr></thead><tbody>';
+             platforms.forEach(p => {
+                 html += `<tr><td style="font-size:11px;font-weight:700;padding:4px 8px;color:var(--text);"><span class="plat-tag pt-${p}" style="padding:3px 8px;">${PLBL[p]}</span></td>`;
+-                monthly.forEach(m => { html += cell(m[p] || 0); });
++                monthly.forEach(m => { html += cell(m[ordField[p]] || 0); });
+                 html += '</tr>';
+             });
+             html += '</tbody></table></div>';
+@@ -2222,10 +2223,10 @@ function onCompareYearChange() {
+ 
+             pMonths.forEach((m, i) => {
+                 const row = [m.label.split(' ')[0]];
+-                row.push(m.net || 0);
+-                row.push(m.net ? FMTK(m.net) : null);
++                row.push(m.orderRevenue || 0);
++                row.push(m.orderRevenue ? FMTK(m.orderRevenue) : null);
+                 if (IS_COMP_MODE && COMPARE_DATA) {
+-                    const cn = cMonths[i] ? cMonths[i].net : 0;
++                    const cn = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
+                     row.push(cn);
+                     row.push(cn ? FMTK(cn) : null);
+                 }
+@@ -2378,10 +2379,10 @@ function onCompareYearChange() {
+ 
+             const monthVals = [];
+             pMonths.forEach((m, i) => {
+-                const v1 = m.net || 0;
++                const v1 = m.orderRevenue || 0;
+                 const row = [m.label.split(' ')[0], v1, v1 ? FMTK(v1) : ''];
+                 if (cMonths) {
+-                    const v2 = cMonths[i] ? cMonths[i].net : 0;
++                    const v2 = cMonths[i] ? (cMonths[i].orderRevenue || 0) : 0;
+                     row.push(v2, v2 ? FMTK(v2) : '');
+                     monthVals.push(v2);
+                 }
+@@ -2409,7 +2410,7 @@ function onCompareYearChange() {
+         function renderPlatformBar(monthly) {
+             const el = document.getElementById('chartPlatformBar');
+             if (!el) return;
+-            const filled = (monthly || []).filter(m => m.shopee || m.tiktok || m.lazada);
++            const filled = (monthly || []).filter(m => m.orderShopee || m.orderTiktok || m.orderLazada);
+             if (!filled.length) {
+                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">α╣äα╕íα╣êα╕íα╕╡α╕éα╣ëα╕¡α╕íα╕╣α╕Ñ</div>';
+                 return;
+@@ -2426,9 +2427,9 @@ function onCompareYearChange() {
+                 const ANNOT_MIN = 8000;
+                 dt.addRow([
+                     m.label.substring(0, 3),
+-                    m.shopee || 0, (m.shopee >= ANNOT_MIN) ? FMTK(m.shopee) : null,
+-                    m.tiktok || 0, (m.tiktok >= ANNOT_MIN) ? FMTK(m.tiktok) : null,
+-                    m.lazada || 0, (m.lazada >= ANNOT_MIN) ? FMTK(m.lazada) : null,
++                    m.orderShopee || 0, (m.orderShopee >= ANNOT_MIN) ? FMTK(m.orderShopee) : null,
++                    m.orderTiktok || 0, (m.orderTiktok >= ANNOT_MIN) ? FMTK(m.orderTiktok) : null,
++                    m.orderLazada || 0, (m.orderLazada >= ANNOT_MIN) ? FMTK(m.orderLazada) : null,
+                 ]);
+             });
+             new google.visualization.ColumnChart(el).draw(dt, {
+
+commit dece5ed402178499f86fe5bd3eed8a37dc3b5b92
+Author: ThanadolSaelem <firstqpmasterchief@gmail.com>
+Date:   Fri May 8 12:01:32 2026 +0700
+
+    Fix fee rate label: % of gross ΓåÆ % of net (#35)
+    
+    * fix: replace datalabels CDN plugin with inline canvas-draw plugin
+    
+    chartjs-plugin-datalabels does not register reliably in the GAS sandboxed
+    iframe. Replace with a self-contained afterDatasetsDraw plugin that draws
+    value labels directly onto the canvas ΓÇö guaranteed to work in all environments.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: month filter in TikTok + Lazada order parsers (multi-month export)
+    
+    TikTok (and hash-named Lazada) order files are often exported with a
+    60-90 day window, so a single file can contain orders from multiple months.
+    Without filtering, the parser assigned ALL rows to the first order's month,
+    inflating that month and losing data for the others.
+    
+    Add a per-row month guard:
+      if (rowMk && rowMk !== monthKey) continue;
+    
+    so only orders whose Created Time matches the detected monthKey are counted.
+    Users who need data for multiple months must import one file per month
+    (or re-export with the correct date filter on TikTok Seller Center).
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: platform filter for all dashboard cards (Donut, FeeBar, CategoryChart, Waterfall)
+    
+    - renderDonut/renderFeeBar now receive filtered `platforms` instead of always `allPlats`
+    - renderCatPlatformChart accepts platFilter param, shows only selected platform columns
+    - renderWaterfall builds per-platform data from byP when a platform is selected
+    - byPlatform in backend now includes seller_discount for accurate per-platform waterfall
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and value labels
+    
+    - Backend builds per-month per-platform ad spend trend (last 6 months)
+    - renderAdSpend replaced with Google Charts LineChart
+    - Responds to platform filter: shows selected platform's line only
+    - Annotation labels displayed above each data point
+    - Summary amount + month label shown above chart
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and labels in Annual dashboard
+    
+    - Backend: annual monthly data now includes adSpendByPlat {tiktok,shopee,lazada}
+    - Annual dashboard: add platform filter dropdown for ad spend line
+    - renderMonthBar: respects platFilter, shows per-platform ad spend line
+    - Annotation labels (FMT) displayed above each ad spend point
+    - Line color follows platform color when a platform is selected
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * refactor: ad spend simplified to monthly total only, no platform filter
+    
+    Executive dashboard:
+    - Single month ΓåÆ shows total number for that month
+    - All months ΓåÆ line chart with every month on x-axis + labels above each point
+    
+    Annual dashboard:
+    - Removed platform filter dropdown and AD_PLATFORM logic
+    - renderMonthBar shows total ad spend line with value labels above points
+    - No per-platform breakdown
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: ad spend always shows line chart; Annual gets dedicated card
+    
+    Executive:
+    - renderAdSpend always renders line chart (trend) regardless of month filter
+    - Shows total above chart + line with annotations in all modes
+    
+    Annual:
+    - Remove ad spend line from renderMonthBar (revenue chart is now bars-only)
+    - Add dedicated 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö' card with standalone line chart + labels
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend always renders line chart with month highlight
+    
+    - Always show total amount header (even with no data)
+    - Show graceful empty message inside chart div instead of early return
+    - Highlight selected month's data point (larger size, darker amber)
+    - Display month label next to total amount
+    - ROAS shown inline with header
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count TikTok orders as transactions not units
+    
+    Change units from sum-of-qty to count-of-1-per-order, matching
+    the reference data definition where "α╕êα╕│α╕Öα╕ºα╕Ö" = α╕êα╕│α╕Öα╕ºα╕Ö order
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count Shopee orders as transactions not units
+    
+    Same fix as TikTok ΓÇö units = 1 per order row, not sum of qty
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend trend includes months with ad spend but no revenue
+    
+    adTrend was built only from allMonths (revenue months). If a month
+    has ad spend but no revenue imported yet, it was missing from the
+    trend ΓåÆ chart showed empty despite total > 0.
+    
+    Now merges allMonths + all months in adSpendByYr so chart always
+    renders when data exists.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page sidebar matches Executive + navigation URL bug
+    
+    - Dashboard_Ad sidebar: logo image, α╕òα╕▒α╣ëα╕çα╕äα╣êα╕▓α╕úα╕░α╕Üα╕Ü, α╕úα╕░α╕Üα╕Üα╕êα╕▒α╕öα╣Çα╕üα╣çα╕Üα╣äα╕ƒα╕Ñα╣î
+      section, sidebar footer ΓÇö identical structure to Executive
+    - Load logo + drive folder links from config on init
+    - FL_Main.gs: cache exec URL in ScriptProperties on doGet so
+      FL_getWebAppUrl() works from google.script.run context where
+      ScriptApp.getService() may return null
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo shows FL fallback immediately, switches to image when loaded
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: add platform logos (Shopee/TikTok/Lazada) to Ad page sidebar nav
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo + gradient styling matches Executive dashboard
+    
+    - Embed FirstLove JPEG logo directly in HTML (same as Executive)
+    - Card hover lift effect + entrance animation
+    - Card header icon uses purple gradient (not flat fill)
+    - Body background uses --bg var (consistent with Executive)
+    - Add --sh-sm, --sh-lg, --lazada CSS variables
+    - Sidebar uses CSS vars for gradient (not hardcoded hex)
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: Ad page nav active state + heading match Executive dashboard
+    
+    - Active nav item: rounded right corner, inset glow shadow, brighter border (#c4b5fd)
+    - Nav hover: translateX(5px) slide + SVG icon scale(1.15)
+    - Page heading: gradient text dark-navyΓåÆpurple, italic, weight 900
+    - Subtitle: muted purple instead of gray
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: replace Ad page sidebar with exact Executive sidebar HTML
+    
+    Copy full sidebar (logo, nav items, platform logos) from Executive,
+    adapt only: active nav ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, brand-sub ΓåÆ AD PERFORMANCE,
+    version text ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, add id="logoMark" for config reload
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Ad page ΓÇö "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" year option + ROAS point labels
+    
+    - yearSelect: add "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" (empty string) option at top; backend
+      FL_getAdSpendDetailAnnual('') returns all months across all years
+    - ROAS chart: roasLabelPlugin draws value above every point;
+      "ROAS α╕úα╕ºα╕í" in bold dark-purple, platform lines in lighter matching color
+    - layout.padding.top:24 added to ROAS chart to give labels room
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Annual dashboard ΓÇö ad spend card shows total + year, rename to α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    
+    - Card title: α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    - Header row: α╕┐{total} α╕¢α╕╡ YYYY displayed above trend line (same style as Executive)
+    - Empty state message updated to reference α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓ page
+    - Chart renders in inner div; outer div height set to min-height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Move α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ card to second position in Annual dashboard grid
+    
+    Reorders cards so α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ appears immediately after α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö
+    for better visual flow when reviewing annual ad performance alongside revenue.
+    
+    New order: α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ ΓåÆ α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í ΓåÆ Heatmap ΓåÆ Product Lifecycle
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Add bundle decomposition for accurate product-level unit counts
+    
+    Previously, bundle SKUs (e.g. Bundle_Gluta2+VitC1) were categorised as 'α╣Çα╕ïα╕ò'
+    and excluded from the α╕üα╕Ñα╕╣α╕òα╣ëα╕▓/α╕ºα╕┤α╕òα╕ïα╕╡/α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü category charts. Standalone
+    packs like GlutaX9-2 were counted as 1 unit instead of 2 physical jars.
+    
+    Changes:
+    - FL_Config.gs: Add FL_BUNDLE_COMPOSITION mapping bundles to component counts
+    - FL_XmlParser.gs: Add FL_getComponentData() ΓÇö decomposes any SKU into
+      [{category, units}] using the composition map (bundles) or regex on the
+      SKU name suffix (standalone packs, extensible to future SKUs)
+    - FL_Main.gs: Fix unitsByCategoryPlatform (Executive dashboard) to call
+      FL_getComponentData instead of filtering out 'α╣Çα╕ïα╕ò'; add componentsByCategory
+      field to Annual dashboard data response
+    - Dashboard_Annual.html: Wire up renderSkuBar to new componentsByCategory
+      data (was orphaned), add chartSkuBar element inside the platform card,
+      fix function signature to accept pre-computed category map directly
+    
+    Revenue figures are intentionally unchanged ΓÇö no per-item price data exists
+    to split bundle revenue accurately.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Meeting fixes: fee rate, Shopee/TikTok revenue columns, per-month targets, ad chart, ROI, Info field
+    
+    - FIX 1: Fee rate formula ΓÇö use fees/(fees+transferred) instead of fees/gross
+      (TikTok gross inflated by platform promotions; correct rate ~19% vs wrong ~8%)
+    - FIX 2: Shopee order revenue ΓÇö use α╕óα╕¡α╕öα╕èα╕│α╕úα╕░α╣Çα╕çα╕┤α╕Ö ├ù 0.93 (VAT-exclusive) instead of α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó ├ù qty
+    - FIX 3: TikTok order revenue ΓÇö use SKU Subtotal Before Discount ΓêÆ SKU Seller Discount (MΓêÆO)
+      so platform-reimbursed discounts don't reduce reported revenue
+    - FIX 4: Per-month targets ΓÇö add MONTHLY_TARGETS config map; UI grid in Config page
+    - FIX 5: Annual ad chart ΓÇö LineChart ΓåÆ grouped ColumnChart with ad spend + revenue series
+    - FIX 6: Ad page annual table ΓÇö add ROI (%) column alongside ROAS
+    - FIX 7: Annual KPI label ΓÇö "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö" ΓåÆ "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö (α╕¬α╕╕α╕ùα╕ÿα╕┤)"
+    - FIX 8: TikTok Info/Conversion ΓÇö add new campaign type row to Ad form and annual summary
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Update FIRSTLOVE_FULL_CONTEXT.md with meeting fixes from 2026-05-07
+    
+    - Add fee rate formula change (BUG 10): |fees|/(|fees|+transferred)
+    - Add Shopee order revenue fix (BUG 11): α╕óα╕¡α╕öα╕èα╕│α╕úα╕░α╣Çα╕çα╕┤α╕Ö ├ù 0.93
+    - Add TikTok order M-O revenue fix (BUG 12)
+    - Add per-month targets config (section 9b)
+    - Add bundle decomposition summary (section 8c)
+    - Update ad_spend schema, Dashboard_Ad.html structure, new fields
+    - Update principles, PR history table
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Redesign α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö card ΓÇö 3 stacked metric boxes
+    
+    Replace kpi-row layout with 3 card-style metric boxes:
+    - α╕óα╕¡α╕öα╕éα╕▓α╕óα╕úα╕ºα╕í (Gross) with MoM % badge
+    - α╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╕úα╕ºα╕í (no badge)
+    - α╕úα╕▓α╕óα╕úα╕▒α╕Üα╕êα╕úα╕┤α╕ç (Net) with MoM % badge + purple tint background
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Fix ad spend card spanning full row on desktop
+    
+    Change grid-column from 2 to 1/-1 so the card stretches
+    across both columns instead of leaving column 1 empty.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Fix chart annotation overlap and pie chart label crowding
+    
+    Stacked bar (Annual):
+    - Hide annotation when value < 8,000 (Lazada typically 1-5k)
+      so tiny segments don't show illegible text
+    
+    Fee Pie (Annual) + Donut (Executive):
+    - Increase chartFeePie height 200ΓåÆ280px, chartDonut height 170ΓåÆ240px
+    - Add dynamic slices option: hide slice label when < 5% of total
+      (prevents Lazada ~1% label from overlapping larger slices)
+    - Slightly expand chartArea to use extra height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Executive ad spend card: LineChart ΓåÆ grouped ColumnChart with ad revenue
+    
+    - Backend: add sales_amount per month to adTrend entries via FL_getAdSpendDetailAnnual
+    - Frontend: show two series (α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ amber / α╕úα╕▓α╕óα╣äα╕öα╣ëα╕êα╕▓α╕üα╣éα╕åα╕⌐α╕ôα╕▓ purple)
+      matching the Annual dashboard ad chart design
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Fix fee rate label: change 'of gross' ΓåÆ 'of net' and fix formula
+    
+    Fee rate is computed as |fees| / (|fees| + transferred) which represents
+    fees as a share of net settlement ΓÇö not of gross sales. Updated both the
+    KPI card subtitle and the fee pie chart legend to say '% of net'.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 8502e84..26ecb15 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -2010,8 +2010,8 @@ function onCompareYearChange() {
+             updateKPI('Avg', p.avgMonthly, c ? c.avgMonthly : null, 'α╕┐', p.yoy);
+             updateKPI('Units', p.totalUnits, c ? c.totalUnits : null, '', p.yoy);
+ 
+-            const feePct = p.totalGross > 0 ? (p.totalFees / p.totalGross * 100).toFixed(1) : null;
+-            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, 'α╕┐', null, feePct ? `${feePct}% of gross` : null);
++            const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
++            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, 'α╕┐', null, feePct ? `${feePct}% of net` : null);
+ 
+             renderMonthBar(PRIMARY_DATA.monthly, (COMPARE_DATA ? COMPARE_DATA.monthly : null));
+             renderMargin(PRIMARY_DATA.marginRanking || []);
+@@ -2312,7 +2312,7 @@ function onCompareYearChange() {
+                     <span class="plat-tag pt-${key}">${r[0]}</span>
+                     <span style="font-size:12px;font-weight:700;color:#1e1b3a;">α╕┐${FMTK(r[1])}</span>
+                     <span style="font-size:11px;color:#6b7280;">${pct}%</span>
+-                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of gross)</span>` : ''}
++                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of net)</span>` : ''}
+                 </div>`;
+             }).join('');
+         }
+
+commit 79e26a01d7ac3645d4e35ee47a0d75880a0e4175
+Author: ThanadolSaelem <firstqpmasterchief@gmail.com>
+Date:   Fri May 8 11:44:23 2026 +0700
+
+    Fix chart annotation overlap and pie label crowding (#33)
+    
+    * fix: replace datalabels CDN plugin with inline canvas-draw plugin
+    
+    chartjs-plugin-datalabels does not register reliably in the GAS sandboxed
+    iframe. Replace with a self-contained afterDatasetsDraw plugin that draws
+    value labels directly onto the canvas ΓÇö guaranteed to work in all environments.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: month filter in TikTok + Lazada order parsers (multi-month export)
+    
+    TikTok (and hash-named Lazada) order files are often exported with a
+    60-90 day window, so a single file can contain orders from multiple months.
+    Without filtering, the parser assigned ALL rows to the first order's month,
+    inflating that month and losing data for the others.
+    
+    Add a per-row month guard:
+      if (rowMk && rowMk !== monthKey) continue;
+    
+    so only orders whose Created Time matches the detected monthKey are counted.
+    Users who need data for multiple months must import one file per month
+    (or re-export with the correct date filter on TikTok Seller Center).
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: platform filter for all dashboard cards (Donut, FeeBar, CategoryChart, Waterfall)
+    
+    - renderDonut/renderFeeBar now receive filtered `platforms` instead of always `allPlats`
+    - renderCatPlatformChart accepts platFilter param, shows only selected platform columns
+    - renderWaterfall builds per-platform data from byP when a platform is selected
+    - byPlatform in backend now includes seller_discount for accurate per-platform waterfall
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and value labels
+    
+    - Backend builds per-month per-platform ad spend trend (last 6 months)
+    - renderAdSpend replaced with Google Charts LineChart
+    - Responds to platform filter: shows selected platform's line only
+    - Annotation labels displayed above each data point
+    - Summary amount + month label shown above chart
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and labels in Annual dashboard
+    
+    - Backend: annual monthly data now includes adSpendByPlat {tiktok,shopee,lazada}
+    - Annual dashboard: add platform filter dropdown for ad spend line
+    - renderMonthBar: respects platFilter, shows per-platform ad spend line
+    - Annotation labels (FMT) displayed above each ad spend point
+    - Line color follows platform color when a platform is selected
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * refactor: ad spend simplified to monthly total only, no platform filter
+    
+    Executive dashboard:
+    - Single month ΓåÆ shows total number for that month
+    - All months ΓåÆ line chart with every month on x-axis + labels above each point
+    
+    Annual dashboard:
+    - Removed platform filter dropdown and AD_PLATFORM logic
+    - renderMonthBar shows total ad spend line with value labels above points
+    - No per-platform breakdown
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: ad spend always shows line chart; Annual gets dedicated card
+    
+    Executive:
+    - renderAdSpend always renders line chart (trend) regardless of month filter
+    - Shows total above chart + line with annotations in all modes
+    
+    Annual:
+    - Remove ad spend line from renderMonthBar (revenue chart is now bars-only)
+    - Add dedicated 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö' card with standalone line chart + labels
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend always renders line chart with month highlight
+    
+    - Always show total amount header (even with no data)
+    - Show graceful empty message inside chart div instead of early return
+    - Highlight selected month's data point (larger size, darker amber)
+    - Display month label next to total amount
+    - ROAS shown inline with header
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count TikTok orders as transactions not units
+    
+    Change units from sum-of-qty to count-of-1-per-order, matching
+    the reference data definition where "α╕êα╕│α╕Öα╕ºα╕Ö" = α╕êα╕│α╕Öα╕ºα╕Ö order
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count Shopee orders as transactions not units
+    
+    Same fix as TikTok ΓÇö units = 1 per order row, not sum of qty
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend trend includes months with ad spend but no revenue
+    
+    adTrend was built only from allMonths (revenue months). If a month
+    has ad spend but no revenue imported yet, it was missing from the
+    trend ΓåÆ chart showed empty despite total > 0.
+    
+    Now merges allMonths + all months in adSpendByYr so chart always
+    renders when data exists.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page sidebar matches Executive + navigation URL bug
+    
+    - Dashboard_Ad sidebar: logo image, α╕òα╕▒α╣ëα╕çα╕äα╣êα╕▓α╕úα╕░α╕Üα╕Ü, α╕úα╕░α╕Üα╕Üα╕êα╕▒α╕öα╣Çα╕üα╣çα╕Üα╣äα╕ƒα╕Ñα╣î
+      section, sidebar footer ΓÇö identical structure to Executive
+    - Load logo + drive folder links from config on init
+    - FL_Main.gs: cache exec URL in ScriptProperties on doGet so
+      FL_getWebAppUrl() works from google.script.run context where
+      ScriptApp.getService() may return null
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo shows FL fallback immediately, switches to image when loaded
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: add platform logos (Shopee/TikTok/Lazada) to Ad page sidebar nav
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo + gradient styling matches Executive dashboard
+    
+    - Embed FirstLove JPEG logo directly in HTML (same as Executive)
+    - Card hover lift effect + entrance animation
+    - Card header icon uses purple gradient (not flat fill)
+    - Body background uses --bg var (consistent with Executive)
+    - Add --sh-sm, --sh-lg, --lazada CSS variables
+    - Sidebar uses CSS vars for gradient (not hardcoded hex)
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: Ad page nav active state + heading match Executive dashboard
+    
+    - Active nav item: rounded right corner, inset glow shadow, brighter border (#c4b5fd)
+    - Nav hover: translateX(5px) slide + SVG icon scale(1.15)
+    - Page heading: gradient text dark-navyΓåÆpurple, italic, weight 900
+    - Subtitle: muted purple instead of gray
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: replace Ad page sidebar with exact Executive sidebar HTML
+    
+    Copy full sidebar (logo, nav items, platform logos) from Executive,
+    adapt only: active nav ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, brand-sub ΓåÆ AD PERFORMANCE,
+    version text ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, add id="logoMark" for config reload
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Ad page ΓÇö "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" year option + ROAS point labels
+    
+    - yearSelect: add "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" (empty string) option at top; backend
+      FL_getAdSpendDetailAnnual('') returns all months across all years
+    - ROAS chart: roasLabelPlugin draws value above every point;
+      "ROAS α╕úα╕ºα╕í" in bold dark-purple, platform lines in lighter matching color
+    - layout.padding.top:24 added to ROAS chart to give labels room
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Annual dashboard ΓÇö ad spend card shows total + year, rename to α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    
+    - Card title: α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    - Header row: α╕┐{total} α╕¢α╕╡ YYYY displayed above trend line (same style as Executive)
+    - Empty state message updated to reference α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓ page
+    - Chart renders in inner div; outer div height set to min-height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Move α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ card to second position in Annual dashboard grid
+    
+    Reorders cards so α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ appears immediately after α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö
+    for better visual flow when reviewing annual ad performance alongside revenue.
+    
+    New order: α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ ΓåÆ α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í ΓåÆ Heatmap ΓåÆ Product Lifecycle
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Add bundle decomposition for accurate product-level unit counts
+    
+    Previously, bundle SKUs (e.g. Bundle_Gluta2+VitC1) were categorised as 'α╣Çα╕ïα╕ò'
+    and excluded from the α╕üα╕Ñα╕╣α╕òα╣ëα╕▓/α╕ºα╕┤α╕òα╕ïα╕╡/α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü category charts. Standalone
+    packs like GlutaX9-2 were counted as 1 unit instead of 2 physical jars.
+    
+    Changes:
+    - FL_Config.gs: Add FL_BUNDLE_COMPOSITION mapping bundles to component counts
+    - FL_XmlParser.gs: Add FL_getComponentData() ΓÇö decomposes any SKU into
+      [{category, units}] using the composition map (bundles) or regex on the
+      SKU name suffix (standalone packs, extensible to future SKUs)
+    - FL_Main.gs: Fix unitsByCategoryPlatform (Executive dashboard) to call
+      FL_getComponentData instead of filtering out 'α╣Çα╕ïα╕ò'; add componentsByCategory
+      field to Annual dashboard data response
+    - Dashboard_Annual.html: Wire up renderSkuBar to new componentsByCategory
+      data (was orphaned), add chartSkuBar element inside the platform card,
+      fix function signature to accept pre-computed category map directly
+    
+    Revenue figures are intentionally unchanged ΓÇö no per-item price data exists
+    to split bundle revenue accurately.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Meeting fixes: fee rate, Shopee/TikTok revenue columns, per-month targets, ad chart, ROI, Info field
+    
+    - FIX 1: Fee rate formula ΓÇö use fees/(fees+transferred) instead of fees/gross
+      (TikTok gross inflated by platform promotions; correct rate ~19% vs wrong ~8%)
+    - FIX 2: Shopee order revenue ΓÇö use α╕óα╕¡α╕öα╕èα╕│α╕úα╕░α╣Çα╕çα╕┤α╕Ö ├ù 0.93 (VAT-exclusive) instead of α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó ├ù qty
+    - FIX 3: TikTok order revenue ΓÇö use SKU Subtotal Before Discount ΓêÆ SKU Seller Discount (MΓêÆO)
+      so platform-reimbursed discounts don't reduce reported revenue
+    - FIX 4: Per-month targets ΓÇö add MONTHLY_TARGETS config map; UI grid in Config page
+    - FIX 5: Annual ad chart ΓÇö LineChart ΓåÆ grouped ColumnChart with ad spend + revenue series
+    - FIX 6: Ad page annual table ΓÇö add ROI (%) column alongside ROAS
+    - FIX 7: Annual KPI label ΓÇö "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö" ΓåÆ "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö (α╕¬α╕╕α╕ùα╕ÿα╕┤)"
+    - FIX 8: TikTok Info/Conversion ΓÇö add new campaign type row to Ad form and annual summary
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Update FIRSTLOVE_FULL_CONTEXT.md with meeting fixes from 2026-05-07
+    
+    - Add fee rate formula change (BUG 10): |fees|/(|fees|+transferred)
+    - Add Shopee order revenue fix (BUG 11): α╕óα╕¡α╕öα╕èα╕│α╕úα╕░α╣Çα╕çα╕┤α╕Ö ├ù 0.93
+    - Add TikTok order M-O revenue fix (BUG 12)
+    - Add per-month targets config (section 9b)
+    - Add bundle decomposition summary (section 8c)
+    - Update ad_spend schema, Dashboard_Ad.html structure, new fields
+    - Update principles, PR history table
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Redesign α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö card ΓÇö 3 stacked metric boxes
+    
+    Replace kpi-row layout with 3 card-style metric boxes:
+    - α╕óα╕¡α╕öα╕éα╕▓α╕óα╕úα╕ºα╕í (Gross) with MoM % badge
+    - α╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╕úα╕ºα╕í (no badge)
+    - α╕úα╕▓α╕óα╕úα╕▒α╕Üα╕êα╕úα╕┤α╕ç (Net) with MoM % badge + purple tint background
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Fix ad spend card spanning full row on desktop
+    
+    Change grid-column from 2 to 1/-1 so the card stretches
+    across both columns instead of leaving column 1 empty.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Fix chart annotation overlap and pie chart label crowding
+    
+    Stacked bar (Annual):
+    - Hide annotation when value < 8,000 (Lazada typically 1-5k)
+      so tiny segments don't show illegible text
+    
+    Fee Pie (Annual) + Donut (Executive):
+    - Increase chartFeePie height 200ΓåÆ280px, chartDonut height 170ΓåÆ240px
+    - Add dynamic slices option: hide slice label when < 5% of total
+      (prevents Lazada ~1% label from overlapping larger slices)
+    - Slightly expand chartArea to use extra height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 8ce48ce..8502e84 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -1801,7 +1801,7 @@
+                             </div>
+                             <div>
+                                 <div class="pair-lbl">α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í</div>
+-                                <div id="chartFeePie" style="height:200px;"></div>
++                                <div id="chartFeePie" style="height:280px;"></div>
+                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
+                             </div>
+                         </div>
+@@ -2277,14 +2277,23 @@ function onCompareYearChange() {
+ 
+             dt.addRows(rows);
+ 
++            const _pieTotal = rows.reduce((s, r) => s + r[1], 0);
++            const _slices = {};
++            rows.forEach((r, i) => {
++                if (_pieTotal && r[1] / _pieTotal * 100 < 5) {
++                    _slices[i] = { textStyle: { color: 'transparent' } };
++                }
++            });
++
+             const options = {
+                 backgroundColor: 'transparent',
+-                pieHole: 0.55,
++                pieHole: 0.52,
+                 colors: ['#f97316', '#5b4a9e', '#0d9488'],
+                 legend: 'none',
+-                chartArea: { width: '85%', height: '85%' },
++                chartArea: { width: '80%', height: '88%' },
+                 pieSliceText: 'percentage',
+-                pieSliceTextStyle: { fontSize: 11, bold: true, color: '#fff' },
++                pieSliceTextStyle: { fontSize: 12, bold: true, color: '#fff' },
++                slices: _slices,
+                 tooltip: { textStyle: { fontSize: 12 } }
+             };
+ 
+@@ -2414,12 +2423,12 @@ function onCompareYearChange() {
+             dt.addColumn('number', 'Lazada');
+             dt.addColumn({ type: 'string', role: 'annotation' });
+             monthly.forEach(m => {
+-                const total = (m.shopee || 0) + (m.tiktok || 0) + (m.lazada || 0);
++                const ANNOT_MIN = 8000;
+                 dt.addRow([
+                     m.label.substring(0, 3),
+-                    m.shopee || 0, m.shopee ? FMTK(m.shopee) : null,
+-                    m.tiktok || 0, m.tiktok ? FMTK(m.tiktok) : null,
+-                    m.lazada || 0, m.lazada ? FMTK(m.lazada) : null,
++                    m.shopee || 0, (m.shopee >= ANNOT_MIN) ? FMTK(m.shopee) : null,
++                    m.tiktok || 0, (m.tiktok >= ANNOT_MIN) ? FMTK(m.tiktok) : null,
++                    m.lazada || 0, (m.lazada >= ANNOT_MIN) ? FMTK(m.lazada) : null,
+                 ]);
+             });
+             new google.visualization.ColumnChart(el).draw(dt, {
+
+commit c565b7ac7068a7cb583519f3cc412a124338bc0b
+Author: ThanadolSaelem <firstqpmasterchief@gmail.com>
+Date:   Fri May 8 01:48:12 2026 +0700
+
+    Meeting fixes: fee rate, revenue columns, per-month targets, ad chart, ROI, Info field (#29)
+    
+    * fix: replace datalabels CDN plugin with inline canvas-draw plugin
+    
+    chartjs-plugin-datalabels does not register reliably in the GAS sandboxed
+    iframe. Replace with a self-contained afterDatasetsDraw plugin that draws
+    value labels directly onto the canvas ΓÇö guaranteed to work in all environments.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: month filter in TikTok + Lazada order parsers (multi-month export)
+    
+    TikTok (and hash-named Lazada) order files are often exported with a
+    60-90 day window, so a single file can contain orders from multiple months.
+    Without filtering, the parser assigned ALL rows to the first order's month,
+    inflating that month and losing data for the others.
+    
+    Add a per-row month guard:
+      if (rowMk && rowMk !== monthKey) continue;
+    
+    so only orders whose Created Time matches the detected monthKey are counted.
+    Users who need data for multiple months must import one file per month
+    (or re-export with the correct date filter on TikTok Seller Center).
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: platform filter for all dashboard cards (Donut, FeeBar, CategoryChart, Waterfall)
+    
+    - renderDonut/renderFeeBar now receive filtered `platforms` instead of always `allPlats`
+    - renderCatPlatformChart accepts platFilter param, shows only selected platform columns
+    - renderWaterfall builds per-platform data from byP when a platform is selected
+    - byPlatform in backend now includes seller_discount for accurate per-platform waterfall
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and value labels
+    
+    - Backend builds per-month per-platform ad spend trend (last 6 months)
+    - renderAdSpend replaced with Google Charts LineChart
+    - Responds to platform filter: shows selected platform's line only
+    - Annotation labels displayed above each data point
+    - Summary amount + month label shown above chart
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and labels in Annual dashboard
+    
+    - Backend: annual monthly data now includes adSpendByPlat {tiktok,shopee,lazada}
+    - Annual dashboard: add platform filter dropdown for ad spend line
+    - renderMonthBar: respects platFilter, shows per-platform ad spend line
+    - Annotation labels (FMT) displayed above each ad spend point
+    - Line color follows platform color when a platform is selected
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * refactor: ad spend simplified to monthly total only, no platform filter
+    
+    Executive dashboard:
+    - Single month ΓåÆ shows total number for that month
+    - All months ΓåÆ line chart with every month on x-axis + labels above each point
+    
+    Annual dashboard:
+    - Removed platform filter dropdown and AD_PLATFORM logic
+    - renderMonthBar shows total ad spend line with value labels above points
+    - No per-platform breakdown
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: ad spend always shows line chart; Annual gets dedicated card
+    
+    Executive:
+    - renderAdSpend always renders line chart (trend) regardless of month filter
+    - Shows total above chart + line with annotations in all modes
+    
+    Annual:
+    - Remove ad spend line from renderMonthBar (revenue chart is now bars-only)
+    - Add dedicated 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö' card with standalone line chart + labels
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend always renders line chart with month highlight
+    
+    - Always show total amount header (even with no data)
+    - Show graceful empty message inside chart div instead of early return
+    - Highlight selected month's data point (larger size, darker amber)
+    - Display month label next to total amount
+    - ROAS shown inline with header
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count TikTok orders as transactions not units
+    
+    Change units from sum-of-qty to count-of-1-per-order, matching
+    the reference data definition where "α╕êα╕│α╕Öα╕ºα╕Ö" = α╕êα╕│α╕Öα╕ºα╕Ö order
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count Shopee orders as transactions not units
+    
+    Same fix as TikTok ΓÇö units = 1 per order row, not sum of qty
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend trend includes months with ad spend but no revenue
+    
+    adTrend was built only from allMonths (revenue months). If a month
+    has ad spend but no revenue imported yet, it was missing from the
+    trend ΓåÆ chart showed empty despite total > 0.
+    
+    Now merges allMonths + all months in adSpendByYr so chart always
+    renders when data exists.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page sidebar matches Executive + navigation URL bug
+    
+    - Dashboard_Ad sidebar: logo image, α╕òα╕▒α╣ëα╕çα╕äα╣êα╕▓α╕úα╕░α╕Üα╕Ü, α╕úα╕░α╕Üα╕Üα╕êα╕▒α╕öα╣Çα╕üα╣çα╕Üα╣äα╕ƒα╕Ñα╣î
+      section, sidebar footer ΓÇö identical structure to Executive
+    - Load logo + drive folder links from config on init
+    - FL_Main.gs: cache exec URL in ScriptProperties on doGet so
+      FL_getWebAppUrl() works from google.script.run context where
+      ScriptApp.getService() may return null
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo shows FL fallback immediately, switches to image when loaded
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: add platform logos (Shopee/TikTok/Lazada) to Ad page sidebar nav
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo + gradient styling matches Executive dashboard
+    
+    - Embed FirstLove JPEG logo directly in HTML (same as Executive)
+    - Card hover lift effect + entrance animation
+    - Card header icon uses purple gradient (not flat fill)
+    - Body background uses --bg var (consistent with Executive)
+    - Add --sh-sm, --sh-lg, --lazada CSS variables
+    - Sidebar uses CSS vars for gradient (not hardcoded hex)
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: Ad page nav active state + heading match Executive dashboard
+    
+    - Active nav item: rounded right corner, inset glow shadow, brighter border (#c4b5fd)
+    - Nav hover: translateX(5px) slide + SVG icon scale(1.15)
+    - Page heading: gradient text dark-navyΓåÆpurple, italic, weight 900
+    - Subtitle: muted purple instead of gray
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: replace Ad page sidebar with exact Executive sidebar HTML
+    
+    Copy full sidebar (logo, nav items, platform logos) from Executive,
+    adapt only: active nav ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, brand-sub ΓåÆ AD PERFORMANCE,
+    version text ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, add id="logoMark" for config reload
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Ad page ΓÇö "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" year option + ROAS point labels
+    
+    - yearSelect: add "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" (empty string) option at top; backend
+      FL_getAdSpendDetailAnnual('') returns all months across all years
+    - ROAS chart: roasLabelPlugin draws value above every point;
+      "ROAS α╕úα╕ºα╕í" in bold dark-purple, platform lines in lighter matching color
+    - layout.padding.top:24 added to ROAS chart to give labels room
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Annual dashboard ΓÇö ad spend card shows total + year, rename to α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    
+    - Card title: α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    - Header row: α╕┐{total} α╕¢α╕╡ YYYY displayed above trend line (same style as Executive)
+    - Empty state message updated to reference α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓ page
+    - Chart renders in inner div; outer div height set to min-height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Move α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ card to second position in Annual dashboard grid
+    
+    Reorders cards so α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ appears immediately after α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö
+    for better visual flow when reviewing annual ad performance alongside revenue.
+    
+    New order: α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ ΓåÆ α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í ΓåÆ Heatmap ΓåÆ Product Lifecycle
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Add bundle decomposition for accurate product-level unit counts
+    
+    Previously, bundle SKUs (e.g. Bundle_Gluta2+VitC1) were categorised as 'α╣Çα╕ïα╕ò'
+    and excluded from the α╕üα╕Ñα╕╣α╕òα╣ëα╕▓/α╕ºα╕┤α╕òα╕ïα╕╡/α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü category charts. Standalone
+    packs like GlutaX9-2 were counted as 1 unit instead of 2 physical jars.
+    
+    Changes:
+    - FL_Config.gs: Add FL_BUNDLE_COMPOSITION mapping bundles to component counts
+    - FL_XmlParser.gs: Add FL_getComponentData() ΓÇö decomposes any SKU into
+      [{category, units}] using the composition map (bundles) or regex on the
+      SKU name suffix (standalone packs, extensible to future SKUs)
+    - FL_Main.gs: Fix unitsByCategoryPlatform (Executive dashboard) to call
+      FL_getComponentData instead of filtering out 'α╣Çα╕ïα╕ò'; add componentsByCategory
+      field to Annual dashboard data response
+    - Dashboard_Annual.html: Wire up renderSkuBar to new componentsByCategory
+      data (was orphaned), add chartSkuBar element inside the platform card,
+      fix function signature to accept pre-computed category map directly
+    
+    Revenue figures are intentionally unchanged ΓÇö no per-item price data exists
+    to split bundle revenue accurately.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Meeting fixes: fee rate, Shopee/TikTok revenue columns, per-month targets, ad chart, ROI, Info field
+    
+    - FIX 1: Fee rate formula ΓÇö use fees/(fees+transferred) instead of fees/gross
+      (TikTok gross inflated by platform promotions; correct rate ~19% vs wrong ~8%)
+    - FIX 2: Shopee order revenue ΓÇö use α╕óα╕¡α╕öα╕èα╕│α╕úα╕░α╣Çα╕çα╕┤α╕Ö ├ù 0.93 (VAT-exclusive) instead of α╕úα╕▓α╕äα╕▓α╕éα╕▓α╕ó ├ù qty
+    - FIX 3: TikTok order revenue ΓÇö use SKU Subtotal Before Discount ΓêÆ SKU Seller Discount (MΓêÆO)
+      so platform-reimbursed discounts don't reduce reported revenue
+    - FIX 4: Per-month targets ΓÇö add MONTHLY_TARGETS config map; UI grid in Config page
+    - FIX 5: Annual ad chart ΓÇö LineChart ΓåÆ grouped ColumnChart with ad spend + revenue series
+    - FIX 6: Ad page annual table ΓÇö add ROI (%) column alongside ROAS
+    - FIX 7: Annual KPI label ΓÇö "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö" ΓåÆ "α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö (α╕¬α╕╕α╕ùα╕ÿα╕┤)"
+    - FIX 8: TikTok Info/Conversion ΓÇö add new campaign type row to Ad form and annual summary
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index ebe4bc9..8ce48ce 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -1752,7 +1752,7 @@
+                             stroke="currentColor" stroke-width="2">
+                             <path d="M12 20v-6M6 20V10M18 20V4" />
+                         </svg></div>
+-                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö</div>
++                    <div class="kpi-lbl">α╣Çα╕ëα╕Ñα╕╡α╣êα╕óα╕òα╣êα╕¡α╣Çα╕öα╕╖α╕¡α╕Ö (α╕¬α╕╕α╕ùα╕ÿα╕┤)</div>
+                     <div class="kpi-num" id="kAvg">ΓÇö</div>
+                     <div class="kpi-trend" id="tAvg"></div>
+                 </div>
+@@ -2026,23 +2026,32 @@ function onCompareYearChange() {
+             );
+         }
+ 
+-        // ΓöÇΓöÇ Ad Spend dedicated line chart (Annual) ΓöÇΓöÇ
++        // ΓöÇΓöÇ Ad Spend + Revenue grouped ColumnChart (Annual) ΓöÇΓöÇ
+         function renderAdSpendAnnual(monthly) {
+             const el = document.getElementById('adSpendAnnualBody');
+             if (!el) return;
+ 
+-            const totalAd = (monthly || []).reduce((s, m) => s + (m.adSpend || 0), 0);
+-            const yearLbl = YEAR ? 'α╕¢α╕╡ ' + YEAR : '';
++            const totalAd    = (monthly || []).reduce((s, m) => s + (m.adSpend  || 0), 0);
++            const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales  || 0), 0);
++            const yearLbl    = YEAR ? 'α╕¢α╕╡ ' + YEAR : '';
+ 
+-            const hasData = totalAd > 0;
++            const hasData = totalAd > 0 || totalSales > 0;
+ 
+-            // Header row: big number + year label (always shown)
+             el.innerHTML = `
+-                <div style="display:flex;align-items:baseline;gap:8px;padding:4px 0 8px;">
+-                    <div style="font-size:22px;font-weight:800;color:#f59e0b;">α╕┐${FMT(totalAd)}</div>
++                <div style="display:flex;align-items:center;gap:18px;padding:4px 0 8px;flex-wrap:wrap;">
++                    <div style="display:flex;align-items:baseline;gap:6px;">
++                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0;"></span>
++                        <span style="font-size:11px;color:#9ca3af;">α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓</span>
++                        <span style="font-size:18px;font-weight:800;color:#f59e0b;">α╕┐${FMT(totalAd)}</span>
++                    </div>
++                    <div style="display:flex;align-items:baseline;gap:6px;">
++                        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#7c3aed;flex-shrink:0;"></span>
++                        <span style="font-size:11px;color:#9ca3af;">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕êα╕▓α╕üα╣éα╕åα╕⌐α╕ôα╕▓</span>
++                        <span style="font-size:18px;font-weight:800;color:#7c3aed;">α╕┐${FMT(totalSales)}</span>
++                    </div>
+                     <div style="font-size:11px;color:#9ca3af;">${yearLbl}</div>
+                 </div>
+-                <div id="chartAdSpendInner" style="width:100%;height:160px;"></div>`;
++                <div id="chartAdSpendInner" style="width:100%;height:200px;"></div>`;
+ 
+             const chartEl = document.getElementById('chartAdSpendInner');
+             if (!chartEl) return;
+@@ -2056,26 +2065,32 @@ function onCompareYearChange() {
+             dt.addColumn('string', 'α╣Çα╕öα╕╖α╕¡α╕Ö');
+             dt.addColumn('number', 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓');
+             dt.addColumn({ type: 'string', role: 'annotation' });
++            dt.addColumn('number', 'α╕úα╕▓α╕óα╣äα╕öα╣ëα╕êα╕▓α╕üα╣éα╕åα╕⌐α╕ôα╕▓');
++            dt.addColumn({ type: 'string', role: 'annotation' });
+ 
+             (monthly || []).forEach(m => {
+-                const v = m.adSpend || 0;
+-                dt.addRow([m.label ? m.label.split(' ')[0] : m.month, v || null, v > 0 ? FMT(Math.round(v)) : null]);
++                const ad   = m.adSpend || 0;
++                const sale = m.adSales || 0;
++                dt.addRow([
++                    m.label ? m.label.split(' ')[0] : m.month,
++                    ad   || null, ad   > 0 ? FMT(Math.round(ad))   : null,
++                    sale || null, sale > 0 ? FMT(Math.round(sale)) : null,
++                ]);
+             });
+ 
+-            new google.visualization.LineChart(chartEl).draw(dt, {
++            new google.visualization.ColumnChart(chartEl).draw(dt, {
+                 backgroundColor: 'transparent',
+-                colors: ['#f59e0b'],
+-                legend: 'none',
+-                lineWidth: 2.5,
+-                pointSize: 5,
++                colors: ['#f59e0b', '#7c3aed'],
++                legend: { position: 'none' },
++                bar: { groupWidth: '70%' },
+                 hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
+                 vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+                          gridlines: { color: '#f3f4f6' }, minValue: 0 },
+                 chartArea: { left: 50, top: 20, right: 14, bottom: 28 },
+                 annotations: {
+                     alwaysOutside: true,
+-                    textStyle: { fontSize: 10, bold: true, color: '#92400e' },
+-                    stem: { length: 4 },
++                    textStyle: { fontSize: 9, bold: true },
++                    stem: { length: 3 },
+                 },
+                 tooltip: { textStyle: { fontSize: 11 } },
+             });
+
+commit 820f2d019843cf68d530ba7e4cf763632dd72fae
+Author: ThanadolSaelem <firstqpmasterchief@gmail.com>
+Date:   Fri May 8 00:49:03 2026 +0700
+
+    Add bundle decomposition for accurate product-level unit counts (#28)
+    
+    * fix: replace datalabels CDN plugin with inline canvas-draw plugin
+    
+    chartjs-plugin-datalabels does not register reliably in the GAS sandboxed
+    iframe. Replace with a self-contained afterDatasetsDraw plugin that draws
+    value labels directly onto the canvas ΓÇö guaranteed to work in all environments.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: month filter in TikTok + Lazada order parsers (multi-month export)
+    
+    TikTok (and hash-named Lazada) order files are often exported with a
+    60-90 day window, so a single file can contain orders from multiple months.
+    Without filtering, the parser assigned ALL rows to the first order's month,
+    inflating that month and losing data for the others.
+    
+    Add a per-row month guard:
+      if (rowMk && rowMk !== monthKey) continue;
+    
+    so only orders whose Created Time matches the detected monthKey are counted.
+    Users who need data for multiple months must import one file per month
+    (or re-export with the correct date filter on TikTok Seller Center).
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: platform filter for all dashboard cards (Donut, FeeBar, CategoryChart, Waterfall)
+    
+    - renderDonut/renderFeeBar now receive filtered `platforms` instead of always `allPlats`
+    - renderCatPlatformChart accepts platFilter param, shows only selected platform columns
+    - renderWaterfall builds per-platform data from byP when a platform is selected
+    - byPlatform in backend now includes seller_discount for accurate per-platform waterfall
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and value labels
+    
+    - Backend builds per-month per-platform ad spend trend (last 6 months)
+    - renderAdSpend replaced with Google Charts LineChart
+    - Responds to platform filter: shows selected platform's line only
+    - Annotation labels displayed above each data point
+    - Summary amount + month label shown above chart
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: ad spend line chart with platform filter and labels in Annual dashboard
+    
+    - Backend: annual monthly data now includes adSpendByPlat {tiktok,shopee,lazada}
+    - Annual dashboard: add platform filter dropdown for ad spend line
+    - renderMonthBar: respects platFilter, shows per-platform ad spend line
+    - Annotation labels (FMT) displayed above each ad spend point
+    - Line color follows platform color when a platform is selected
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * refactor: ad spend simplified to monthly total only, no platform filter
+    
+    Executive dashboard:
+    - Single month ΓåÆ shows total number for that month
+    - All months ΓåÆ line chart with every month on x-axis + labels above each point
+    
+    Annual dashboard:
+    - Removed platform filter dropdown and AD_PLATFORM logic
+    - renderMonthBar shows total ad spend line with value labels above points
+    - No per-platform breakdown
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: ad spend always shows line chart; Annual gets dedicated card
+    
+    Executive:
+    - renderAdSpend always renders line chart (trend) regardless of month filter
+    - Shows total above chart + line with annotations in all modes
+    
+    Annual:
+    - Remove ad spend line from renderMonthBar (revenue chart is now bars-only)
+    - Add dedicated 'α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö' card with standalone line chart + labels
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend always renders line chart with month highlight
+    
+    - Always show total amount header (even with no data)
+    - Show graceful empty message inside chart div instead of early return
+    - Highlight selected month's data point (larger size, darker amber)
+    - Display month label next to total amount
+    - ROAS shown inline with header
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count TikTok orders as transactions not units
+    
+    Change units from sum-of-qty to count-of-1-per-order, matching
+    the reference data definition where "α╕êα╕│α╕Öα╕ºα╕Ö" = α╕êα╕│α╕Öα╕ºα╕Ö order
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: count Shopee orders as transactions not units
+    
+    Same fix as TikTok ΓÇö units = 1 per order row, not sum of qty
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: executive ad spend trend includes months with ad spend but no revenue
+    
+    adTrend was built only from allMonths (revenue months). If a month
+    has ad spend but no revenue imported yet, it was missing from the
+    trend ΓåÆ chart showed empty despite total > 0.
+    
+    Now merges allMonths + all months in adSpendByYr so chart always
+    renders when data exists.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page sidebar matches Executive + navigation URL bug
+    
+    - Dashboard_Ad sidebar: logo image, α╕òα╕▒α╣ëα╕çα╕äα╣êα╕▓α╕úα╕░α╕Üα╕Ü, α╕úα╕░α╕Üα╕Üα╕êα╕▒α╕öα╣Çα╕üα╣çα╕Üα╣äα╕ƒα╕Ñα╣î
+      section, sidebar footer ΓÇö identical structure to Executive
+    - Load logo + drive folder links from config on init
+    - FL_Main.gs: cache exec URL in ScriptProperties on doGet so
+      FL_getWebAppUrl() works from google.script.run context where
+      ScriptApp.getService() may return null
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo shows FL fallback immediately, switches to image when loaded
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: add platform logos (Shopee/TikTok/Lazada) to Ad page sidebar nav
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * fix: Ad page logo + gradient styling matches Executive dashboard
+    
+    - Embed FirstLove JPEG logo directly in HTML (same as Executive)
+    - Card hover lift effect + entrance animation
+    - Card header icon uses purple gradient (not flat fill)
+    - Body background uses --bg var (consistent with Executive)
+    - Add --sh-sm, --sh-lg, --lazada CSS variables
+    - Sidebar uses CSS vars for gradient (not hardcoded hex)
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: Ad page nav active state + heading match Executive dashboard
+    
+    - Active nav item: rounded right corner, inset glow shadow, brighter border (#c4b5fd)
+    - Nav hover: translateX(5px) slide + SVG icon scale(1.15)
+    - Page heading: gradient text dark-navyΓåÆpurple, italic, weight 900
+    - Subtitle: muted purple instead of gray
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * style: replace Ad page sidebar with exact Executive sidebar HTML
+    
+    Copy full sidebar (logo, nav items, platform logos) from Executive,
+    adapt only: active nav ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, brand-sub ΓåÆ AD PERFORMANCE,
+    version text ΓåÆ α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓, add id="logoMark" for config reload
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Ad page ΓÇö "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" year option + ROAS point labels
+    
+    - yearSelect: add "α╕ùα╕▒α╣ëα╕çα╕½α╕íα╕ö" (empty string) option at top; backend
+      FL_getAdSpendDetailAnnual('') returns all months across all years
+    - ROAS chart: roasLabelPlugin draws value above every point;
+      "ROAS α╕úα╕ºα╕í" in bold dark-purple, platform lines in lighter matching color
+    - layout.padding.top:24 added to ROAS chart to give labels room
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * feat: Annual dashboard ΓÇö ad spend card shows total + year, rename to α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    
+    - Card title: α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓α╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓
+    - Header row: α╕┐{total} α╕¢α╕╡ YYYY displayed above trend line (same style as Executive)
+    - Empty state message updated to reference α╕éα╣ëα╕¡α╕íα╕╣α╕Ñα╣éα╕åα╕⌐α╕ôα╕▓ page
+    - Chart renders in inner div; outer div height set to min-height
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Move α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ card to second position in Annual dashboard grid
+    
+    Reorders cards so α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ appears immediately after α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö
+    for better visual flow when reviewing annual ad performance alongside revenue.
+    
+    New order: α╕áα╕▓α╕₧α╕úα╕ºα╕íα╕úα╕▓α╕óα╣äα╕öα╣ëα╕úα╕▓α╕óα╣Çα╕öα╕╖α╕¡α╕Ö ΓåÆ α╕äα╣êα╕▓α╣éα╕åα╕⌐α╕ôα╕▓ ΓåÆ α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í ΓåÆ Heatmap ΓåÆ Product Lifecycle
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    * Add bundle decomposition for accurate product-level unit counts
+    
+    Previously, bundle SKUs (e.g. Bundle_Gluta2+VitC1) were categorised as 'α╣Çα╕ïα╕ò'
+    and excluded from the α╕üα╕Ñα╕╣α╕òα╣ëα╕▓/α╕ºα╕┤α╕òα╕ïα╕╡/α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü category charts. Standalone
+    packs like GlutaX9-2 were counted as 1 unit instead of 2 physical jars.
+    
+    Changes:
+    - FL_Config.gs: Add FL_BUNDLE_COMPOSITION mapping bundles to component counts
+    - FL_XmlParser.gs: Add FL_getComponentData() ΓÇö decomposes any SKU into
+      [{category, units}] using the composition map (bundles) or regex on the
+      SKU name suffix (standalone packs, extensible to future SKUs)
+    - FL_Main.gs: Fix unitsByCategoryPlatform (Executive dashboard) to call
+      FL_getComponentData instead of filtering out 'α╣Çα╕ïα╕ò'; add componentsByCategory
+      field to Annual dashboard data response
+    - Dashboard_Annual.html: Wire up renderSkuBar to new componentsByCategory
+      data (was orphaned), add chartSkuBar element inside the platform card,
+      fix function signature to accept pre-computed category map directly
+    
+    Revenue figures are intentionally unchanged ΓÇö no per-item price data exists
+    to split bundle revenue accurately.
+    
+    https://claude.ai/code/session_019mHMqkguz51EMdcXd3iih3
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+diff --git a/Dashboard_Annual.html b/Dashboard_Annual.html
+index 9d3da4e..ebe4bc9 100644
+--- a/Dashboard_Annual.html
++++ b/Dashboard_Annual.html
+@@ -1788,7 +1788,7 @@
+                     </div>
+                 </div>
+ 
+-                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie -->
++                <!-- Platform Revenue Breakdown (Stacked) + Fee Pie + Category Units -->
+                 <div class="card">
+                     <div class="card-head">
+                         <span class="card-ttl">α╕úα╕▓α╕óα╣äα╕öα╣ëα╕òα╕▓α╕íα╣üα╕₧α╕Ñα╕òα╕ƒα╕¡α╕úα╣îα╕í & α╕¬α╕▒α╕öα╕¬α╣êα╕ºα╕Öα╕äα╣êα╕▓α╕ÿα╕úα╕úα╕íα╣Çα╕Öα╕╡α╕óα╕í</span>
+@@ -1805,6 +1805,10 @@
+                                 <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
+                             </div>
+                         </div>
++                        <div style="margin-top:20px;border-top:1px solid var(--purple-100);padding-top:14px;">
++                            <div class="pair-lbl">α╕êα╕│α╕Öα╕ºα╕Öα╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕çα╕òα╕▓α╕íα╕½α╕íα╕ºα╕öα╕¬α╕┤α╕Öα╕äα╣ëα╕▓ (α╕úα╕ºα╕í bundle)</div>
++                            <div id="chartSkuBar" style="height:220px;"></div>
++                        </div>
+                     </div>
+                 </div>
+ 
+@@ -2016,6 +2020,10 @@ function onCompareYearChange() {
+             renderHeatmap(PRIMARY_DATA.monthly);
+             renderAdSpendAnnual(PRIMARY_DATA.monthly);
+             renderQuadrant(PRIMARY_DATA.quadrant || []);
++            renderSkuBar(
++                PRIMARY_DATA.componentsByCategory || {},
++                (IS_COMP_MODE && COMPARE_DATA) ? (COMPARE_DATA.componentsByCategory || {}) : null
++            );
+         }
+ 
+         // ΓöÇΓöÇ Ad Spend dedicated line chart (Annual) ΓöÇΓöÇ
+@@ -2285,17 +2293,12 @@ function onCompareYearChange() {
+             }).join('');
+         }
+ 
+-        // REQ-8-2: BarChart ΓåÆ ColumnChart (vertical) + always-on annotations (REQ-07)
+-        function renderSkuBar(pSku, cSku) {
++        // α╕êα╕│α╕Öα╕ºα╕Öα╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕çα╕òα╕▓α╕íα╕½α╕íα╕ºα╕öα╕¬α╕┤α╕Öα╕äα╣ëα╕▓ ΓÇö pCat/cCat = componentsByCategory from backend
++        function renderSkuBar(pCat, cCat) {
+             const el = document.getElementById('chartSkuBar');
+-            // Sum units per category (α╣Çα╕₧α╕úα╕▓α╕░ pSku α╕äα╕╖α╕¡ Top10 SKUs α╕êα╕╢α╕çα╕òα╣ëα╕¡α╕ç group α╣Çα╕¡α╕ç)
+-            const sumByCat = (arr) => {
+-                const m = {};
+-                (arr || []).forEach(x => { m[x.category] = (m[x.category] || 0) + (x.units || 0); });
+-                return m;
+-            };
+-            const pCat = sumByCat(pSku);
+-            const cCat = cSku ? sumByCat(cSku) : null;
++            if (!el) return;
++            // pCat = { 'α╕üα╕Ñα╕╣α╕òα╣ëα╕▓': { units: N }, 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡': { units: N }, ... }
++            const categories = ['α╕üα╕Ñα╕╣α╕òα╣ëα╕▓', 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡', 'α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü'];
+ 
+             const dt = new google.visualization.DataTable();
+             dt.addColumn('string', 'Category');
+@@ -2306,20 +2309,20 @@ function onCompareYearChange() {
+                 dt.addColumn({ type: 'string', role: 'annotation' });
+             }
+ 
+-            const categories = ['α╕üα╕Ñα╕╣α╕òα╣ëα╕▓', 'α╕ºα╕┤α╕òα╕▓α╕íα╕┤α╕Öα╕ïα╕╡', 'α╣éα╕¢α╕úα╣äα╕Üα╣éα╕¡α╕òα╕┤α╕ü'];
+             categories.forEach(cat => {
+-                const v1 = pCat[cat] || 0;
++                const v1 = ((pCat || {})[cat] || {}).units || 0;
+                 const row = [cat, v1, FMT(v1)];
+                 if (cCat) {
+-                    const v2 = cCat[cat] || 0;
++                    const v2 = ((cCat || {})[cat] || {}).units || 0;
+                     row.push(v2, FMT(v2));
+                 }
+                 dt.addRow(row);
+             });
+ 
+-            // Calculate yMax so annotations always have headroom above the tallest bar.
+-            // Without this, Google Charts clips annotations inside tall bars.
+-            const allVals = categories.flatMap(cat => cCat ? [pCat[cat] || 0, cCat[cat] || 0] : [pCat[cat] || 0]);
++            const allVals = categories.flatMap(cat =>
++                cCat ? [((pCat||{})[cat]||{}).units||0, ((cCat||{})[cat]||{}).units||0]
++                      : [((pCat||{})[cat]||{}).units||0]
++            );
+             const yMax = Math.ceil(Math.max(...allVals) * 1.3) || 10;
+ 
+             const options = {
+@@ -2328,7 +2331,7 @@ function onCompareYearChange() {
+                 chartArea: { left: 50, top: 32, right: 14, bottom: 40 },
+                 legend: cCat ? { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } } : 'none',
+                 hAxis: { textStyle: { color: '#1e1b3a', fontSize: 11, bold: true }, gridlines: { count: 0 } },
+-                vAxis: { title: 'Total Units Sold', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
++                vAxis: { title: 'α╕üα╕úα╕░α╕¢α╕╕α╕ü/α╕éα╕ºα╕öα╕êα╕úα╕┤α╕ç', titleTextStyle: { fontSize: 11, italic: false, color: '#6b7280' }, textStyle: { color: '#9ca3af', fontSize: 10 }, format: 'short', gridlines: { color: '#f3e8ff' }, viewWindow: { min: 0, max: yMax } },
+                 bar: { groupWidth: '60%' },
+                 annotations: { alwaysOutside: true, textStyle: { fontSize: 11, color: '#1e1b3a', bold: true }, stem: { length: 4 } },
+                 tooltip: { textStyle: { fontSize: 11 } },

@@ -480,6 +480,9 @@
         }
 
         .card-head {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             padding: 12px 16px;
             border-bottom: 1px solid rgba(139, 92, 246, .1);
             background: linear-gradient(90deg, #fdfcff 0%, #f8f5ff 100%);
@@ -489,6 +492,7 @@
             font-size: 13px;
             font-weight: 700;
             color: var(--purple-900);
+            flex: 1;
         }
 
         .card-body {
@@ -1075,12 +1079,16 @@
         }
 
         .card-head {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
             background: linear-gradient(90deg, #fefcff 0%, #f8f4ff 100%) !important;
             border-bottom: 1px solid rgba(139, 92, 246, .08) !important;
             padding: 14px 18px !important;
         }
 
         .card-ttl {
+            flex: 1 !important;
             font-size: 13.5px !important;
             font-weight: 800 !important;
             letter-spacing: .2px !important;
@@ -1604,6 +1612,8 @@
             .ov-card {
                 padding: 28px 20px !important;
             }
+        }
+
         /* ── fee-sku-grid: Fee Pie + SKU Bar ── */
         .fee-sku-grid {
             display: grid;
@@ -1618,47 +1628,34 @@
             }
         }
 
-        /* ── card-head: flex for tip icon ── */
-        .card-head {
-            display: flex !important;
-            align-items: center !important;
-            gap: 6px !important;
-        }
-
-        .card-ttl {
-            flex: 1 !important;
-        }
-
-        /* ── Tooltip .tip / .tt ── */
+        /* ── Tooltip ── */
         .tip {
             cursor: help;
-            color: rgba(139, 92, 246, .45);
-            font-size: 12px;
+            color: var(--text-light);
+            font-size: 11px;
             flex-shrink: 0;
             transition: color .2s;
-            line-height: 1;
         }
 
         .tip:hover {
-            color: #7c3aed;
+            color: var(--brand);
         }
 
         .tt {
             position: fixed;
-            background: rgba(30, 0, 56, .93);
+            background: rgba(30, 27, 58, .92);
             color: #fff;
-            padding: 7px 12px;
-            border-radius: 10px;
-            font-size: 11.5px;
-            max-width: 260px;
-            line-height: 1.55;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            max-width: 220px;
+            line-height: 1.5;
             pointer-events: none;
-            z-index: 99999;
+            z-index: 9999;
             opacity: 0;
-            transform: translateY(-6px);
+            transform: translateY(-5px);
             transition: opacity .15s, transform .15s;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, .22);
-            font-family: inherit;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
         }
 
         .tt.show {
@@ -1699,7 +1696,8 @@
             <a href="#" class="nav-item" onclick="navTo('ad');return false"><span class="nav-icon"><svg width="14"
                         height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                     </svg></span>ข้อมูลโฆษณา</a>
             <div class="nav-label">ระบบ</div>
             <a href="#" class="nav-item" onclick="navTo('import');return false"><span class="nav-icon"><svg width="14"
@@ -1776,7 +1774,7 @@
                         <option value="">(ไม่มี)</option>
                     </select>
 
-<button class="btn-sm" onclick="initLoad()">↻ รีเฟรช</button>
+                    <button class="btn-sm" onclick="initLoad()">↻ รีเฟรช</button>
                     <button class="btn-sm" onclick="downloadDebugData()">⬇️ โหลดข้อมูล Debug</button>
                 </div>
             </div>
@@ -1823,7 +1821,8 @@
                 <div class="card">
                     <div class="card-head">
                         <span class="card-ttl">ภาพรวมรายได้สุทธิ</span>
-                        <span class="tip" data-tip="รายได้สุทธิแยกตามแพลตฟอร์ม (Shopee / TikTok / Lazada) รายเดือน และ Contribution Margin Ranking Top 10 สินค้า">ⓘ</span>
+                        <span class="tip"
+                            data-tip="รายได้สุทธิแยกตามแพลตฟอร์ม (Shopee / TikTok / Lazada) รายเดือน และ Contribution Margin Ranking Top 10 สินค้า">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 13px;">
                         <div class="chart-pair-equal">
@@ -1854,14 +1853,17 @@
                 <div class="card">
                     <div class="card-head">
                         <span class="card-ttl">สัดส่วนค่าธรรมเนียมแพลตฟอร์ม & จำนวนสินค้า</span>
-                        <span class="tip" data-tip="สัดส่วนค่าธรรมเนียมที่แต่ละแพลตฟอร์มหัก และจำนวนกระปุก/ขวดจริงแยกตามหมวดสินค้า (รวม bundle)">ⓘ</span>
+                        <span class="tip"
+                            data-tip="สัดส่วนค่าธรรมเนียมที่แต่ละแพลตฟอร์มหัก และจำนวนกระปุก/ขวดจริงแยกตามหมวดสินค้า (รวม bundle)">ⓘ</span>
                     </div>
                     <div class="card-body" style="padding:8px 13px 13px;">
                         <div class="fee-sku-grid">
                             <div class="fee-sku-left">
                                 <div class="pair-lbl">สัดส่วนค่าธรรมเนียม (ตามรายได้รวม)</div>
                                 <div id="chartFeePie" style="height:220px;"></div>
-                                <div id="platLegend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;"></div>
+                                <div id="platLegend"
+                                    style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px;">
+                                </div>
                             </div>
                             <div class="fee-sku-right">
                                 <div class="pair-lbl">จำนวนกระปุก/ขวดจริงตามหมวดสินค้า (รวม bundle)</div>
@@ -1875,7 +1877,8 @@
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
                         <span class="card-ttl">Heatmap: รายได้สุทธิตามเดือน × แพลตฟอร์ม</span>
-                        <span class="tip" data-tip="ตารางสีแสดงความเข้มของรายได้สุทธิ (ยอดโอนจริง) สีเข้มขึ้น = ยอดสูงขึ้น ช่วยมองเห็น pattern รายได้แต่ละเดือน">ⓘ</span>
+                        <span class="tip"
+                            data-tip="ตารางสีแสดงความเข้มของรายได้สุทธิ (ยอดโอนจริง) สีเข้มขึ้น = ยอดสูงขึ้น ช่วยมองเห็น pattern รายได้แต่ละเดือน">ⓘ</span>
                     </div>
                     <div class="card-body">
                         <div id="chartHeatmap" style="padding:6px 2px;"></div>
@@ -1886,7 +1889,8 @@
                 <div class="card" style="margin-top:11px;">
                     <div class="card-head">
                         <span class="card-ttl">Product Lifecycle — จำนวน × การเติบโต %</span>
-                        <span class="tip" data-tip="Bubble chart: แกน X = จำนวนชิ้นขาย, แกน Y = % การเติบโต vs ปีก่อน, ขนาดฟอง = ยอดรายได้ (ราคาขายหักค่าธรรมเนียมแพลตฟอร์ม)">ⓘ</span>
+                        <span class="tip"
+                            data-tip="Bubble chart: แกน X = จำนวนชิ้นขาย, แกน Y = % การเติบโต vs ปีก่อน, ขนาดฟอง = ยอดรายได้ (ราคาขายหักค่าธรรมเนียมแพลตฟอร์ม)">ⓘ</span>
                     </div>
                     <div class="card-body">
                         <div id="chartQuadrant" style="height:400px;"></div>
@@ -1927,26 +1931,24 @@
 
     <script>
         // ══════════════════════════════
-        //  TOOLTIP ENGINE
+        //  TOOLTIP
         // ══════════════════════════════
-        ;(function () {
+        ; (function () {
             const box = document.getElementById('ttBox');
-            if (!box) return;
-            document.addEventListener('mouseover', function (e) {
+            document.addEventListener('mouseover', e => {
                 const t = e.target.closest('[data-tip]');
                 if (t) { box.textContent = t.dataset.tip; box.classList.add('show'); }
             });
-            document.addEventListener('mouseout', function (e) {
+            document.addEventListener('mouseout', e => {
                 if (e.target.closest('[data-tip]')) box.classList.remove('show');
             });
-            document.addEventListener('mousemove', function (e) {
+            document.addEventListener('mousemove', e => {
                 if (!box.classList.contains('show')) return;
-                var l = e.clientX - box.offsetWidth / 2;
-                var t = e.clientY - box.offsetHeight - 12;
+                let l = e.clientX - box.offsetWidth / 2;
+                let t = e.clientY - box.offsetHeight - 12;
                 l = Math.max(6, Math.min(l, innerWidth - box.offsetWidth - 6));
                 if (t < 6) t = e.clientY + 14;
-                box.style.left = l + 'px';
-                box.style.top  = t + 'px';
+                box.style.left = l + 'px'; box.style.top = t + 'px';
             });
         })();
     </script>
@@ -2041,7 +2043,7 @@
             fetchPrimary();
         }
 
-function onCompareYearChange() {
+        function onCompareYearChange() {
             COMP_YEAR = document.getElementById('selCompareYear').value;
             if (COMP_YEAR) {
                 IS_COMP_MODE = true;
@@ -2120,9 +2122,9 @@ function onCompareYearChange() {
             const el = document.getElementById('adSpendAnnualBody');
             if (!el) return;
 
-            const totalAd    = (monthly || []).reduce((s, m) => s + (m.adSpend  || 0), 0);
-            const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales  || 0), 0);
-            const yearLbl    = YEAR ? 'ปี ' + YEAR : '';
+            const totalAd = (monthly || []).reduce((s, m) => s + (m.adSpend || 0), 0);
+            const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales || 0), 0);
+            const yearLbl = YEAR ? 'ปี ' + YEAR : '';
 
             const hasData = totalAd > 0 || totalSales > 0;
 
@@ -2158,11 +2160,11 @@ function onCompareYearChange() {
             dt.addColumn({ type: 'string', role: 'annotation' });
 
             (monthly || []).forEach(m => {
-                const ad   = m.adSpend || 0;
+                const ad = m.adSpend || 0;
                 const sale = m.adSales || 0;
                 dt.addRow([
                     m.label ? m.label.split(' ')[0] : m.month,
-                    ad   || null, ad   > 0 ? FMT(Math.round(ad))   : null,
+                    ad || null, ad > 0 ? FMT(Math.round(ad)) : null,
                     sale || null, sale > 0 ? FMT(Math.round(sale)) : null,
                 ]);
             });
@@ -2173,8 +2175,10 @@ function onCompareYearChange() {
                 legend: { position: 'none' },
                 bar: { groupWidth: '70%' },
                 hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
-                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
-                         gridlines: { color: '#f3f4f6' }, minValue: 0 },
+                vAxis: {
+                    textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+                    gridlines: { color: '#f3f4f6' }, minValue: 0
+                },
                 chartArea: { left: 50, top: 20, right: 14, bottom: 28 },
                 annotations: {
                     alwaysOutside: true,
@@ -2191,7 +2195,7 @@ function onCompareYearChange() {
             if (!el) return;
             if (!monthly || !monthly.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-light)">ไม่มีข้อมูล</div>'; return; }
             const platforms = ['shopee', 'tiktok', 'lazada'];
-            const ordField  = { shopee: 'orderShopee', tiktok: 'orderTiktok', lazada: 'orderLazada' };
+            const ordField = { shopee: 'orderShopee', tiktok: 'orderTiktok', lazada: 'orderLazada' };
             let max = 0;
             monthly.forEach(m => platforms.forEach(p => { if ((m[ordField[p]] || 0) > max) max = m[ordField[p]]; }));
             const cell = (v) => {
@@ -2353,8 +2357,8 @@ function onCompareYearChange() {
         function renderFeePie(fees) {
             const el = document.getElementById('chartFeePie');
             // fees[p] is now { amount, rate } — support both old (number) and new (object) shape
-            const getAmt  = (p) => { const v = fees[p]; return typeof v === 'object' ? (v.amount || 0) : (v || 0); };
-            const getRate = (p) => { const v = fees[p]; return typeof v === 'object' ? (v.rate  || 0) : 0; };
+            const getAmt = (p) => { const v = fees[p]; return typeof v === 'object' ? (v.amount || 0) : (v || 0); };
+            const getRate = (p) => { const v = fees[p]; return typeof v === 'object' ? (v.rate || 0) : 0; };
 
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Platform');
@@ -2394,8 +2398,8 @@ function onCompareYearChange() {
             const leg = document.getElementById('platLegend');
             const platKeys = { 'Shopee': 'shopee', 'TikTok': 'tiktok', 'Lazada': 'lazada' };
             leg.innerHTML = rows.map(r => {
-                const pct  = total ? Math.round(r[1] / total * 100) : 0;
-                const key  = platKeys[r[0]] || r[0].toLowerCase();
+                const pct = total ? Math.round(r[1] / total * 100) : 0;
+                const key = platKeys[r[0]] || r[0].toLowerCase();
                 const rate = getRate(key);
                 return `
                 <div style="display:flex;align-items:center;gap:5px;">
@@ -2434,8 +2438,8 @@ function onCompareYearChange() {
             });
 
             const allVals = categories.flatMap(cat =>
-                cCat ? [((pCat||{})[cat]||{}).units||0, ((cCat||{})[cat]||{}).units||0]
-                      : [((pCat||{})[cat]||{}).units||0]
+                cCat ? [((pCat || {})[cat] || {}).units || 0, ((cCat || {})[cat] || {}).units || 0]
+                    : [((pCat || {})[cat] || {}).units || 0]
             );
             const yMax = Math.ceil(Math.max(...allVals) * 1.3) || 10;
 
@@ -2495,67 +2499,145 @@ function onCompareYearChange() {
             new google.visualization.ColumnChart(el).draw(dt, options);
         }
 
+        // ─────────────────────────────────────────────────────────────────────
         // Stacked bar — net revenue by platform per month
+        // NOW WITH: Inline label for large segments & callout for small ones
+        // ─────────────────────────────────────────────────────────────────────
         function renderPlatformBar(monthly) {
             const el = document.getElementById('chartPlatformBar');
             if (!el) return;
 
-            // ใช้ *_net fields ถ้ามี, fallback ไป order* fields
+            // Same field-resolution logic as before (net preferred, order* fallback)
             const getShopee = m => m.shopee_net != null ? (m.shopee_net || 0) : (m.orderShopee || 0);
             const getTiktok = m => m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0);
             const getLazada = m => m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0);
 
-            const filled = (monthly || []).filter(m => getShopee(m) || getTiktok(m) || getLazada(m));
-            if (!filled.length) {
+            const data = (monthly || []).map(m => ({
+                m: m.label ? m.label.substring(0, 3) : (m.month || ''),
+                shopee: getShopee(m),
+                tiktok: getTiktok(m),
+                lazada: getLazada(m),
+            }));
+            const totalOf = d => (d.shopee || 0) + (d.tiktok || 0) + (d.lazada || 0);
+
+            if (!data.some(d => totalOf(d) > 0)) {
                 el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูล</div>';
                 return;
             }
 
-            const dt = new google.visualization.DataTable();
-            dt.addColumn('string', 'เดือน');
-            dt.addColumn('number', 'Shopee');
-            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
-            dt.addColumn('number', 'TikTok');
-            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
-            dt.addColumn('number', 'Lazada');
-            dt.addColumn({ type: 'string', role: 'tooltip', p: { html: true } });
+            // ── Layout constants ────────────────────────────────────────────
+            const PORDER = ['shopee', 'tiktok', 'lazada']; // bottom → top
+            const W = 1040, H = 380;
+            const PAD = { l: 56, r: 28, t: 36, b: 30 };
+            const innerW = W - PAD.l - PAD.r;
+            const innerH = H - PAD.t - PAD.b;
+            const colW = innerW / data.length;
 
-            const allVals = [];
-            monthly.forEach(m => {
-                const s = getShopee(m), t = getTiktok(m), l = getLazada(m);
-                allVals.push(s + t + l);
-                const tip = (name, val) =>
-                    `<div style="padding:8px 12px;font-size:12px;"><b>${name}</b><br>รายได้สุทธิ: <b>฿${FMT(val)}</b></div>`;
-                dt.addRow([
-                    m.label ? m.label.substring(0, 3) : m.month,
-                    s || null, tip('Shopee', s),
-                    t || null, tip('TikTok', t),
-                    l || null, tip('Lazada', l),
-                ]);
+            // Tweakables (final values from the design canvas)
+            const BAR_RATIO = 0.36; // bar width as fraction of column width
+            const INLINE_MIN_H = 30;   // px — segment must be at least this tall to inline-label
+            const CALLOUT_GAP = 15;   // px — min vertical gap between two callout labels
+
+            const barW = colW * BAR_RATIO;
+            const yMaxRaw = Math.max(...data.map(totalOf), 0) * 1.2;
+            const yMax = niceMax(yMaxRaw) || 10;
+            const yToPx = v => PAD.t + innerH - (v / yMax) * innerH;
+
+            // Y axis ticks: 4 nice levels
+            const ticks = niceTicks(yMax, 4);
+
+            // ── Build SVG ───────────────────────────────────────────────────
+            let svg = '';
+            svg += `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">`;
+
+            // Y axis title
+            svg += `<text x="14" y="${PAD.t + innerH / 2}" transform="rotate(-90 14 ${PAD.t + innerH / 2})" text-anchor="middle" font-size="10" fill="#9ca3af">รายได้สุทธิ (฿)</text>`;
+
+            // Gridlines + Y labels
+            ticks.forEach(t => {
+                const y = yToPx(t);
+                svg += `<line x1="${PAD.l}" x2="${W - PAD.r}" y1="${y}" y2="${y}" stroke="#f3e8ff" stroke-width="1"/>`;
+                svg += `<text x="${PAD.l - 8}" y="${y + 3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${t === 0 ? '0' : FMTK(t)}</text>`;
             });
 
-            const yMax = Math.ceil(Math.max(...allVals, 0) * 1.2) || 10;
-
-            new google.visualization.ColumnChart(el).draw(dt, {
-                isStacked: true,
-                colors: [PCOL.shopee, PCOL.tiktok, PCOL.lazada],
-                backgroundColor: 'transparent',
-                legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } },
-                bar: { groupWidth: '65%' },
-                hAxis: { textStyle: { fontSize: 10, color: '#9ca3af' }, gridlines: { count: 0 } },
-                vAxis: {
-                    title: 'รายได้สุทธิ (฿)',
-                    titleTextStyle: { fontSize: 10, italic: false, color: '#9ca3af' },
-                    textStyle: { fontSize: 9, color: '#9ca3af' },
-                    format: 'short',
-                    gridlines: { color: '#f3e8ff' },
-                    minValue: 0,
-                    viewWindow: { min: 0, max: yMax }
-                },
-                chartArea: { left: 54, top: 36, right: 14, bottom: 32, height: '66%' },
-                tooltip: { isHtml: true, textStyle: { fontSize: 11 } },
+            // X axis labels
+            data.forEach((d, i) => {
+                const cx = PAD.l + colW * (i + 0.5);
+                svg += `<text x="${cx}" y="${PAD.t + innerH + 18}" text-anchor="middle" font-size="10" fill="#9ca3af">${escapeXML(d.m)}</text>`;
             });
+
+            // Bars + labels
+            data.forEach((d, i) => {
+                const total = totalOf(d);
+                if (!total) return;
+                const x = PAD.l + colW * i + (colW - barW) / 2;
+                const baseY = yToPx(0);
+
+                // Build segments bottom → top
+                let yCursor = baseY;
+                const segs = [];
+                PORDER.forEach(p => {
+                    const v = d[p] || 0;
+                    if (!v) return;
+                    const h = (v / yMax) * innerH;
+                    yCursor -= h;
+                    segs.push({ p, v, y: yCursor, h, midY: yCursor + h / 2 });
+                });
+
+                // Render segment rects
+                segs.forEach(s => {
+                    svg += `<rect x="${x}" y="${s.y}" width="${barW}" height="${s.h}" fill="${PCOL[s.p]}"/>`;
+                });
+
+                // Inline labels for segments tall enough
+                const inline = segs.filter(s => s.h >= INLINE_MIN_H);
+                const callouts = segs.filter(s => s.h < INLINE_MIN_H);
+
+                inline.forEach(s => {
+                    svg += `<text x="${x + barW / 2}" y="${s.y + s.h / 2 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${FMTK(s.v)}</text>`;
+                });
+
+                // Callouts in right gutter — stack vertically with min gap, no overlap with next column's bar
+                const gutterStart = x + barW + 3;
+                const sorted = callouts.slice().sort((a, b) => a.midY - b.midY);
+                let lastY = -Infinity;
+                sorted.forEach(s => {
+                    let labelY = s.midY;
+                    if (labelY - lastY < CALLOUT_GAP) labelY = lastY + CALLOUT_GAP;
+                    labelY = Math.min(labelY, baseY + 12);
+                    lastY = labelY;
+                    // connector
+                    svg += `<line x1="${x + barW}" y1="${s.midY}" x2="${gutterStart}" y2="${labelY}" stroke="${PCOL[s.p]}" stroke-width="1" opacity="0.5"/>`;
+                    // dot
+                    svg += `<circle cx="${gutterStart + 2}" cy="${labelY}" r="2" fill="${PCOL[s.p]}"/>`;
+                    // text
+                    svg += `<text x="${gutterStart + 6}" y="${labelY + 3.5}" font-size="10" font-weight="700" fill="${PCOL[s.p]}">${FMTK(s.v)}</text>`;
+                });
+            });
+
+            svg += '</svg>';
+            el.innerHTML = svg;
+
+            // ── helpers ─────────────────────────────────────────────────────
+            function niceMax(v) {
+                if (v <= 0) return 0;
+                const pow = Math.pow(10, Math.floor(Math.log10(v)));
+                const n = v / pow;
+                const nice = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+                return nice * pow;
+            }
+            function niceTicks(max, count) {
+                if (max <= 0) return [0];
+                const step = max / count;
+                const out = [];
+                for (let i = 0; i <= count; i++) out.push(Math.round(step * i));
+                return out;
+            }
+            function escapeXML(s) {
+                return String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
+            }
         }
+
 
         // Stacked revenue by platform per month (replaces units bar)
         function renderUnitsBar(monthly) {
@@ -2667,10 +2749,10 @@ function onCompareYearChange() {
                         badge.style.display = 'none';
                         if (dot) dot.style.display = 'none';
                     }
-                })
-                .withFailureHandler(function (e) { console.error('FL_getNewProducts error:', e); })
+                }).withFailureHandler(function (e) { console.error('FL_getNewProducts error:', e) })
                 .FL_getNewProducts();
         }
+
 
         function openSkuModal() {
             var list = document.getElementById('skuModalList');

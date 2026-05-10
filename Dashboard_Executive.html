@@ -406,10 +406,19 @@
             gap: 11px;
             margin: 0;
         }
+
         @media (min-width: 1024px) {
-            [data-lg~="2column"] { grid-template-columns: repeat(2, 1fr); }
-            [data-lg~="3column"] { grid-template-columns: repeat(3, 1fr); }
-            .ad-card-col2 { grid-column: 1 / -1; }
+            [data-lg~="2column"] {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            [data-lg~="3column"] {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .ad-card-col2 {
+                grid-column: 1 / -1;
+            }
         }
 
         /* ── Cards ── */
@@ -419,7 +428,7 @@
             border: 1px solid var(--border);
             box-shadow: var(--sh-sm);
             overflow: hidden;
-            animation: cardIn .44s cubic-bezier(.2,.8,.2,1) both;
+            animation: cardIn .44s cubic-bezier(.2, .8, .2, 1) both;
             transition: transform .22s ease, box-shadow .22s ease;
         }
 
@@ -429,11 +438,20 @@
         }
 
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         .card-head {
             display: flex;
@@ -524,34 +542,44 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 1px 5px rgba(124,58,237,.07);
+            box-shadow: 0 1px 5px rgba(124, 58, 237, .07);
             border: 1px solid #f0edfb;
             margin-bottom: 10px;
         }
-        .metric-box:last-of-type { margin-bottom: 14px; }
+
+        .metric-box:last-of-type {
+            margin-bottom: 14px;
+        }
+
         .metric-box-lbl {
             font-size: 11px;
             color: var(--text-sub);
             margin-bottom: 5px;
             font-weight: 500;
         }
+
         .metric-box-val {
             font-size: 22px;
             font-weight: 800;
             line-height: 1;
             color: var(--text);
         }
+
         .metric-box-unit {
             font-size: 12px;
             color: var(--text-sub);
             font-weight: 500;
             margin-left: 3px;
         }
+
         .metric-box-net {
             background: var(--purple-50);
             border-color: #ddd6fe;
         }
-        .metric-box-net .metric-box-val { color: var(--purple-700); }
+
+        .metric-box-net .metric-box-val {
+            color: var(--purple-700);
+        }
 
         .badge {
             display: inline-flex;
@@ -657,9 +685,20 @@
             font-weight: 700;
         }
 
-        .pt-shopee { background: #fee2e2; color: #f97316; }
-        .pt-tiktok { background: #f3e8ff; color: #5b4a9e; }
-        .pt-lazada { background: #ccfbf1; color: #0d9488; }
+        .pt-shopee {
+            background: #fee2e2;
+            color: #f97316;
+        }
+
+        .pt-tiktok {
+            background: #f3e8ff;
+            color: #5b4a9e;
+        }
+
+        .pt-lazada {
+            background: #ccfbf1;
+            color: #0d9488;
+        }
 
         .plat-val-row {
             display: flex;
@@ -674,7 +713,7 @@
             justify-content: space-between;
             padding: 9px 12px;
             border-radius: 10px;
-            border: 1px solid rgba(139,92,246,.08);
+            border: 1px solid rgba(139, 92, 246, .08);
             background: linear-gradient(135deg, #faf8ff 0%, #f5f0ff 100%);
         }
 
@@ -882,7 +921,10 @@
         /* ── Loading ── */
         .overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100vw;
             height: 100vh;
             height: 100dvh;
@@ -1222,7 +1264,7 @@
 
         /* Topbar */
         .topbar {
-            background: linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(250,248,255,.96) 100%) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .98) 0%, rgba(250, 248, 255, .96) 100%) !important;
             border-bottom: 1px solid rgba(139, 92, 246, .1) !important;
             box-shadow: 0 2px 28px rgba(139, 92, 246, .09) !important;
         }
@@ -1249,7 +1291,7 @@
             border: 1px solid rgba(139, 92, 246, .1) !important;
             border-radius: 20px !important;
             box-shadow: 0 4px 30px rgba(139, 92, 246, .08), inset 0 1px 0 rgba(255, 255, 255, .95) !important;
-            transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1) !important;
+            transition: transform .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s cubic-bezier(.4, 0, .2, 1) !important;
             will-change: transform;
         }
 
@@ -1889,7 +1931,8 @@
             <a href="#" class="nav-item" onclick="navTo('ad');return false"><span class="nav-icon"><svg width="14"
                         height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                     </svg></span>ข้อมูลโฆษณา</a>
             <div class="nav-label">ระบบ</div>
             <a href="#" class="nav-item" onclick="navTo('import');return false"><span class="nav-icon"><svg width="14"
@@ -1979,7 +2022,9 @@
                             <option value="lazada">Lazada</option>
                         </select>
                         <button class="btn-sm" onclick="loadData(MONTH_KEY)">↻ รีเฟรช</button>
-                        <button class="btn-sm" onclick="downloadDebugData()" style="background-color:var(--card-bg);color:var(--text);border:1px solid #d1d5db;">⬇️ Debug</button>
+                        <button class="btn-sm" onclick="downloadDebugData()"
+                            style="background-color:var(--card-bg);color:var(--text);border:1px solid #d1d5db;">⬇️
+                            Debug</button>
                     </div>
                 </div>
             </div>
@@ -1994,31 +2039,37 @@
                     <div class="card">
                         <div class="card-head">
                             <span class="card-ttl">ภาพรวมรายเดือน</span>
-                            <span class="tip" data-tip="ยอดสรุปรายได้รวม ค่าธรรมเนียม และรายรับสุทธิของช่วงที่เลือก">ⓘ</span>
+                            <span class="tip"
+                                data-tip="ยอดสรุปรายได้รวม ค่าธรรมเนียม และรายรับสุทธิของช่วงที่เลือก">ⓘ</span>
                         </div>
                         <div class="card-body">
                             <div class="metric-box">
                                 <div>
                                     <div class="metric-box-lbl">ยอดขายรวม</div>
-                                    <div><span class="metric-box-val" id="kGross">—</span><span class="metric-box-unit">บาท</span></div>
+                                    <div><span class="metric-box-val" id="kGross">—</span><span
+                                            class="metric-box-unit">บาท</span></div>
                                 </div>
                                 <span class="badge b-neu" id="bGross" style="display:none"></span>
                             </div>
                             <div class="metric-box">
                                 <div>
                                     <div class="metric-box-lbl">ค่าธรรมเนียมรวม</div>
-                                    <div><span class="metric-box-val" id="kFees">—</span><span class="metric-box-unit">บาท</span></div>
+                                    <div><span class="metric-box-val" id="kFees">—</span><span
+                                            class="metric-box-unit">บาท</span></div>
                                 </div>
                             </div>
                             <div class="metric-box metric-box-net">
                                 <div>
                                     <div class="metric-box-lbl">รายรับจริง (Net)</div>
-                                    <div><span class="metric-box-val" id="kNet">—</span><span class="metric-box-unit">บาท</span></div>
+                                    <div><span class="metric-box-val" id="kNet">—</span><span
+                                            class="metric-box-unit">บาท</span></div>
                                 </div>
                                 <span class="badge b-neu" id="bNet" style="display:none"></span>
                             </div>
                             <div style="border-top:1px solid #e5e7eb;padding-top:10px;">
-                                <div style="font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.3px;margin-bottom:4px;">กระแสรายได้สุทธิ</div>
+                                <div
+                                    style="font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.3px;margin-bottom:4px;">
+                                    กระแสรายได้สุทธิ</div>
                                 <div id="chartWaterfall" style="height:180px;"></div>
                             </div>
                         </div>
@@ -2040,7 +2091,9 @@
                             <span class="badge b-tgt" id="tgtBadge" style="display:none"></span>
                             <div class="tgt-note" id="tgtNote"></div>
                             <div style="border-top:1px solid #e5e7eb;margin-top:14px;padding-top:10px;">
-                                <div style="font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.3px;margin-bottom:6px;">ยอดขายรายสินค้า (ชิ้นแยกตาม Platform)</div>
+                                <div
+                                    style="font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.3px;margin-bottom:6px;">
+                                    ยอดขายรายสินค้า (ชิ้นแยกตาม Platform)</div>
                                 <div id="chartCatPlatform" style="height:200px;"></div>
                             </div>
                         </div>
@@ -2050,10 +2103,12 @@
                     <div class="card ad-card-col2">
                         <div class="card-head">
                             <span class="card-ttl">ค่าโฆษณา</span>
-                            <span class="tip" data-tip="ค่าโฆษณารวมของช่วงที่เลือก กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา">ⓘ</span>
+                            <span class="tip"
+                                data-tip="ค่าโฆษณารวมของช่วงที่เลือก กรอกได้ที่หน้า ตั้งค่า → บันทึกค่าโฆษณา">ⓘ</span>
                         </div>
                         <div class="card-body" id="adSpendBody">
-                            <div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:13px;">กำลังโหลด...</div>
+                            <div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:13px;">
+                                กำลังโหลด...</div>
                         </div>
                     </div>
 
@@ -2080,7 +2135,8 @@
                                 </thead>
                                 <tbody id="topProdBody">
                                     <tr>
-                                        <td colspan="4" style="text-align:center;padding:14px;color:var(--text-light)">กำลังโหลด...</td>
+                                        <td colspan="4" style="text-align:center;padding:14px;color:var(--text-light)">
+                                            กำลังโหลด...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2091,21 +2147,28 @@
                     <div class="card">
                         <div class="card-head">
                             <span class="card-ttl">สัดส่วนยอดขาย & ค่า Platform Fee</span>
-                            <span class="tip" data-tip="ซ้าย: สัดส่วนยอดขายสุทธิแยกตามแพลตฟอร์ม | ขวา: ค่าธรรมเนียมแยกตาม Platform ของช่วงที่เลือก">ⓘ</span>
+                            <span class="tip"
+                                data-tip="ซ้าย: สัดส่วนยอดขายสุทธิแยกตามแพลตฟอร์ม | ขวา: ค่าธรรมเนียมแยกตาม Platform ของช่วงที่เลือก">ⓘ</span>
                         </div>
                         <div class="card-body" style="padding:8px 10px 10px;">
                             <div style="display:flex;gap:12px;align-items:flex-start;">
                                 <!-- Left: Donut -->
                                 <div style="flex:0 0 42%;min-width:0;">
-                                    <div style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">สัดส่วนยอดขาย</div>
+                                    <div
+                                        style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">
+                                        สัดส่วนยอดขาย</div>
                                     <div id="chartDonut" style="height:240px;"></div>
                                     <div class="plat-val-row" id="platValRow"></div>
                                 </div>
                                 <!-- Right: Fee Bar -->
                                 <div style="flex:1;min-width:0;">
-                                    <div style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">ค่า Platform Fee (แยกตาม Platform)</div>
+                                    <div
+                                        style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">
+                                        ค่า Platform Fee (แยกตาม Platform)</div>
                                     <div id="chartFeeBar" style="height:150px;"></div>
-                                    <div id="feeRateRow" style="display:flex;justify-content:space-around;margin-top:4px;padding:0 4px;"></div>
+                                    <div id="feeRateRow"
+                                        style="display:flex;justify-content:space-around;margin-top:4px;padding:0 4px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2151,7 +2214,8 @@
                     <div class="card">
                         <div class="card-head">
                             <span class="card-ttl">สถานะสต็อก</span>
-                            <span class="tip" data-tip="สินค้าคงเหลือ = SUM(stock_in) − SUM(units_sold ตั้งแต่ stock_in แรก) · บันทึก stock เข้าได้ที่หน้า Import">ⓘ</span>
+                            <span class="tip"
+                                data-tip="สินค้าคงเหลือ = SUM(stock_in) − SUM(units_sold ตั้งแต่ stock_in แรก) · บันทึก stock เข้าได้ที่หน้า Import">ⓘ</span>
                         </div>
                         <div class="card-body" id="stockBody" style="max-height:240px;overflow:auto;">
                             <div class="empty">
@@ -2359,12 +2423,12 @@
 
             // Section 1: KPIs
             document.getElementById('kGross').innerText = FMT(fGross);
-            document.getElementById('kFees').innerText  = FMT(fFees);
-            document.getElementById('kNet').innerText   = FMT(fNet);
+            document.getElementById('kFees').innerText = FMT(fFees);
+            document.getElementById('kNet').innerText = FMT(fNet);
 
             const isAllMode = DATA.isAllMode || MONTH_KEY === 'all';
             setMomBadge('bGross', (!isAllMode && plat === 'all') ? sum.momOrderRev : null);
-            setMomBadge('bNet',   (!isAllMode && plat === 'all') ? sum.momNet   : null);
+            setMomBadge('bNet', (!isAllMode && plat === 'all') ? sum.momNet : null);
 
             // Sec 5 — Revenue vs Target
             const lbl = isAllMode ? 'ทั้งหมด' : thLbl(MONTH_KEY);
@@ -2414,8 +2478,8 @@
             renderTopTable(topSkus);
             const filteredWaterfall = platFilter ? {
                 gross: byP[platFilter]?.orderRevenue || 0,
-                fees:  Math.abs(byP[platFilter]?.platform_fees || 0),
-                net:   byP[platFilter]?.transferred || 0,
+                fees: Math.abs(byP[platFilter]?.platform_fees || 0),
+                net: byP[platFilter]?.transferred || 0,
             } : DATA.waterfall;
             renderWaterfall(filteredWaterfall);
             renderStock(DATA.stockStatus, DATA.stockThreshold);
@@ -2429,9 +2493,9 @@
             if (!el) return;
             if (!wf || !wf.gross) { el.innerHTML = noData(200); return; }
             const stages = [
-                { label: 'ยอดขายรวม',    value: wf.gross,        color: '#7c3aed', isTotal: true },
+                { label: 'ยอดขายรวม', value: wf.gross, color: '#7c3aed', isTotal: true },
                 { label: '−ค่าธรรมเนียม', value: -(wf.fees || 0), color: '#f59e0b' },
-                { label: 'รายรับจริง',   value: wf.net,          color: '#10b981', isTotal: true },
+                { label: 'รายรับจริง', value: wf.net, color: '#10b981', isTotal: true },
             ];
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Stage');
@@ -2533,10 +2597,10 @@
             // Value legend rows — show all 3 platforms with feeRate
             if (vRow) {
                 vRow.innerHTML = platforms.map(p => {
-                    const v       = byP[p]?.orderRevenue || 0;
-                    const pct     = total ? Math.round(v / total * 100) : 0;
-                    const rate    = byP[p]?.feeRate ? Math.round(byP[p].feeRate * 10) / 10 : 0;
-                    const dim     = v > 0 ? '' : 'opacity:.45;';
+                    const v = byP[p]?.orderRevenue || 0;
+                    const pct = total ? Math.round(v / total * 100) : 0;
+                    const rate = byP[p]?.feeRate ? Math.round(byP[p].feeRate * 10) / 10 : 0;
+                    const dim = v > 0 ? '' : 'opacity:.45;';
                     return `
                     <div class="plat-val-item" style="${dim}">
                         <div class="plat-val-left">
@@ -2596,7 +2660,7 @@
         // ── Units by product — dynamic N-panel grid (REQ-01) ──
         // One panel per category; one line per individual SKU (not platform).
         // 'เซต' excluded. New SKUs auto-appear when data is imported.
-        const SKU_PALETTE = ['#7c3aed','#f97316','#10b981','#3b82f6','#ec4899','#eab308','#6366f1','#14b8a6','#f43f5e','#64748b'];
+        const SKU_PALETTE = ['#7c3aed', '#f97316', '#10b981', '#3b82f6', '#ec4899', '#eab308', '#6366f1', '#14b8a6', '#f43f5e', '#64748b'];
 
         // ── Grouped Chart: Category × Platform (current month) ──
         function renderCatPlatformChart(catPlat, platFilter) {
@@ -2609,40 +2673,120 @@
                 shownPlats.some(p => (data[c][p] || 0) > 0));
             if (!cats.length) { el.innerHTML = noData(200); return; }
 
-            const dt = new google.visualization.DataTable();
-            dt.addColumn('string', 'หมวด');
-            shownPlats.forEach(p => {
-                dt.addColumn('number', PLBL[p]);
-                dt.addColumn({ type: 'string', role: 'annotation' });
+            // ── Layout ──────────────────────────────────────────────────────
+            const W = 640, H = 200;
+            const PAD = { l: 38, r: 14, t: 30, b: 26 };
+            const innerW = W - PAD.l - PAD.r;
+            const innerH = H - PAD.t - PAD.b;
+            const colW = innerW / cats.length;
+
+            const N = shownPlats.length;
+            const GROUP_RATIO = 0.66;          // group occupies 66% of column
+            const BAR_GAP = 3;                 // px between bars in a group
+            const groupW = colW * GROUP_RATIO;
+            const barW = (groupW - BAR_GAP * (N - 1)) / N;
+
+            // Y axis — nice round max
+            const allVals = [];
+            cats.forEach(c => shownPlats.forEach(p => allVals.push(data[c][p] || 0)));
+            const yMaxRaw = Math.max(...allVals, 0) * 1.25;
+            const yMax = niceMax(yMaxRaw) || 10;
+            const yToPx = v => PAD.t + innerH - (v / yMax) * innerH;
+            const ticks = niceTicks(yMax, 2);  // 0 / mid / max — only 3 lines, chart is short
+
+            // ── Build SVG ───────────────────────────────────────────────────
+            let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">`;
+
+            // Legend (top-right)
+            let legX = W - PAD.r;
+            [...shownPlats].reverse().forEach(p => {
+                const labelW = textWidth(PLBL[p], 10) + 16;
+                legX -= labelW;
+                svg += `<rect x="${legX}" y="10" width="9" height="9" rx="1.5" fill="${PCOL[p]}"/>`;
+                svg += `<text x="${legX + 13}" y="18" font-size="10" font-weight="500" fill="#6b7280">${escapeXML(PLBL[p])}</text>`;
+                legX -= 10;
             });
 
-            cats.forEach(cat => {
-                const d = data[cat];
-                const row = [cat];
-                shownPlats.forEach(p => row.push(d[p] || 0, (d[p] || 0) > 0 ? String(d[p]) : null));
-                dt.addRow(row);
+            // Gridlines + Y labels
+            ticks.forEach(t => {
+                const y = yToPx(t);
+                svg += `<line x1="${PAD.l}" x2="${W - PAD.r}" y1="${y}" y2="${y}" stroke="#f3f4f6" stroke-width="1"/>`;
+                svg += `<text x="${PAD.l - 6}" y="${y + 3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${t === 0 ? '0' : FMTK(t)}</text>`;
             });
 
-            new google.visualization.ColumnChart(el).draw(dt, {
-                backgroundColor: 'transparent',
-                colors: shownPlats.map(p => PCOL[p]),
-                legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 10, color: '#6b7280' } },
-                bar: { groupWidth: '65%' },
-                hAxis: { textStyle: { fontSize: 11, color: '#4b5563' }, gridlines: { count: 0 } },
-                vAxis: { textStyle: { fontSize: 10, color: '#9ca3af' }, format: 'short', gridlines: { color: '#f3f4f6' }, minValue: 0 },
-                chartArea: { left: 36, top: 36, right: 10, bottom: 28 },
-                annotations: { alwaysOutside: true, textStyle: { fontSize: 10, color: '#1e1b3a', bold: true }, stem: { length: 4 } },
-                tooltip: { textStyle: { fontSize: 11 } },
+            // Bars + per-bar value labels
+            cats.forEach((cat, ci) => {
+                const colCenter = PAD.l + colW * (ci + 0.5);
+                const groupLeft = colCenter - groupW / 2;
+                const baseY = yToPx(0);
+
+                // Category label (X-axis)
+                svg += `<text x="${colCenter}" y="${baseY + 16}" text-anchor="middle" font-size="11" fill="#4b5563" font-weight="500">${escapeXML(cat)}</text>`;
+
+                shownPlats.forEach((p, pi) => {
+                    const v = data[cat][p] || 0;
+                    const x = groupLeft + pi * (barW + BAR_GAP);
+
+                    // Always draw at least a 2px stub for a non-zero value, so the
+                    // viewer sees that the platform exists with a tiny number — the
+                    // label connector dot then anchors visibly to it.
+                    const minStub = 2;
+                    const naturalH = (v / yMax) * innerH;
+                    const h = v > 0 ? Math.max(naturalH, minStub) : 0;
+                    const y = baseY - h;
+
+                    if (v > 0) {
+                        svg += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${PCOL[p]}" rx="1"/>`;
+
+                        // Value label above the bar — color-coded
+                        // For very small bars, lift the label a bit further & add a tiny dot
+                        const labelY = y - 6;
+                        const isTiny = naturalH < 14;
+                        if (isTiny) {
+                            // anchor dot at top of stub
+                            svg += `<circle cx="${x + barW / 2}" cy="${y - 1}" r="1.5" fill="${PCOL[p]}"/>`;
+                        }
+                        svg += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" font-size="${isTiny ? 10.5 : 11}" font-weight="700" fill="${PCOL[p]}">${FMT(v)}</text>`;
+                    } else {
+                        // Zero bar — faint dash on baseline, no label
+                        svg += `<line x1="${x + 2}" y1="${baseY}" x2="${x + barW - 2}" y2="${baseY}" stroke="#e5e7eb" stroke-width="1.5"/>`;
+                    }
+                });
             });
+
+            svg += '</svg>';
+            el.innerHTML = svg;
+
+            // ── helpers ─────────────────────────────────────────────────────
+            function niceMax(v) {
+                if (v <= 0) return 0;
+                const pow = Math.pow(10, Math.floor(Math.log10(v)));
+                const n = v / pow;
+                const nice = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+                return nice * pow;
+            }
+            function niceTicks(max, count) {
+                if (max <= 0) return [0];
+                const step = max / count;
+                const out = [];
+                for (let i = 0; i <= count; i++) out.push(Math.round(step * i));
+                return out;
+            }
+            function textWidth(s, fontSize) {
+                // rough estimate — good enough for legend layout
+                return String(s).length * fontSize * 0.55;
+            }
+            function escapeXML(s) {
+                return String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
+            }
         }
-
         function renderUnitsByType(unitsByProduct) {
-            const grid         = document.getElementById('prodGrid');
+            const grid = document.getElementById('prodGrid');
             if (!grid) return;
-            const families     = (unitsByProduct || {}).families     || [];
+            const families = (unitsByProduct || {}).families || [];
             const skusByFamily = (unitsByProduct || {}).skusByFamily || {};
             const displayNames = (unitsByProduct || {}).displayNames || {};
-            const data         = (unitsByProduct || {}).data         || [];
+            const data = (unitsByProduct || {}).data || [];
             if (!families.length) { grid.innerHTML = noData(200); return; }
 
             grid.innerHTML = families.map((f, i) => `
@@ -2780,7 +2924,7 @@
                 const grouped = {};
                 data.skuPerformance.forEach(s => {
                     if (!grouped[s.sku]) grouped[s.sku] = { sku: s.sku, displayName: s.displayName || s.sku, units: 0, revenue: 0 };
-                    grouped[s.sku].units   += s.units;
+                    grouped[s.sku].units += s.units;
                     grouped[s.sku].revenue += s.revenue;
                 });
                 const top = Object.values(grouped).sort((a, b) => b.revenue - a.revenue)[0];
@@ -2814,12 +2958,12 @@
             const el = document.getElementById('adSpendBody');
             if (!el) return;
 
-            const trend      = (adSpend && adSpend.trend) || [];
-            const total      = (adSpend && adSpend.total) || 0;
+            const trend = (adSpend && adSpend.trend) || [];
+            const total = (adSpend && adSpend.total) || 0;
             const totalSales = trend.reduce((s, r) => s + (r.sales || 0), 0);
-            const roas       = adSpend && adSpend.roas;
+            const roas = adSpend && adSpend.roas;
 
-            const isAll    = DATA.isAllMode || MONTH_KEY === 'all';
+            const isAll = DATA.isAllMode || MONTH_KEY === 'all';
             const monthLbl = !isAll && MONTH_KEY ? thLbl(MONTH_KEY) : 'รวมทุกเดือน';
             el.innerHTML = `
                 <div style="display:flex;align-items:center;gap:16px;padding:8px 0 6px;flex-wrap:wrap;">
@@ -2855,11 +2999,11 @@
             dt.addColumn({ type: 'string', role: 'annotation' });
 
             trend.forEach(row => {
-                const ad   = row.total || 0;
+                const ad = row.total || 0;
                 const sale = row.sales || 0;
                 dt.addRow([
                     row.label || row.month,
-                    ad   || null, ad   > 0 ? FMT(Math.round(ad))   : null,
+                    ad || null, ad > 0 ? FMT(Math.round(ad)) : null,
                     sale || null, sale > 0 ? FMT(Math.round(sale)) : null,
                 ]);
             });
@@ -2870,8 +3014,10 @@
                 legend: { position: 'none' },
                 bar: { groupWidth: '70%' },
                 hAxis: { textStyle: { fontSize: 10, color: '#6b7280' }, gridlines: { count: 0 } },
-                vAxis: { textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
-                         gridlines: { color: '#f3f4f6' }, minValue: 0 },
+                vAxis: {
+                    textStyle: { fontSize: 9, color: '#9ca3af' }, format: 'short',
+                    gridlines: { color: '#f3f4f6' }, minValue: 0
+                },
                 chartArea: { left: 44, top: 18, right: 10, bottom: 24 },
                 annotations: {
                     alwaysOutside: true,
