@@ -2448,11 +2448,6 @@
             const el = document.getElementById('chartSkuBar');
             if (!el) return;
             const categories = ['กลูต้า', 'วิตามินซี', 'โปรไบโอติก'];
-            const catColors = {
-                'กลูต้า': '#a78bfa',      // ม่วงอ่อน
-                'วิตามินซี': '#fb923c',    // ส้มอ่อน
-                'โปรไบโอติก': '#60a5fa'   // ฟ้า
-            };
 
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'Category');
@@ -2467,11 +2462,17 @@
 
             categories.forEach(cat => {
                 const v1 = ((pCat || {})[cat] || {}).units || 0;
-                const clr = catColors[cat] || '#8b5cf6';
+                
+                // Explicit color mapping
+                let clr = '#8b5cf6'; // Default purple
+                if (cat.includes('กลูต้า')) clr = '#a78bfa';      // ม่วงอ่อน
+                else if (cat.includes('วิตามิน') || cat.includes('วิตซี')) clr = '#fb923c'; // ส้มอ่อน
+                else if (cat.includes('โปรไบโอติก')) clr = '#60a5fa'; // ฟ้า
+                
                 const row = [cat, v1, clr, FMT(v1)];
                 if (cCat) {
                     const v2 = ((cCat || {})[cat] || {}).units || 0;
-                    row.push(v2, clr + '66', FMT(v2));
+                    row.push(v2, 'opacity: 0.4; color: ' + clr, FMT(v2));
                 }
                 dt.addRow(row);
             });
