@@ -2319,6 +2319,13 @@
         let TARGET_MONTHLY = 2000000;
 
         const FMT = n => Math.round(n || 0).toLocaleString('th-TH');
+        const FMTK = n => {
+            if (!n) return '0';
+            const v = Math.round(n);
+            if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+            if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(1) + 'k';
+            return v.toLocaleString('th-TH');
+        };
         const PCOL = { tiktok: '#5b4a9e', shopee: '#f97316', lazada: '#0d9488' };
         const PLBL = { tiktok: 'TikTok', shopee: 'Shopee', lazada: 'Lazada' };
 
