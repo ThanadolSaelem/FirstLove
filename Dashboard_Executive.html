@@ -430,11 +430,27 @@
             overflow: hidden;
             animation: cardIn .44s cubic-bezier(.2, .8, .2, 1) both;
             transition: transform .22s ease, box-shadow .22s ease;
+            position: relative;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--purple-700);
+            opacity: 0;
+            transition: opacity .22s ease;
+            z-index: 10;
         }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 32px rgba(124, 58, 237, .12), inset 0 4px 0 0 var(--purple-700);
+            box-shadow: 0 10px 32px rgba(124, 58, 237, .12);
+        }
+
+        .card:hover::after {
+            opacity: 1;
         }
 
         @keyframes cardIn {

@@ -456,11 +456,27 @@
             overflow: hidden;
             animation: cardIn .5s cubic-bezier(.2, .8, .2, 1) both;
             transition: transform .24s ease, box-shadow .24s ease;
+            position: relative;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--purple-700);
+            opacity: 0;
+            transition: opacity .24s ease;
+            z-index: 10;
         }
 
         .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 14px 44px rgba(139, 92, 246, .15), inset 0 4px 0 0 var(--purple-700);
+            box-shadow: 0 14px 44px rgba(139, 92, 246, .15), 0 1px 0 rgba(255, 255, 255, .9) inset;
+        }
+
+        .card:hover::after {
+            opacity: 1;
         }
 
         @keyframes cardIn {
