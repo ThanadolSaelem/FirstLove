@@ -2255,9 +2255,9 @@
             const el = document.getElementById('chartQuadrant');
             if (!el) return;
             if (!quad || !quad.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูลปีก่อนสำหรับเปรียบเทียบ</div>'; return; }
-            const filtered = quad.filter(s => s.category !== 'เซต' && s.category !== 'Bundle');
+            const filtered = quad;
             const top = [...filtered].sort((a, b) => b.revenue - a.revenue).slice(0, 25);
-            const catCol = { 'กลูต้า': '#8F00FF', 'เซต': '#5b4a9e', 'วิตามินซี': '#fb923c', 'โปรไบโอติก': '#60a5fa' };
+            const catCol = { 'กลูต้า': '#8F00FF', 'วิตามินซี': '#fb923c', 'โปรไบโอติก': '#60a5fa' };
             const dt = new google.visualization.DataTable();
             dt.addColumn('string', 'ID');
             dt.addColumn('number', 'จำนวน');
