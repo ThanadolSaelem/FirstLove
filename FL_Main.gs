@@ -549,15 +549,40 @@ function FL_getAnnualDashboardData(year) {
         });
       });
 
-      // Product Lifecycle Quadrant: units (x) × YoY growth % (y)
-      quadrant = Object.values(skuMap).map(s => {
-        const prev = prevSkuMap[s.sku] || 0;
-        const growth = prev ? Math.round((s.units - prev) / prev * 100) : (s.units > 0 ? 100 : 0);
+      // Product Lifecycle Quadrant: category-level (bundles decomposed), units × YoY growth %
+      const _qCatMap = {};
+      skRows.forEach(function(r) {
+        const u = parseFloat(r[iUnits]) || 0;
+        const rev = parseFloat(r[iRev]) || 0;
+        const components = FL_getComponentData(r[iSku], u);
+        if (!components.length) return;
+        const totalCompUnits = components.reduce(function(s, c) { return s + c.units; }, 0);
+        components.forEach(function(c) {
+          if (!_qCatMap[c.category]) _qCatMap[c.category] = { units: 0, revenue: 0 };
+          _qCatMap[c.category].units += c.units;
+          _qCatMap[c.category].revenue += totalCompUnits > 0 ? rev * (c.units / totalCompUnits) : 0;
+        });
+      });
+      const _qPrevCatMap = {};
+      prevSkRows.forEach(function(r) {
+        const u = parseFloat(r[iUnits]) || 0;
+        FL_getComponentData(r[iSku], u).forEach(function(c) {
+          _qPrevCatMap[c.category] = (_qPrevCatMap[c.category] || 0) + c.units;
+        });
+      });
+      quadrant = Object.keys(_qCatMap).map(function(cat) {
+        const data = _qCatMap[cat];
+        const prevUnits = _qPrevCatMap[cat] || 0;
+        const growth = prevUnits > 0
+          ? Math.round((data.units - prevUnits) / prevUnits * 100)
+          : (data.units > 0 ? 100 : 0);
         return {
-          sku: s.sku, displayName: s.displayName, category: s.category,
-          units: s.units, revenue: s.revenue, growth,
+          sku: cat, displayName: cat, category: cat,
+          units: Math.round(data.units),
+          revenue: Math.round(data.revenue),
+          growth: growth,
         };
-      }).filter(s => s.units > 0);
+      }).filter(function(s) { return s.units > 0; });
 
       // Contribution Margin Ranking: revenue − commission per SKU (top 10)
       marginRanking = Object.values(skuMap).map(s => {
