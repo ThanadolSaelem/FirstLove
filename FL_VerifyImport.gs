@@ -4,7 +4,38 @@ function onOpen() {
     .addItem('📦 Shopee', 'importShopee')
     .addItem('🎵 TikTok', 'importTiktok')
     .addItem('🛍️ Lazada', 'importLazada')
+    .addSeparator()
+    .addItem('🔧 Fix Verify_Income formulas', 'fixVerifyIncome')
     .addToUi();
+}
+
+function fixVerifyIncome() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName('Verify_Income');
+  if (!sh) { SpreadsheetApp.getUi().alert('ไม่พบชีต Verify_Income'); return; }
+
+  // F2 — fee จาก income sheet (SUMIF ครบทุก row สำหรับ Shopee)
+  sh.getRange('F2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
+      'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าคอมมิชชั่น*",shopee_income!$B:$B)' +
+      '+SUMIF(shopee_income!$A:$A,"ค่าบริการ*",shopee_income!$B:$B)' +
+      '+SUMIF(shopee_income!$A:$A,"ค่าธรรมเนียม*",shopee_income!$B:$B)' +
+      '+SUMIF(shopee_income!$A:$A,"ค่าธุรกรรม*",shopee_income!$B:$B),0),' +
+    'IF(B2:B1000="tiktok",' +
+      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Total*Fee*",tiktok_income!$A:$A,0))),0),' +
+    'IF(B2:B1000="lazada",' +
+      'IFERROR(SUMIF(lazada_income!$B:$B,"*ธรรมเนียม*",lazada_income!$C:$C),0)' +
+      '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),"")))))'
+  );
+
+  // H2 — fee ✓ check (เทียบ F vs G)
+  sh.getRange('H2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(F2:F1000=0,"⏳",' +
+      'IF(ABS(F2:F1000-G2:G1000)<=1,"✅",' +
+      '"❌ diff="&TEXT(F2:F1000-G2:G1000,"#,##0.00")))))'
+  );
+
+  SpreadsheetApp.getUi().alert('✅ แก้ F2 และ H2 เรียบร้อย');
 }
 
 // ===== Entry points =====
