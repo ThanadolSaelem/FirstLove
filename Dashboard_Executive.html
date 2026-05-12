@@ -846,18 +846,6 @@
             color: #c2410c;
         }
 
-        /* ── MC placeholder ── */
-        .phase-pill {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 100px;
-            background: var(--purple-100);
-            color: var(--purple-700);
-            font-size: 10px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
         /* ── Insights ── */
         .ins-head {
             font-size: 12px;
@@ -2195,41 +2183,10 @@
 
                 </div><!-- /row2 -->
 
-                <!-- ROW 3: MC | Stock (2 cols desktop, 1 col mobile) -->
-                <div data-sm="1column gap" data-lg="2column gap">
+                <!-- ROW 3: Stock -->
+                <div data-sm="1column gap" data-lg="1column gap">
 
-                    <!-- 7. MC Performance -->
-                    <div class="card">
-                        <div class="card-head">
-                            <span class="card-ttl">ประสิทธิภาพ MC</span>
-                            <span class="tip" data-tip="ยอดขายและ orders แยกตาม MC — จะพร้อมใน Phase 3">ⓘ</span>
-                        </div>
-                        <div class="card-body">
-                            <div style="text-align:center;padding:6px 0 8px;">
-                                <span class="phase-pill">Phase 3</span>
-                            </div>
-                            <div class="empty">
-                                <div class="empty-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <rect x=2 y=2 width=20 height=20 rx=2.18 ry=2.18 />
-                                        <line x1=7 y1=2 x2=7 y2=22 />
-                                        <line x1=17 y1=2 x2=17 y2=22 />
-                                        <line x1=2 y1=12 x2=22 y2=12 />
-                                        <line x1=2 y1=7 x2=7 y2=7 />
-                                        <line x1=2 y1=17 x2=7 y2=17 />
-                                        <line x1=17 y1=17 x2=22 y2=17 />
-                                        <line x1=17 y1=7 x2=22 y2=7 />
-                                    </svg></div>
-                                <p>ข้อมูล MC Performance จะพร้อมใน <strong>Phase 3</strong><br>
-                                    <span style="font-size:10.5px;color:var(--text-light)">หลังยืนยัน Commission Formula
-                                        กับลูกค้า</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 8. Stock (REQ-05) -->
+                    <!-- Stock (REQ-05) -->
                     <div class="card">
                         <div class="card-head">
                             <span class="card-ttl">สถานะสต็อก</span>
@@ -2968,8 +2925,6 @@
                 ins.push({ i: '!', t: `ยังต้องเพิ่มอีก ฿${FMT(TARGET_MONTHLY - fNet)} เพื่อบรรลุเป้าหมายรายเดือน` });
             else
                 ins.push({ i: '!', t: `ยังไม่มีข้อมูลเพียงพอเพื่อคำนวณเป้าหมาย` });
-
-            ins.push({ i: '◆', t: 'MC Performance จะพร้อมเมื่อ Phase 3 เสร็จสมบูรณ์' });
 
             setInsights(ins);
         }
