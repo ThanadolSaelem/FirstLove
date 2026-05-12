@@ -22,13 +22,14 @@ function fixVerifyIncome() {
 
   // C2: gross formula
   // shopee_income: col B=sub-label, col C=sub-amount → "สินค้าราคาปกติ" in B, sum C
-  // tiktok_income: col C=Total Revenue → SUM col C
+  // tiktok_income: col D=Subtotal before discounts, col C=Total Revenue
+  //   → SUMIF(C>0, D) excludes refund rows (Total Revenue=0) to avoid double-counting
   // lazada_income: col C=amount → sum positive values (payments to seller)
   sh.getRange('C2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$B:$B,"สินค้าราคาปกติ",shopee_income!$C:$C),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(SUM(tiktok_income!$C$2:$C$10000),0),' +
+      'IFERROR(SUMIF(tiktok_income!$C$2:$C$10000,">0",tiktok_income!$D$2:$D$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$C:$C,">0"),0),' +
     '"")))))'
@@ -49,7 +50,7 @@ function fixVerifyIncome() {
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าธรรมเนียม",shopee_income!$D:$D),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(SUM(tiktok_income!$D$2:$D$10000),0),' +
+      'IFERROR(SUM(tiktok_income!$E$2:$E$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$B:$B,"*ธรรมเนียม*",lazada_income!$C:$C),0)' +
       '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),' +
@@ -148,14 +149,15 @@ const INCOME_CONFIG = {
   tiktok: {
     sheet: 'tiktok_income',
     mode: 'tiktok-income',
-    outHeaders: ['Type', 'Settlement Amount', 'Total Revenue', 'Total Fees'],
+    outHeaders: ['Type', 'Settlement Amount', 'Total Revenue', 'Subtotal Before Discounts', 'Total Fees'],
     search: [
       ['type'],
       ['total settlement amount'],
       ['total revenue'],
+      ['subtotal before discounts'],
       ['total fees'],
     ],
-    hint: 'ไฟล์ income TikTok (Order details) — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ Type, Total settlement amount, Total Revenue, Total Fees เอง',
+    hint: 'ไฟล์ income TikTok (Order details) — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ Type, Settlement, Revenue, Subtotal before discounts, Total Fees เอง',
   },
   lazada: {
     sheet: 'lazada_income',
@@ -408,9 +410,9 @@ function processIncomeImport(platform) {
     // lazada_income: col A = dummy, col B = type, col C = amount
     outputRows = dataFiltered.map(row => ['', row[iA], row[iB]]);
   } else if (cfg.mode === 'tiktok-income') {
-    // tiktok_income: A=Type, B=Settlement Amount, C=Total Revenue, D=Total Fees
-    const [i0, i1, i2, i3] = colIdxList;
-    outputRows = dataFiltered.map(row => [row[i0], row[i1], row[i2], row[i3]]);
+    // tiktok_income: A=Type, B=Settlement Amount, C=Total Revenue, D=Subtotal Before Discounts, E=Total Fees
+    const [i0, i1, i2, i3, i4] = colIdxList;
+    outputRows = dataFiltered.map(row => [row[i0], row[i1], row[i2], row[i3], row[i4]]);
   } else {
     // two-col: col A = label, col B = amount
     outputRows = dataFiltered.map(row => [row[iA], row[iB]]);
