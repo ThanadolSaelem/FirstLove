@@ -160,10 +160,10 @@ const INCOME_CONFIG = {
     mode: 'lazada',
     outHeaders: ['', 'Transaction Type', 'Amount'],
     search: [
-      ['transaction type', 'ประเภทธุรกรรม', 'type', 'ประเภท'],
-      ['amount', 'จำนวนเงิน', 'net amount', 'fee amount', 'total amount'],
+      ['transaction type', 'ประเภทธุรกรรม', 'ชื่อรายการธุรกรรม', 'type', 'ประเภท'],
+      ['จำนวนเงิน(รวมภาษี)', 'amount', 'จำนวนเงิน', 'net amount', 'fee amount', 'total amount'],
     ],
-    hint: 'ไฟล์ financial report Lazada — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ "Transaction Type" และ "Amount" เอง',
+    hint: 'ไฟล์ financial report Lazada — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ "ชื่อรายการธุรกรรม" และ "จำนวนเงิน" เอง',
   },
 };
 
