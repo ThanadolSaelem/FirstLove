@@ -2183,8 +2183,8 @@
 
                 </div><!-- /row2 -->
 
-                <!-- ROW 3: Stock -->
-                <div data-sm="1column gap" data-lg="1column gap">
+                <!-- ROW 3: Stock | Auto Insight — side by side, each card self-heights -->
+                <div data-sm="1column gap" data-lg="2column gap" style="align-items:start;">
 
                     <!-- Stock (REQ-05) -->
                     <div class="card">
@@ -2193,17 +2193,12 @@
                             <span class="tip"
                                 data-tip="สินค้าคงเหลือ = SUM(stock_in) − SUM(units_sold ตั้งแต่ stock_in แรก) · บันทึก stock เข้าได้ที่หน้า Import">ⓘ</span>
                         </div>
-                        <div class="card-body" id="stockBody" style="max-height:240px;overflow:auto;">
+                        <div class="card-body" id="stockBody" style="max-height:320px;overflow:auto;">
                             <div class="empty">
                                 <p style="font-size:11.5px;color:var(--text-light)">กำลังโหลด...</p>
                             </div>
                         </div>
                     </div>
-
-                </div><!-- /row3 -->
-
-                <!-- ROW 4: Insights -->
-                <div data-sm="1column gap" data-lg="2column gap">
 
                     <!-- Auto Insights -->
                     <div class="card">
@@ -2220,7 +2215,7 @@
                         </div>
                     </div>
 
-                </div><!-- /row4 -->
+                </div><!-- /row3 -->
 
             </div><!-- /grid -->
         </main>
