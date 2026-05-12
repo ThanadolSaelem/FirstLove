@@ -289,6 +289,19 @@ function processIncomeImport(platform) {
     });
     dataRows = allData.slice(headerRowIdx + 1);
 
+    // Fallback: if amount col not found by header name, find first col with numeric data
+    if (colIdxList[1] === -1 && colIdxList[0] >= 0) {
+      const labelCol = colIdxList[0];
+      for (let c = 0; c < allData[0].length; c++) {
+        if (c === labelCol) continue;
+        const hasNumbers = dataRows.slice(0, 15).some(row => {
+          const v = String(row[c]).replace(/,/g, '').trim();
+          return v !== '' && !isNaN(parseFloat(v)) && isFinite(parseFloat(v));
+        });
+        if (hasNumbers) { colIdxList[1] = c; break; }
+      }
+    }
+
     const missing = cfg.search
       .map((c, i) => ({ name: c[0], idx: colIdxList[i] }))
       .filter(x => x.idx < 0);
@@ -297,8 +310,7 @@ function processIncomeImport(platform) {
       ui.alert(
         '❌ ไม่พบคอลัมน์',
         `หาไม่เจอ: ${missing.map(m => m.name).join(', ')}\n\n` +
-        `หัวคอลัมน์ที่เจอ:\n${allData[headerRowIdx].slice(0, 15).join(' | ')}\n\n` +
-        `💡 ลองวางไฟล์ใหม่ตรวจสอบว่าแถวแรกมีหัวคอลัมน์`,
+        `หัวคอลัมน์ที่เจอ:\n${allData[headerRowIdx].slice(0, 15).join(' | ')}`,
         ui.ButtonSet.OK
       );
       ss.deleteSheet(staging);
