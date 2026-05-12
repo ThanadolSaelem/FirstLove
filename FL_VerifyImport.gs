@@ -22,14 +22,14 @@ function fixVerifyIncome() {
 
   // C2: gross formula
   // shopee_income: col B=sub-label, col C=sub-amount → "สินค้าราคาปกติ" in B, sum C
-  // tiktok_income: col D=Subtotal before discounts, col C=Total Revenue
-  //   → SUMIF(C>0, D) excludes refund rows (Total Revenue=0) to avoid double-counting
+  // tiktok_income: col D=Subtotal before discounts, col A=Type
+  //   → SUMIF(A="Order", D) — all Order rows including refunds, matches GAS income parser
   // lazada_income: col C=amount → sum positive values (payments to seller)
   sh.getRange('C2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$B:$B,"สินค้าราคาปกติ",shopee_income!$C:$C),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(SUMIF(tiktok_income!$C$2:$C$10000,">0",tiktok_income!$D$2:$D$10000),0),' +
+      'IFERROR(SUMIF(tiktok_income!$A$2:$A$10000,"Order",tiktok_income!$D$2:$D$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$C:$C,">0"),0),' +
     '"")))))'
