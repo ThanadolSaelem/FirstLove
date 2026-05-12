@@ -22,13 +22,13 @@ function fixVerifyIncome() {
 
   // C2: gross formula
   // shopee_income: col B=sub-label, col C=sub-amount → "สินค้าราคาปกติ" in B, sum C
-  // tiktok_income: col A=label, col B=amount → MATCH pattern in A, INDEX B
+  // tiktok_income: col C=Total Revenue → SUM col C
   // lazada_income: col C=amount → sum positive values (payments to seller)
   sh.getRange('C2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$B:$B,"สินค้าราคาปกติ",shopee_income!$C:$C),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Order*Amount*",tiktok_income!$A:$A,0))),0),' +
+      'IFERROR(SUM(tiktok_income!$C$2:$C$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$C:$C,">0"),0),' +
     '"")))))'
@@ -43,13 +43,13 @@ function fixVerifyIncome() {
   // F2: fee formula
   // shopee_income: col A=parent section, col D=section total
   //   → SUMIF A="ค่าธรรมเนียม", sum D covers ALL sub-fees (Shopee pre-sums them)
-  // tiktok_income: col A=label, col B=amount → MATCH "*Total*Fee*" in A, INDEX B
+  // tiktok_income: col D=Total Fees → SUM col D
   // lazada_income: col B=type, col C=amount → SUMIF type for *ธรรมเนียม* + *Premium*
   sh.getRange('F2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าธรรมเนียม",shopee_income!$D:$D),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Total*Fee*",tiktok_income!$A:$A,0))),0),' +
+      'IFERROR(SUM(tiktok_income!$D$2:$D$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$B:$B,"*ธรรมเนียม*",lazada_income!$C:$C),0)' +
       '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),' +
@@ -65,13 +65,13 @@ function fixVerifyIncome() {
   // I2: net/transferred formula
   // shopee_income: col A=parent section, col D=section total
   //   → SUMIF A contains "โอนแล้ว", sum D
-  // tiktok_income: col A=label, col B=amount → MATCH "*Settlement*Amount*" in A, INDEX B
+  // tiktok_income: col B=Settlement Amount → SUM col B
   // lazada_income: col C=amount → SUM all (positive payments - negative fees = net payout)
   sh.getRange('I2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$A:$A,"*โอนแล้ว*",shopee_income!$D:$D),0),' +
     'IF(B2:B1000="tiktok",' +
-      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Settlement*Amount*",tiktok_income!$A:$A,0))),0),' +
+      'IFERROR(SUM(tiktok_income!$B$2:$B$10000),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUM(lazada_income!$C$2:$C$10000),0),' +
     '"")))))'
@@ -147,13 +147,15 @@ const INCOME_CONFIG = {
   },
   tiktok: {
     sheet: 'tiktok_income',
-    mode: 'two-col',
-    outHeaders: ['Description', 'Amount'],
+    mode: 'tiktok-income',
+    outHeaders: ['Type', 'Settlement Amount', 'Total Revenue', 'Total Fees'],
     search: [
-      ['description', 'item', 'type', 'รายการ', 'รายละเอียด'],
-      ['amount', 'total', 'จำนวนเงิน', 'settlement amount', 'value'],
+      ['type'],
+      ['total settlement amount'],
+      ['total revenue'],
+      ['total fees'],
     ],
-    hint: 'ไฟล์ settlement TikTok — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ "Description" และ "Amount" เอง',
+    hint: 'ไฟล์ income TikTok (Order details) — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ Type, Total settlement amount, Total Revenue, Total Fees เอง',
   },
   lazada: {
     sheet: 'lazada_income',
@@ -405,8 +407,12 @@ function processIncomeImport(platform) {
   if (cfg.mode === 'lazada') {
     // lazada_income: col A = dummy, col B = type, col C = amount
     outputRows = dataFiltered.map(row => ['', row[iA], row[iB]]);
+  } else if (cfg.mode === 'tiktok-income') {
+    // tiktok_income: A=Type, B=Settlement Amount, C=Total Revenue, D=Total Fees
+    const [i0, i1, i2, i3] = colIdxList;
+    outputRows = dataFiltered.map(row => [row[i0], row[i1], row[i2], row[i3]]);
   } else {
-    // tiktok_income: col A = label, col B = amount
+    // two-col: col A = label, col B = amount
     outputRows = dataFiltered.map(row => [row[iA], row[iB]]);
   }
 
