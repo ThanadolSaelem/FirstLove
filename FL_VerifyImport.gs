@@ -5,6 +5,8 @@ function onOpen() {
     .addItem('🎵 TikTok', 'importTiktok')
     .addItem('🛍️ Lazada', 'importLazada')
     .addSeparator()
+    .addItem('✅ ดำเนินการต่อ (หลัง Paste)', 'importContinue')
+    .addSeparator()
     .addItem('🔧 Fix Verify_Income formulas', 'fixVerifyIncome')
     .addToUi();
 }
@@ -14,7 +16,6 @@ function fixVerifyIncome() {
   const sh = ss.getSheetByName('Verify_Income');
   if (!sh) { SpreadsheetApp.getUi().alert('ไม่พบชีต Verify_Income'); return; }
 
-  // F2 — fee จาก income sheet (SUMIF ครบทุก row สำหรับ Shopee)
   sh.getRange('F2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
       'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าคอมมิชชั่น*",shopee_income!$B:$B)' +
@@ -28,7 +29,6 @@ function fixVerifyIncome() {
       '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),"")))))'
   );
 
-  // H2 — fee ✓ check (เทียบ F vs G)
   sh.getRange('H2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(F2:F1000=0,"⏳",' +
       'IF(ABS(F2:F1000-G2:G1000)<=1,"✅",' +
@@ -39,9 +39,9 @@ function fixVerifyIncome() {
 }
 
 // ===== Entry points =====
-function importShopee()  { runImport('shopee');  }
-function importTiktok()  { runImport('tiktok');  }
-function importLazada()  { runImport('lazada');  }
+function importShopee() { startImport('shopee'); }
+function importTiktok() { startImport('tiktok'); }
+function importLazada() { startImport('lazada'); }
 
 // ===== Column config per platform =====
 const PLATFORM_CONFIG = {
@@ -77,25 +77,15 @@ const PLATFORM_CONFIG = {
   },
 };
 
-// ===== Main logic =====
-function runImport(platform) {
+// ===== Step 1: prepare staging sheet, then close dialog so user can paste =====
+function startImport(platform) {
   const ss  = SpreadsheetApp.getActiveSpreadsheet();
   const ui  = SpreadsheetApp.getUi();
-  const cfg = PLATFORM_CONFIG[platform];
 
-  // Step 1: instruct user
-  const step1 = ui.alert(
-    `Import ${platform.toUpperCase()} Order`,
-    `วิธีใช้:\n` +
-    `1. เปิดไฟล์ order ของ ${platform} (ใน Excel หรือ Google Sheets)\n` +
-    `2. กด Ctrl+A เพื่อ select ทั้งหมด\n` +
-    `3. กด Ctrl+C เพื่อ Copy\n` +
-    `4. กลับมาที่หน้านี้ แล้วกด OK`,
-    ui.ButtonSet.OK_CANCEL
-  );
-  if (step1 !== ui.Button.OK) return;
+  // Store which platform we're importing
+  PropertiesService.getUserProperties().setProperty('importPlatform', platform);
 
-  // Step 2: open staging sheet for paste
+  // Create / clear staging sheet
   let staging = ss.getSheetByName('__staging__');
   if (staging) {
     staging.clearContents();
@@ -105,36 +95,59 @@ function runImport(platform) {
   ss.setActiveSheet(staging);
   staging.getRange('A1').activate();
 
-  const step2 = ui.alert(
-    'วาง (Paste) ข้อมูลได้เลย',
-    'กด Ctrl+V เพื่อวางข้อมูลลงในชีตนี้\nแล้วกด OK เมื่อเสร็จแล้ว',
-    ui.ButtonSet.OK_CANCEL
+  // Single blocking dialog — tells user to paste AFTER closing this dialog
+  ui.alert(
+    `เตรียม ${platform.toUpperCase()} พร้อมแล้ว`,
+    `กด OK เพื่อปิด dialog นี้\n\n` +
+    `จากนั้น:\n` +
+    `1. เปิดไฟล์ order ของ ${platform} (Excel / Sheets)\n` +
+    `2. กด Ctrl+A แล้ว Ctrl+C\n` +
+    `3. คลิกชีต __staging__ แล้วกด Ctrl+V วางข้อมูล\n` +
+    `4. วางเสร็จแล้ว คลิกเมนู '✅ ดำเนินการต่อ (หลัง Paste)'`,
+    ui.ButtonSet.OK
   );
-  if (step2 !== ui.Button.OK) {
-    ss.deleteSheet(staging);
+}
+
+// ===== Step 2: read staging and write to target sheet =====
+function importContinue() {
+  const ss       = SpreadsheetApp.getActiveSpreadsheet();
+  const ui       = SpreadsheetApp.getUi();
+  const props    = PropertiesService.getUserProperties();
+  const platform = props.getProperty('importPlatform');
+
+  if (!platform) {
+    ui.alert('❌ ไม่พบข้อมูลการ import\nกรุณาเริ่มใหม่โดยคลิก Shopee / TikTok / Lazada ก่อน');
+    return;
+  }
+  props.deleteProperty('importPlatform');
+
+  const cfg     = PLATFORM_CONFIG[platform];
+  const staging = ss.getSheetByName('__staging__');
+
+  if (!staging) {
+    ui.alert('❌ ไม่พบชีต __staging__\nกรุณาเริ่มใหม่');
     return;
   }
 
-  // Step 3: read staging data
   const allData = staging.getDataRange().getValues();
   if (allData.length < 2) {
-    ui.alert('❌ ไม่พบข้อมูล กรุณาลองใหม่');
+    ui.alert('❌ ไม่พบข้อมูลใน __staging__\nกรุณาเริ่มใหม่แล้ววางข้อมูลให้ครบ');
     ss.deleteSheet(staging);
     return;
   }
 
   const rawHeaders = allData[0].map(h => String(h).trim().toLowerCase());
 
-  // Step 4: match columns
-  const colIdxList = cfg.search.map((candidates, i) => {
+  // Match columns by header name
+  const colIdxList = cfg.search.map(candidates => {
     for (const candidate of candidates) {
       const idx = rawHeaders.findIndex(h => h.includes(candidate));
       if (idx >= 0) return idx;
     }
-    return -1; // not found
+    return -1;
   });
 
-  // Check which columns are missing (skip last col for lazada = auto-calculated)
+  // Check for missing required columns (lazada col 7 = auto-calculated, skip)
   const required = platform === 'lazada' ? colIdxList.slice(0, 6) : colIdxList;
   const missing  = cfg.search.slice(0, required.length)
     .map((c, i) => ({ name: c[0], idx: colIdxList[i] }))
@@ -151,13 +164,12 @@ function runImport(platform) {
     return;
   }
 
-  // Step 5: extract only needed columns
-  const extracted = allData.slice(1).map(row => {
-    const pickedCols = colIdxList.filter(i => i >= 0).map(i => row[i]);
-    return pickedCols;
-  });
+  // Extract needed columns
+  const extracted = allData.slice(1).map(row =>
+    colIdxList.filter(i => i >= 0).map(i => row[i])
+  );
 
-  // Step 6: write to target sheet
+  // Write to target sheet
   const target = ss.getSheetByName(cfg.sheet);
   if (!target) {
     ui.alert(`❌ ไม่พบชีต "${cfg.sheet}"`);
@@ -167,16 +179,14 @@ function runImport(platform) {
 
   target.clearContents();
 
-  // Write header row
   const usedHeaders = cfg.headers.slice(0, colIdxList.filter(i => i >= 0).length);
   target.getRange(1, 1, 1, usedHeaders.length).setValues([usedHeaders]);
 
-  // Write data rows
   if (extracted.length > 0) {
     target.getRange(2, 1, extracted.length, extracted[0].length).setValues(extracted);
   }
 
-  // For lazada: restore net_rev formula in column G
+  // Lazada: restore net_rev formula in column G
   if (platform === 'lazada' && extracted.length > 0) {
     target.getRange(1, 7).setValue('net_rev [auto]');
     target.getRange(2, 7).setFormula(
@@ -184,7 +194,6 @@ function runImport(platform) {
     );
   }
 
-  // Cleanup & done
   ss.deleteSheet(staging);
   ss.setActiveSheet(target);
   ui.alert(`✅ สำเร็จ! นำเข้า ${extracted.length} แถว ลงใน ${cfg.sheet}`);
