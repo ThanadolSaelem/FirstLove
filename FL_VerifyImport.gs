@@ -20,26 +20,70 @@ function fixVerifyIncome() {
   const sh = ss.getSheetByName('Verify_Income');
   if (!sh) { SpreadsheetApp.getUi().alert('ไม่พบชีต Verify_Income'); return; }
 
+  // C2: gross formula
+  // shopee_income: col B=sub-label, col C=sub-amount → "สินค้าราคาปกติ" in B, sum C
+  // tiktok_income: col A=label, col B=amount → MATCH pattern in A, INDEX B
+  // lazada_income: col C=amount → sum positive values (payments to seller)
+  sh.getRange('C2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
+      'IFERROR(SUMIF(shopee_income!$B:$B,"สินค้าราคาปกติ",shopee_income!$C:$C),0),' +
+    'IF(B2:B1000="tiktok",' +
+      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Order*Amount*",tiktok_income!$A:$A,0))),0),' +
+    'IF(B2:B1000="lazada",' +
+      'IFERROR(SUMIF(lazada_income!$C:$C,">0"),0),' +
+    '"")))))'
+  );
+
+  // E2: gross ✓
+  sh.getRange('E2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(C2:C1000=0,"⏳",' +
+      'IF(ABS(C2:C1000-D2:D1000)<=1,"✅","❌ diff="&TEXT(C2:C1000-D2:D1000,"#,##0.00")))))'
+  );
+
+  // F2: fee formula
+  // shopee_income: col A=parent section, col D=section total
+  //   → SUMIF A="ค่าธรรมเนียม", sum D covers ALL sub-fees (Shopee pre-sums them)
+  // tiktok_income: col A=label, col B=amount → MATCH "*Total*Fee*" in A, INDEX B
+  // lazada_income: col B=type, col C=amount → SUMIF type for *ธรรมเนียม* + *Premium*
   sh.getRange('F2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
-      'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าคอมมิชชั่น*",shopee_income!$B:$B)' +
-      '+SUMIF(shopee_income!$A:$A,"ค่าบริการ*",shopee_income!$B:$B)' +
-      '+SUMIF(shopee_income!$A:$A,"ค่าธรรมเนียม*",shopee_income!$B:$B)' +
-      '+SUMIF(shopee_income!$A:$A,"ค่าธุรกรรม*",shopee_income!$B:$B),0),' +
+      'IFERROR(SUMIF(shopee_income!$A:$A,"ค่าธรรมเนียม",shopee_income!$D:$D),0),' +
     'IF(B2:B1000="tiktok",' +
       'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Total*Fee*",tiktok_income!$A:$A,0))),0),' +
     'IF(B2:B1000="lazada",' +
       'IFERROR(SUMIF(lazada_income!$B:$B,"*ธรรมเนียม*",lazada_income!$C:$C),0)' +
-      '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),"")))))'  
+      '+IFERROR(SUMIF(lazada_income!$B:$B,"*Premium*",lazada_income!$C:$C),0),' +
+    '"")))))'
   );
 
+  // H2: fee ✓
   sh.getRange('H2').setFormula(
     '=ARRAYFORMULA(IF(A2:A1000="","",IF(F2:F1000=0,"⏳",' +
-      'IF(ABS(F2:F1000-G2:G1000)<=1,"✅",' +
-      '"❌ diff="&TEXT(F2:F1000-G2:G1000,"#,##0.00")))))'  
+      'IF(ABS(F2:F1000-G2:G1000)<=1,"✅","❌ diff="&TEXT(F2:F1000-G2:G1000,"#,##0.00")))))'
   );
 
-  SpreadsheetApp.getUi().alert('✅ แก้ F2 และ H2 เรียบร้อย');
+  // I2: net/transferred formula
+  // shopee_income: col A=parent section, col D=section total
+  //   → SUMIF A contains "โอนแล้ว", sum D
+  // tiktok_income: col A=label, col B=amount → MATCH "*Settlement*Amount*" in A, INDEX B
+  // lazada_income: col C=amount → SUM all (positive payments - negative fees = net payout)
+  sh.getRange('I2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(B2:B1000="shopee",' +
+      'IFERROR(SUMIF(shopee_income!$A:$A,"*โอนแล้ว*",shopee_income!$D:$D),0),' +
+    'IF(B2:B1000="tiktok",' +
+      'IFERROR(VALUE(INDEX(tiktok_income!$B:$B,MATCH("*Settlement*Amount*",tiktok_income!$A:$A,0))),0),' +
+    'IF(B2:B1000="lazada",' +
+      'IFERROR(SUM(lazada_income!$C$2:$C$10000),0),' +
+    '"")))))'
+  );
+
+  // K2: net ✓
+  sh.getRange('K2').setFormula(
+    '=ARRAYFORMULA(IF(A2:A1000="","",IF(I2:I1000=0,"⏳",' +
+      'IF(ABS(I2:I1000-J2:J1000)<=1,"✅","❌ diff="&TEXT(I2:I1000-J2:J1000,"#,##0.00")))))'
+  );
+
+  SpreadsheetApp.getUi().alert('✅ อัปเดต C2, E2, F2, H2, I2, K2 เรียบร้อยแล้ว');
 }
 
 // ===== Entry points =====
@@ -50,7 +94,7 @@ function importShopeeIncome() { startJob('income', 'shopee'); }
 function importTiktokIncome() { startJob('income', 'tiktok'); }
 function importLazadaIncome() { startJob('income', 'lazada'); }
 
-// legacy aliases
+// legacy aliases (ถ้าเคยผูก trigger ไว้ชื่อเดิม)
 function importShopee() { importShopeeOrder(); }
 function importTiktok() { importTiktokOrder(); }
 function importLazada() { importLazadaOrder(); }
@@ -90,19 +134,16 @@ const ORDER_CONFIG = {
 };
 
 // ===== Income column config =====
-// shopee_income: col A = label (Thai), col B = amount  → SUMIF on A, sum B
-// tiktok_income: col A = label (English), col B = amount → MATCH on A, INDEX B
-// lazada_income: col B = transaction type, col C = amount → SUMIF on B, sum C
+// shopee_income: 4-col (A=parent section, B=sub-label, C=sub-amount, D=section total)
+//   → mode 'shopee-income': paste raw, keep all 4 cols
+// tiktok_income: 2-col (A=label, B=amount) → mode 'two-col'
+// lazada_income: 3-col (A=dummy, B=type, C=amount) → mode 'lazada'
 const INCOME_CONFIG = {
   shopee: {
     sheet: 'shopee_income',
-    mode: 'two-col',
-    outHeaders: ['รายการ', 'จำนวนเงิน'],
-    search: [
-      ['รายการ', 'รายละเอียด', 'description', 'ประเภท', 'หัวข้อ', 'item'],
-      ['มูลค่า', 'จำนวนเงิน', 'amount', 'ยอดเงิน', 'total', 'value'],
-    ],
-    hint: 'ไฟล์ settlement Shopee — วางทั้งไฟล์\nสคริปต์จะหาคอลัมน์ "รายการ" และ "มูลค่า" เอง',
+    mode: 'shopee-income',
+    outHeaders: ['รายการหลัก', 'รายการย่อย', 'จำนวนเงิน', 'ยอดรวมส่วน'],
+    hint: 'ไฟล์ settlement Shopee (แท็บ Summary)\nวางทั้งเนื้อหา — ระบบเก็บ 4 คอลัมน์แรกอัตโนมัติ',
   },
   tiktok: {
     sheet: 'tiktok_income',
@@ -158,9 +199,9 @@ function startJob(type, platform) {
 
 // ===== Step 2: read staging and route to correct processor =====
 function importContinue() {
-  const ui    = SpreadsheetApp.getUi();
+  const ui   = SpreadsheetApp.getUi();
   const props = PropertiesService.getUserProperties();
-  const job   = props.getProperty('importJob');
+  const job  = props.getProperty('importJob');
 
   if (!job) {
     ui.alert('❌ ไม่พบข้อมูลการ import\nกรุณาเริ่มใหม่โดยเลือก platform ก่อน');
@@ -264,7 +305,47 @@ function processIncomeImport(platform) {
     return;
   }
 
-  // Find header row by scanning first 15 rows for any search keyword
+  // === Shopee income: fixed 4-col structure (A=parent, B=sub-label, C=sub-amount, D=section-total) ===
+  // No header searching needed — just take all 4 cols as-is
+  if (cfg.mode === 'shopee-income') {
+    const outputRows = allData
+      .map(row => [
+        row[0] !== undefined ? row[0] : '',
+        row[1] !== undefined ? row[1] : '',
+        row[2] !== undefined ? row[2] : '',
+        row[3] !== undefined ? row[3] : '',
+      ])
+      .filter(row => row.some(c => String(c).trim() !== ''));
+
+    if (outputRows.length === 0) {
+      ui.alert('❌ ไม่พบข้อมูลใน __staging__\nกรุณาเริ่มใหม่แล้ววางข้อมูลให้ครบ');
+      ss.deleteSheet(staging);
+      return;
+    }
+
+    const target = ss.getSheetByName(cfg.sheet);
+    if (!target) {
+      ui.alert(
+        `❌ ไม่พบชีต "${cfg.sheet}"`,
+        `กรุณาสร้างชีตชื่อ "${cfg.sheet}" ก่อน`,
+        ui.ButtonSet.OK
+      );
+      ss.deleteSheet(staging);
+      return;
+    }
+
+    target.clearContents();
+    target.getRange(1, 1, 1, cfg.outHeaders.length).setValues([cfg.outHeaders]);
+    target.getRange(2, 1, outputRows.length, 4).setValues(outputRows);
+    ss.deleteSheet(staging);
+    ss.setActiveSheet(target);
+    ui.alert(`✅ สำเร็จ! นำเข้า ${outputRows.length} แถว ลงใน ${cfg.sheet}`);
+    return;
+  }
+
+  // === TikTok / Lazada income: search for header row then extract columns ===
+
+  // Find the header row by searching the first 15 rows for any search keyword
   const allKeywords = cfg.search.flat();
   let headerRowIdx = -1;
   for (let r = 0; r < Math.min(15, allData.length); r++) {
@@ -289,19 +370,6 @@ function processIncomeImport(platform) {
     });
     dataRows = allData.slice(headerRowIdx + 1);
 
-    // Fallback: if amount col not found by header name, find first col with numeric data
-    if (colIdxList[1] === -1 && colIdxList[0] >= 0) {
-      const labelCol = colIdxList[0];
-      for (let c = 0; c < allData[0].length; c++) {
-        if (c === labelCol) continue;
-        const hasNumbers = dataRows.slice(0, 15).some(row => {
-          const v = String(row[c]).replace(/,/g, '').trim();
-          return v !== '' && !isNaN(parseFloat(v)) && isFinite(parseFloat(v));
-        });
-        if (hasNumbers) { colIdxList[1] = c; break; }
-      }
-    }
-
     const missing = cfg.search
       .map((c, i) => ({ name: c[0], idx: colIdxList[i] }))
       .filter(x => x.idx < 0);
@@ -317,7 +385,7 @@ function processIncomeImport(platform) {
       return;
     }
   } else {
-    // No header found — assume 2-col data (label, amount) from row 0
+    // No header found — assume 2-col data starting at row 0 (label, amount)
     if (allData[0].length < 2) {
       ui.alert('❌ ไม่พบ header row และข้อมูลมีน้อยกว่า 2 คอลัมน์\nกรุณาตรวจสอบไฟล์');
       ss.deleteSheet(staging);
@@ -327,7 +395,7 @@ function processIncomeImport(platform) {
     dataRows = allData;
   }
 
-  // Build output rows, skip fully-empty rows
+  // Build output rows (skip fully-empty rows)
   const [iA, iB] = colIdxList;
   const dataFiltered = dataRows.filter(row =>
     String(row[iA]).trim() !== '' || String(row[iB]).trim() !== ''
@@ -338,19 +406,23 @@ function processIncomeImport(platform) {
     // lazada_income: col A = dummy, col B = type, col C = amount
     outputRows = dataFiltered.map(row => ['', row[iA], row[iB]]);
   } else {
-    // shopee_income / tiktok_income: col A = label, col B = amount
+    // tiktok_income: col A = label, col B = amount
     outputRows = dataFiltered.map(row => [row[iA], row[iB]]);
   }
 
   if (outputRows.length === 0) {
-    ui.alert('❌ ไม่พบ data rows หลัง header\nกรุณาตรวจสอบไฟล์');
+    ui.alert('❌ ไม่พบข้อมูล data rows หลัง header\nกรุณาตรวจสอบไฟล์');
     ss.deleteSheet(staging);
     return;
   }
 
   const target = ss.getSheetByName(cfg.sheet);
   if (!target) {
-    ui.alert(`❌ ไม่พบชีต "${cfg.sheet}"\nกรุณาสร้างชีตชื่อนี้ก่อน`);
+    ui.alert(
+      `❌ ไม่พบชีต "${cfg.sheet}"`,
+      `กรุณาสร้างชีตชื่อ "${cfg.sheet}" ก่อน`,
+      ui.ButtonSet.OK
+    );
     ss.deleteSheet(staging);
     return;
   }
