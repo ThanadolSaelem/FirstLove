@@ -403,10 +403,11 @@ function FL_saveAdSpendDetail(monthKey, entries) {
     }
     const now = new Date();
     (entries || []).forEach(e => {
-      const adAmt = parseFloat(e.ad_amount) || 0;
+      const adAmt  = parseFloat(e.ad_amount)   || 0;
       const saleAmt = parseFloat(e.sales_amount) || 0;
-      if (adAmt === 0 && saleAmt === 0) return;
-      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, now]);
+      const impAmt  = parseFloat(e.impression)   || 0;
+      if (adAmt === 0 && saleAmt === 0 && impAmt === 0) return;
+      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, impAmt, now]);
     });
     FL_clearDashboardCache();
     return { success: true, message: `บันทึกข้อมูลโฆษณา ${mk} สำเร็จ` };
@@ -425,9 +426,11 @@ function FL_getAdSpendDetail(monthKey) {
     const result = [];
     for (let i = 1; i < data.length; i++) {
       if (String(data[i][0]).replace(/^'/, '') !== mk) continue;
-      if (data[i].length >= 6) {
+      if (data[i].length >= 5) {
         result.push({ platform: data[i][1], ad_type: data[i][2],
-                      ad_amount: parseFloat(data[i][3]) || 0, sales_amount: parseFloat(data[i][4]) || 0 });
+                      ad_amount: parseFloat(data[i][3]) || 0,
+                      sales_amount: parseFloat(data[i][4]) || 0,
+                      impression: data[i].length >= 7 ? (parseFloat(data[i][5]) || 0) : 0 });
       }
     }
     return result;
