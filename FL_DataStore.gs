@@ -403,14 +403,11 @@ function FL_saveAdSpendDetail(monthKey, entries) {
     }
     const now = new Date();
     (entries || []).forEach(e => {
-      const adAmt       = parseFloat(e.ad_amount)      || 0;
-      const saleAmt     = parseFloat(e.sales_amount)   || 0;
-      const impAmt      = parseFloat(e.impression)     || 0;
-      const reachAmt    = parseFloat(e.reach)          || 0;
-      const liveAmt     = parseFloat(e.live_view)      || 0;
-      const purchaseCnt = parseFloat(e.purchase_count) || 0;
-      if (adAmt === 0 && saleAmt === 0 && impAmt === 0 && reachAmt === 0 && liveAmt === 0 && purchaseCnt === 0) return;
-      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, impAmt, reachAmt, liveAmt, purchaseCnt, now]);
+      const adAmt  = parseFloat(e.ad_amount)   || 0;
+      const saleAmt = parseFloat(e.sales_amount) || 0;
+      const impAmt  = parseFloat(e.impression)   || 0;
+      if (adAmt === 0 && saleAmt === 0 && impAmt === 0) return;
+      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, impAmt, now]);
     });
     FL_clearDashboardCache();
     return { success: true, message: `บันทึกข้อมูลโฆษณา ${mk} สำเร็จ` };
@@ -431,12 +428,9 @@ function FL_getAdSpendDetail(monthKey) {
       if (String(data[i][0]).replace(/^'/, '') !== mk) continue;
       if (data[i].length >= 5) {
         result.push({ platform: data[i][1], ad_type: data[i][2],
-                      ad_amount:      parseFloat(data[i][3]) || 0,
-                      sales_amount:   parseFloat(data[i][4]) || 0,
-                      impression:     data[i].length >= 7  ? (parseFloat(data[i][5]) || 0) : 0,
-                      reach:          data[i].length >= 8  ? (parseFloat(data[i][6]) || 0) : 0,
-                      live_view:      data[i].length >= 9  ? (parseFloat(data[i][7]) || 0) : 0,
-                      purchase_count: data[i].length >= 10 ? (parseFloat(data[i][8]) || 0) : 0 });
+                      ad_amount: parseFloat(data[i][3]) || 0,
+                      sales_amount: parseFloat(data[i][4]) || 0,
+                      impression: data[i].length >= 7 ? (parseFloat(data[i][5]) || 0) : 0 });
       }
     }
     return result;

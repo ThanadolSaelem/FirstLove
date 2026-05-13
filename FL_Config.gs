@@ -92,7 +92,7 @@ const FL_HEADERS = {
   PROCESSED_FILES: ['file_id','file_name','platform','file_type','month_key','imported_at'],
   ERROR_LOG:       ['timestamp','file_name','platform','error'],
   STOCK_IN:        ['date','sku_ref','quantity','note','recorded_at'],
-  AD_SPEND:        ['month_key','platform','ad_type','ad_amount','sales_amount','impression','reach','live_view','purchase_count','recorded_at'],
+  AD_SPEND:        ['month_key','platform','ad_type','ad_amount','sales_amount','impression','recorded_at'],
 };
 
 // ─── Lazada valid order statuses ─────────────────────────────
