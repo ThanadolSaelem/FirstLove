@@ -388,7 +388,7 @@ function _FL_adSheet(create) {
 
 /**
  * บันทึกข้อมูลโฆษณาแบบแยก platform/type รายเดือน
- * entries = [{platform, ad_type, ad_amount, sales_amount}, ...]
+ * entries = [{platform, ad_type, ad_amount, value_amount, net_amount, impression, reach, freq, live_view, purchase_count}, ...]
  */
 function FL_saveAdSpendDetail(monthKey, entries) {
   try {
@@ -404,13 +404,15 @@ function FL_saveAdSpendDetail(monthKey, entries) {
     const now = new Date();
     (entries || []).forEach(e => {
       const adAmt       = parseFloat(e.ad_amount)      || 0;
-      const saleAmt     = parseFloat(e.sales_amount)   || 0;
+      const valAmt      = parseFloat(e.value_amount)   || 0;
       const impAmt      = parseFloat(e.impression)     || 0;
       const reachAmt    = parseFloat(e.reach)          || 0;
       const liveAmt     = parseFloat(e.live_view)      || 0;
       const purchaseCnt = parseFloat(e.purchase_count) || 0;
-      if (adAmt === 0 && saleAmt === 0 && impAmt === 0 && reachAmt === 0 && liveAmt === 0 && purchaseCnt === 0) return;
-      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, saleAmt, impAmt, reachAmt, liveAmt, purchaseCnt, now]);
+      const netAmt      = parseFloat(e.net_amount)     || 0;
+      const freqVal     = parseFloat(e.freq)           || 0;
+      if (adAmt === 0 && valAmt === 0 && impAmt === 0 && reachAmt === 0 && liveAmt === 0 && purchaseCnt === 0 && netAmt === 0 && freqVal === 0) return;
+      sheet.appendRow(["'" + mk, e.platform || '', e.ad_type || '', adAmt, valAmt, impAmt, reachAmt, liveAmt, purchaseCnt, netAmt, freqVal, now]);
     });
     FL_clearDashboardCache();
     return { success: true, message: `บันทึกข้อมูลโฆษณา ${mk} สำเร็จ` };
@@ -419,7 +421,7 @@ function FL_saveAdSpendDetail(monthKey, entries) {
   }
 }
 
-/** ดึงข้อมูลโฆษณาแบบ detail รายเดือน → [{platform, ad_type, ad_amount, sales_amount}] */
+/** ดึงข้อมูลโฆษณาแบบ detail รายเดือน → [{platform, ad_type, ad_amount, value_amount, ...}] */
 function FL_getAdSpendDetail(monthKey) {
   try {
     const sheet = _FL_adSheet(false);
@@ -432,18 +434,20 @@ function FL_getAdSpendDetail(monthKey) {
       if (data[i].length >= 5) {
         result.push({ platform: data[i][1], ad_type: data[i][2],
                       ad_amount:      parseFloat(data[i][3]) || 0,
-                      sales_amount:   parseFloat(data[i][4]) || 0,
+                      value_amount:   parseFloat(data[i][4]) || 0,
                       impression:     data[i].length >= 7  ? (parseFloat(data[i][5]) || 0) : 0,
                       reach:          data[i].length >= 8  ? (parseFloat(data[i][6]) || 0) : 0,
                       live_view:      data[i].length >= 9  ? (parseFloat(data[i][7]) || 0) : 0,
-                      purchase_count: data[i].length >= 10 ? (parseFloat(data[i][8]) || 0) : 0 });
+                      purchase_count: data[i].length >= 10 ? (parseFloat(data[i][8]) || 0) : 0,
+                      net_amount:     data[i].length >= 12 ? (parseFloat(data[i][9])  || 0) : 0,
+                      freq:           data[i].length >= 12 ? (parseFloat(data[i][10]) || 0) : 0 });
       }
     }
     return result;
   } catch (e) { Logger.log('FL_getAdSpendDetail error: ' + e); return []; }
 }
 
-/** ดึงข้อมูลโฆษณาทั้งปี → { '2026-01': [{platform,ad_type,ad_amount,sales_amount},...], ... } */
+/** ดึงข้อมูลโฆษณาทั้งปี → { '2026-01': [{platform,ad_type,ad_amount,value_amount},...], ... } */
 function FL_getAdSpendDetailAnnual(year) {
   try {
     const sheet = _FL_adSheet(false);
@@ -456,7 +460,7 @@ function FL_getAdSpendDetailAnnual(year) {
       if (!mk.startsWith(y) || data[i].length < 6) continue;
       if (!out[mk]) out[mk] = [];
       out[mk].push({ platform: data[i][1], ad_type: data[i][2],
-                     ad_amount: parseFloat(data[i][3]) || 0, sales_amount: parseFloat(data[i][4]) || 0 });
+                     ad_amount: parseFloat(data[i][3]) || 0, value_amount: parseFloat(data[i][4]) || 0 });
     }
     return out;
   } catch (e) { Logger.log('FL_getAdSpendDetailAnnual error: ' + e); return {}; }
