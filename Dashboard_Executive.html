@@ -2178,7 +2178,6 @@
                                     <div id="feeRateRow"
                                         style="display:flex;justify-content:space-around;padding:0 4px;">
                                     </div>
-                                    <div id="feeTotalRow" style="text-align:center;margin-top:6px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -2640,16 +2639,6 @@
                         <div style="font-size:18px;font-weight:800;color:${PCOL[p]};">${rateStr}</div>
                     </div>`;
                 }).join('');
-            }
-            // Total fee rate row
-            const totalRow = document.getElementById('feeTotalRow');
-            if (totalRow) {
-                const totalFee  = platforms.reduce((s, p) => s + Math.abs(byPlatform[p]?.platform_fees || 0), 0);
-                const totalRev  = platforms.reduce((s, p) => s + (byPlatform[p]?.orderRevenue || 0), 0);
-                const totalRate = totalRev > 0 ? (totalFee / totalRev * 100).toFixed(1) : null;
-                totalRow.innerHTML = totalRate
-                    ? `<span style="font-size:11px;color:#6b7280;">รวมทุก Platform&nbsp;</span><span style="font-size:20px;font-weight:800;color:#ef4444;">${totalRate}%</span>`
-                    : '';
             }
         }
 
