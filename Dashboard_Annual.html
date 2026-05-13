@@ -2135,7 +2135,7 @@
             updateKPI('Units', p.totalUnits, c ? c.totalUnits : null, '', p.yoy);
 
             const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
-            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `${feePct}% of net` : null);
+            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `อัตราค่าธรรมเนียม ${feePct}%` : null);
 
             renderPlatformBar(PRIMARY_DATA.monthly);
             renderMargin(PRIMARY_DATA.marginRanking || []);
@@ -2438,7 +2438,7 @@
                     <span class="plat-tag pt-${key}">${r[0]}</span>
                     <span style="font-size:12px;font-weight:700;color:#1e1b3a;">฿${FMTK(r[1])}</span>
                     <span style="font-size:11px;color:#6b7280;">${pct}%</span>
-                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(${rate}% of net)</span>` : ''}
+                    ${rate ? `<span style="font-size:11px;color:#ef4444;font-weight:600;">(ค่าธรรมเนียม ${rate}%)</span>` : ''}
                 </div>`;
             }).join('');
         }
