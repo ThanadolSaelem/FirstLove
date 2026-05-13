@@ -2171,11 +2171,14 @@
                                 <div style="flex:1;min-width:0;">
                                     <div
                                         style="font-size:10px;color:var(--text-light);text-align:center;margin-bottom:3px;letter-spacing:.3px;">
-                                        ค่า Platform Fee (แยกตาม Platform)</div>
+                                        ค่าธรรมเนียม Platform (บาท)</div>
                                     <div id="chartFeeBar" style="height:150px;"></div>
+                                    <div style="font-size:9px;color:var(--text-light);text-align:center;margin:6px 0 3px;letter-spacing:.3px;">
+                                        อัตราค่าธรรมเนียม (% ของยอดขาย)</div>
                                     <div id="feeRateRow"
-                                        style="display:flex;justify-content:space-around;margin-top:4px;padding:0 4px;">
+                                        style="display:flex;justify-content:space-around;padding:0 4px;">
                                     </div>
+                                    <div id="feeTotalRow" style="text-align:center;margin-top:6px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -2592,7 +2595,7 @@
                         <div style="text-align:right;">
                             <span class="plat-val-num">฿${FMT(v)}</span>
                             <span class="plat-val-pct">${pct}%</span>
-                            ${rate ? `<div style="font-size:10px;color:#ef4444;font-weight:600;margin-top:1px;">Fee ${rate}%</div>` : ''}
+                            ${rate ? `<div style="font-size:10px;color:#ef4444;font-weight:600;margin-top:1px;">ค่าธรรมเนียม ${rate}%</div>` : ''}
                         </div>
                     </div>`;
                 }).join('');
@@ -2633,10 +2636,20 @@
                     const rate = byPlatform[p]?.feeRate;
                     const rateStr = rate != null ? rate.toFixed(1) + '%' : '—';
                     return `<div style="flex:1;text-align:center;">
-                        <div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">${PLBL[p]}</div>
-                        <div style="font-size:13px;font-weight:700;color:${PCOL[p]};">${rateStr}</div>
+                        <div style="font-size:10px;color:#6b7280;margin-bottom:3px;">${PLBL[p]}</div>
+                        <div style="font-size:18px;font-weight:800;color:${PCOL[p]};">${rateStr}</div>
                     </div>`;
                 }).join('');
+            }
+            // Total fee rate row
+            const totalRow = document.getElementById('feeTotalRow');
+            if (totalRow) {
+                const totalFee  = platforms.reduce((s, p) => s + Math.abs(byPlatform[p]?.platform_fees || 0), 0);
+                const totalRev  = platforms.reduce((s, p) => s + (byPlatform[p]?.orderRevenue || 0), 0);
+                const totalRate = totalRev > 0 ? (totalFee / totalRev * 100).toFixed(1) : null;
+                totalRow.innerHTML = totalRate
+                    ? `<span style="font-size:11px;color:#6b7280;">รวมทุก Platform&nbsp;</span><span style="font-size:20px;font-weight:800;color:#ef4444;">${totalRate}%</span>`
+                    : '';
             }
         }
 
