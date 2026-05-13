@@ -120,6 +120,8 @@
     .roas-ok{color:var(--warning);font-weight:700;}
     .roas-bad{color:var(--danger);font-weight:700;}
     .num{font-variant-numeric:tabular-nums;}
+    .form-row:not(.header-row):not(.section-row) .form-cell.num{background:#f5f3ff;border-radius:6px;justify-content:center;font-size:13px;font-weight:600;color:var(--purple-700);}
+    .form-row.subtotal-row .form-cell.num,.form-row.total-row .form-cell.num{background:transparent;}
     .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;}
     .alert.success{background:var(--success-bg);color:#065f46;display:block;}
     .alert.danger{background:var(--danger-bg);color:#991b1b;display:block;}
@@ -302,7 +304,7 @@
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Shopee Ads</div>
           <div class="form-cell"><input type="number" id="sp_ad"   min="0" step="1" placeholder="0"></div>
-          <div class="form-cell" style="color:var(--text-sub);justify-content:center;">—</div>
+          <div class="form-cell"><input type="number" id="sp_imp"  min="0" step="1" placeholder="0"></div>
           <div class="form-cell"><input type="number" id="sp_sale" min="0" step="1" placeholder="0"></div>
           <div class="form-cell num" id="sp_roi">—</div>
         </div>
@@ -318,7 +320,7 @@
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Facebook Ads</div>
           <div class="form-cell"><input type="number" id="fb_ad"   min="0" step="1" placeholder="0"></div>
-          <div class="form-cell" style="color:var(--text-sub);justify-content:center;">—</div>
+          <div class="form-cell"><input type="number" id="fb_imp"  min="0" step="1" placeholder="0"></div>
           <div class="form-cell"><input type="number" id="fb_sale" min="0" step="1" placeholder="0"></div>
           <div class="form-cell num" id="fb_roi">—</div>
         </div>
@@ -438,8 +440,8 @@
     {id:'tt_livegmv',    platform:'tiktok',   ad_type:'live_gmv',   hasImp:true},
     {id:'tt_branding',   platform:'tiktok',   ad_type:'branding',   hasImp:true},
     {id:'tt_influencer', platform:'tiktok',   ad_type:'influencer', hasImp:true},
-    {id:'sp',            platform:'shopee',   ad_type:'',           hasImp:false},
-    {id:'fb',            platform:'facebook', ad_type:'',           hasImp:false},
+    {id:'sp',            platform:'shopee',   ad_type:'',           hasImp:true},
+    {id:'fb',            platform:'facebook', ad_type:'',           hasImp:true},
   ];
   const TT_IDS = ['tt_gmvmax','tt_livegmv','tt_branding','tt_influencer'];
 
@@ -466,7 +468,8 @@
     setEl('tt_total_sale_disp', ttSale > 0 ? fmt(ttSale) : '—');
     setEl('tt_total_roi_disp',  roiPct(ttAd, ttSale));
     setEl('grand_ad_disp',      grandAd   > 0 ? fmt(grandAd)   : '—');
-    setEl('grand_imp_disp',     ttImp  > 0 ? fmt(ttImp)  : '—');
+    const grandImp = ttImp + val('sp_imp') + val('fb_imp');
+    setEl('grand_imp_disp',     grandImp > 0 ? fmt(grandImp) : '—');
     setEl('grand_sale_disp',    grandSale > 0 ? fmt(grandSale) : '—');
     setEl('grand_roi_disp',     roiPct(grandAd, grandSale));
   }
