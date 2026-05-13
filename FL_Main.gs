@@ -1059,3 +1059,25 @@ function FL_removeWarmupTrigger() {
     .forEach(t => ScriptApp.deleteTrigger(t));
   Logger.log('Warmup trigger removed.');
 }
+
+/**
+ * บันทึกข้อมูลโฆษณา มกราคม 2026 — รันครั้งเดียวจาก Apps Script editor แล้วลบทิ้งได้
+ *
+ * Mapping จาก spreadsheet ลูกค้า:
+ *   branding + influencer (awareness)  → tt_awareness  18,734.51 / sale 0
+ *   tiktok Gmv (GMV Max)               → tt_gmvmax     11,553.37 / sale 77,255.68
+ *   tiktok Live (ใกล้เคียง Info/Conv)  → tt_info       18,017.94 / sale 33,248.01
+ *   shopee                             → sp             4,400.00 / sale 38,100.00
+ *   facebook                           → fb            10,000.00 / sale 0
+ */
+function FL_seedAdData_Jan2026() {
+  const entries = [
+    { platform: 'tiktok',   ad_type: 'awareness', ad_amount: 18734.51, sales_amount: 0       },
+    { platform: 'tiktok',   ad_type: 'gmv_max',   ad_amount: 11553.37, sales_amount: 77255.68 },
+    { platform: 'tiktok',   ad_type: 'info',       ad_amount: 18017.94, sales_amount: 33248.01 },
+    { platform: 'shopee',   ad_type: '',           ad_amount: 4400.00,  sales_amount: 38100.00 },
+    { platform: 'facebook', ad_type: '',           ad_amount: 10000.00, sales_amount: 0       },
+  ];
+  const res = FL_saveAdSpendDetail('2026-01', entries);
+  Logger.log('FL_seedAdData_Jan2026: ' + JSON.stringify(res));
+}
