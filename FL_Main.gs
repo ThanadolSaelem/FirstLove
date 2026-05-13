@@ -594,7 +594,7 @@ function FL_getAnnualDashboardData(year) {
           sku: s.sku, displayName: s.displayName, category: s.category,
           revenue: s.revenue, commission, margin, marginPct, units: s.units,
         };
-      }).sort((a,b) => b.margin - a.margin).slice(0, 10);
+      }).sort((a,b) => b.units - a.units).slice(0, 10);
     }
 
     // Platform fee distribution + rate

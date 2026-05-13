@@ -2454,7 +2454,7 @@
             });
 
             const topSkus = Object.values(skuMap)
-                .sort((a, b) => b.revenue - a.revenue)
+                .sort((a, b) => b.units - a.units)
                 .slice(0, 10);
 
             // ── Charts & Tables ──
@@ -2665,8 +2665,9 @@
             const data = catPlat || {};
             const allP = ['tiktok', 'shopee', 'lazada'];
             const shownPlats = platFilter ? [platFilter] : allP;
-            const cats = Object.keys(data).filter(c => c !== 'เซต' && c !== 'อื่นๆ' &&
-                shownPlats.some(p => (data[c][p] || 0) > 0));
+            const CAT_ORDER = ['กลูต้า', 'วิตามินซี', 'โปรไบโอติก'];
+            const cats = CAT_ORDER.filter(c => shownPlats.some(p => (data[c]?.[p] || 0) > 0));
+            Object.keys(data).forEach(c => { if (!CAT_ORDER.includes(c) && c !== 'เซต' && c !== 'อื่นๆ' && shownPlats.some(p => (data[c][p]||0)>0)) cats.push(c); });
             if (!cats.length) { el.innerHTML = noData(200); return; }
 
             // ── Layout ──────────────────────────────────────────────────────
