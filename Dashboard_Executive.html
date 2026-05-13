@@ -2417,13 +2417,18 @@
             setMomBadge('revMomBadge', (!isAllMode && plat === 'all') ? sum.momOrderRev : null);
 
             if (isAllMode) {
-                document.getElementById('tgtBadge').style.display = 'none';
+                const annualTarget = TARGET_MONTHLY * 12;
+                const pctAll = Math.round(fGross / annualTarget * 100);
+                const tgtBadge = document.getElementById('tgtBadge');
+                tgtBadge.style.display = 'inline-flex';
+                tgtBadge.textContent = pctAll + '% ของเป้าทั้งปี';
+                tgtBadge.className = 'badge ' + (pctAll >= 100 ? 'b-tgt' : 'b-neu');
                 document.getElementById('tgtNote').textContent = 'ยอดสะสมจากทุกเดือนที่มีข้อมูล';
             } else {
                 const pct = Math.round(fGross / TARGET_MONTHLY * 100);
                 const tgtBadge = document.getElementById('tgtBadge');
                 tgtBadge.style.display = 'inline-flex';
-                tgtBadge.textContent = pct + '% of Target';
+                tgtBadge.textContent = pct + '% ของเป้าหมาย';
                 tgtBadge.className = 'badge ' + (pct >= 100 ? 'b-tgt' : 'b-neu');
                 document.getElementById('tgtNote').textContent =
                     fGross >= TARGET_MONTHLY ? ' บรรลุเป้าหมายแล้ว!' : `ยังขาดอีก ฿${FMT(TARGET_MONTHLY - fGross)}`;
