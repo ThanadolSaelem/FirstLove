@@ -11,6 +11,10 @@
 
 // ─── Web App Entry Points ────────────────────────────────────
 
+// Platform fees are charged with 7% VAT included; P&L records them ex-VAT.
+// Divide raw fee amounts by this constant before exposing to dashboards.
+const FL_FEE_VAT_DIVISOR = 1.07;
+
 /**
  * Route URL ?page= to different HTML files
  * ?page=dashboard  → Dashboard_Executive.html
@@ -174,7 +178,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
 
     // Totals for the selected scope
     const curGross = sumField(targetMonth, null, 'gross');
-    const curFees  = sumField(targetMonth, null, 'platform_fees');
+    const curFees  = sumField(targetMonth, null, 'platform_fees') / FL_FEE_VAT_DIVISOR;
     const curNet   = sumField(targetMonth, null, 'transferred');
 
     // MoM% only meaningful for single-month mode
@@ -187,7 +191,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
     const byPlatform = {};
     ['shopee', 'tiktok', 'lazada'].forEach(p => {
       const g = sumField(targetMonth, p, 'gross');
-      const f = sumField(targetMonth, p, 'platform_fees');
+      const f = sumField(targetMonth, p, 'platform_fees') / FL_FEE_VAT_DIVISOR;
       const t = sumField(targetMonth, p, 'transferred');
       byPlatform[p] = {
         gross:           g,
@@ -204,9 +208,9 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
     const feeTrend = last6.map(m => ({
       month:  m,
       label:  FL_monthLabel(m),
-      shopee: Math.abs(sumField(m, 'shopee', 'platform_fees')),
-      tiktok: Math.abs(sumField(m, 'tiktok', 'platform_fees')),
-      lazada: Math.abs(sumField(m, 'lazada', 'platform_fees')),
+      shopee: Math.abs(sumField(m, 'shopee', 'platform_fees')) / FL_FEE_VAT_DIVISOR,
+      tiktok: Math.abs(sumField(m, 'tiktok', 'platform_fees')) / FL_FEE_VAT_DIVISOR,
+      lazada: Math.abs(sumField(m, 'lazada', 'platform_fees')) / FL_FEE_VAT_DIVISOR,
     }));
 
     // Waterfall (computed after totalOrderRev — uses order file source)
@@ -448,7 +452,7 @@ function FL_getAnnualDashboardData(year) {
         month:        key,
         label:        FL_monthLabel(key),
         gross:        mRows.reduce((s,r) => s+(parseFloat(r[idx('gross')])||0), 0),
-        fees:         Math.abs(mRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0)),
+        fees:         Math.abs(mRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0)) / FL_FEE_VAT_DIVISOR,
         net:          mRows.reduce((s,r) => s+(parseFloat(r[idx('transferred')])||0), 0),
         shopee:       mRows.filter(r=>r[1]==='shopee').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
         tiktok:       mRows.filter(r=>r[1]==='tiktok').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
@@ -464,7 +468,7 @@ function FL_getAnnualDashboardData(year) {
     const yearRows    = rowsForYear(targetYear);
     const totalNet    = yearRows.reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0), 0);
     const totalGross  = yearRows.reduce((s,r)=>s+(parseFloat(r[idx('gross')])||0), 0);
-    const totalFees   = Math.abs(yearRows.reduce((s,r)=>s+(parseFloat(r[idx('platform_fees')])||0), 0));
+    const totalFees   = Math.abs(yearRows.reduce((s,r)=>s+(parseFloat(r[idx('platform_fees')])||0), 0)) / FL_FEE_VAT_DIVISOR;
     const filledMonths= monthly.filter(m => m.net > 0).length;
     const avgMonthly  = filledMonths ? Math.round(totalNet / filledMonths) : 0;
 
@@ -601,7 +605,7 @@ function FL_getAnnualDashboardData(year) {
     const feeByPlatform = {};
     ['shopee','tiktok','lazada'].forEach(p => {
       const pRows = yearRows.filter(r => r[1] === p);
-      const pFees = Math.abs(pRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0));
+      const pFees = Math.abs(pRows.reduce((s,r) => s+(parseFloat(r[idx('platform_fees')])||0), 0)) / FL_FEE_VAT_DIVISOR;
       const pTransferred = pRows.reduce((s,r) => s+(parseFloat(r[idx('transferred')])||0), 0);
       feeByPlatform[p] = { amount: pFees, rate: (pFees + pTransferred) > 0 ? Math.round(pFees / (pFees + pTransferred) * 1000) / 10 : 0 };
     });
