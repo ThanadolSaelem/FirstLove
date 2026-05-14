@@ -2291,7 +2291,7 @@
         // เป้าหมายรายเดือน — อ่านจาก backend (Config), อัปเดตทุกครั้งที่โหลดข้อมูล
         let TARGET_MONTHLY = 2000000;
 
-        const FMT = n => Math.round(n || 0).toLocaleString('th-TH');
+        const FMT = n => (n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
         const FMTK = n => {
             if (!n) return '0';
             const v = Math.round(n);

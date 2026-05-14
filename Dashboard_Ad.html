@@ -408,7 +408,7 @@
   // ── Helpers ────────────────────────────────────────────────
   function fmt(n) {
     if (!n && n !== 0) return '—';
-    return Number(n).toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:0});
+    return Number(n).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
   }
   function roasClass(r) {
     if (!r || r <= 0) return '';
