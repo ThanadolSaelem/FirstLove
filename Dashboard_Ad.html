@@ -745,12 +745,6 @@
       {label:'Shopee Ads',        color:'var(--shopee)',   d: a.sp},
       {label:'Facebook Ads',      color:'var(--facebook)', d: a.fb},
     ];
-    const ttTotal = {
-      ad:  a.tt_gm.ad  + a.tt_live.ad  + a.tt_br.ad  + a.tt_inf.ad,
-      val: a.tt_gm.val + a.tt_live.val + a.tt_br.val + a.tt_inf.val,
-    };
-    const ttRoas = ttTotal.ad > 0 ? (ttTotal.val / ttTotal.ad).toFixed(2) : null;
-    const grRoas = a.total.ad > 0 ? (a.total.val / a.total.ad).toFixed(2) : null;
 
     let html = rows.map(r => {
       const roas = r.d.ad > 0 ? (r.d.val / r.d.ad).toFixed(2) : null;
@@ -762,14 +756,9 @@
         <td>${roiStr(r.d.ad, r.d.val)}</td>
       </tr>`;
     }).join('');
-    html += `<tr style="background:var(--purple-50);font-weight:600;">
-      <td>รวม TikTok</td><td>${fmt(ttTotal.ad)}</td><td>${fmt(ttTotal.val)}</td>
-      <td class="${roasClass(parseFloat(ttRoas))}">${ttRoas ? ttRoas + 'x' : '—'}</td>
-      <td>${roiStr(ttTotal.ad, ttTotal.val)}</td>
-    </tr>`;
     html += `<tr class="total-row">
       <td>รวมทั้งหมด</td><td>${fmt(a.total.ad)}</td><td>${fmt(a.total.val)}</td>
-      <td class="${roasClass(parseFloat(grRoas))}">${grRoas ? grRoas + 'x' : '—'}</td>
+      <td>—</td>
       <td>${roiStr(a.total.ad, a.total.val)}</td>
     </tr>`;
     document.getElementById('annualBody').innerHTML = html;
