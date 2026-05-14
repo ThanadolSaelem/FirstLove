@@ -1995,7 +1995,7 @@
         let PRIMARY_DATA = null;
         let COMPARE_DATA = null;
 
-        const FMT = n => Math.round(n || 0).toLocaleString('th-TH');
+        const FMT = n => (n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
         const FMTK = n => {
             n = Math.round(n || 0);
             return n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' :
