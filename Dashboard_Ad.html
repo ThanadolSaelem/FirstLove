@@ -618,12 +618,12 @@
     // ── ROAS chart: line per platform + total ──────────────
     const roasTotal = rows.map(r => r.roasNum);
     const roasTT = rows.map(r => {
-      const ad = r.ttAw.ad + r.ttGm.ad + r.ttGl.ad;
-      const s  = r.ttAw.sale + r.ttGm.sale + r.ttGl.sale;
+      const ad = r.ttGm.ad + r.ttLive.ad + r.ttBr.ad + r.ttInf.ad;
+      const s  = r.ttGm.val + r.ttLive.val + r.ttBr.val + r.ttInf.val;
       return ad > 0 ? parseFloat((s / ad).toFixed(2)) : null;
     });
-    const roasSP = rows.map(r => r.sp.ad > 0 ? parseFloat((r.sp.sale / r.sp.ad).toFixed(2)) : null);
-    const roasFB = rows.map(r => r.fb.ad > 0 ? parseFloat((r.fb.sale / r.fb.ad).toFixed(2)) : null);
+    const roasSP = rows.map(r => r.sp.ad > 0 ? parseFloat((r.sp.val / r.sp.ad).toFixed(2)) : null);
+    const roasFB = rows.map(r => r.fb.ad > 0 ? parseFloat((r.fb.val / r.fb.ad).toFixed(2)) : null);
 
     // inline plugin — draws ROAS value labels above every visible point
     const roasLabelPlugin = {
