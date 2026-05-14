@@ -559,7 +559,7 @@
     }
     const labels = keys.map(fmtMonth);
 
-    const thbFmt = v => Number(v).toLocaleString('th-TH', {maximumFractionDigits:0});
+    const thbFmt = v => Number(v).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
     const thbAxis = v => {
       if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
       if (v >= 1000)    return (v / 1000).toFixed(0) + 'K';
