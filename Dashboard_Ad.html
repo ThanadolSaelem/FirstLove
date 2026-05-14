@@ -95,7 +95,7 @@
     .tab-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text-sub);font-family:inherit;transition:all .15s;}
     .tab-btn.active,.tab-btn:hover{background:var(--purple-700);color:#fff;border-color:var(--purple-700);}
     .form-grid{display:grid;gap:0;}
-    .form-row{display:grid;grid-template-columns:200px 1fr 1fr 1fr 80px;gap:0;border-bottom:1px solid var(--border);}
+    .form-row{display:grid;grid-template-columns:200px 1fr 1fr 1fr 1fr 80px;gap:0;border-bottom:1px solid var(--border);}
     .form-row:last-child{border-bottom:none;}
     .form-row.header-row{background:var(--bg);font-weight:600;font-size:12px;color:var(--text-sub);}
     .form-cell{padding:10px 12px;display:flex;align-items:center;}
@@ -131,7 +131,7 @@
     @media(max-width:900px){
       .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:10px;}
       .main-content{margin-left:0;padding:16px;}
-      .form-row{grid-template-columns:140px 1fr 1fr 1fr 70px;}
+      .form-row{grid-template-columns:140px 1fr 1fr 1fr 1fr 70px;}
     }
   </style>
 </head>
@@ -245,7 +245,8 @@
           <div class="form-cell label-cell">Platform / ประเภท</div>
           <div class="form-cell">Spending (฿)</div>
           <div class="form-cell">Impression</div>
-          <div class="form-cell">Purchase (฿)</div>
+          <div class="form-cell">Purchase</div>
+          <div class="form-cell">Value (฿)</div>
           <div class="form-cell">ROI</div>
         </div>
 
@@ -255,34 +256,38 @@
             <span class="platform-dot" style="background:var(--tiktok)"></span>
             <span class="section-label" style="color:var(--tiktok)">TikTok</span>
           </div>
-          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
+          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">GMV Max</div>
-          <div class="form-cell"><input type="number" id="tt_gmvmax_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_gmvmax_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_gmvmax_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_gmvmax_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="tt_gmvmax_roi">—</div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Live GMV</div>
-          <div class="form-cell"><input type="number" id="tt_livegmv_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_livegmv_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_livegmv_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_livegmv_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_livegmv_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_livegmv_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_livegmv_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="tt_livegmv_roi">—</div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Branding</div>
-          <div class="form-cell"><input type="number" id="tt_branding_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_branding_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_branding_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_branding_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_branding_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_branding_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_branding_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="tt_branding_roi">—</div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Influencer</div>
-          <div class="form-cell"><input type="number" id="tt_influencer_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_influencer_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="tt_influencer_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_influencer_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_influencer_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_influencer_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="tt_influencer_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="tt_influencer_roi">—</div>
         </div>
 
@@ -292,13 +297,14 @@
             <span class="platform-dot" style="background:var(--shopee)"></span>
             <span class="section-label" style="color:var(--shopee)">Shopee</span>
           </div>
-          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
+          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Shopee Ads</div>
-          <div class="form-cell"><input type="number" id="sp_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="sp_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="sp_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="sp_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="sp_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="sp_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="sp_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="sp_roi">—</div>
         </div>
 
@@ -308,13 +314,14 @@
             <span class="platform-dot" style="background:var(--facebook)"></span>
             <span class="section-label" style="color:var(--facebook)">Facebook</span>
           </div>
-          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
+          <div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div><div class="form-cell"></div>
         </div>
         <div class="form-row">
           <div class="form-cell label-cell" style="padding-left:24px;">Facebook Ads</div>
-          <div class="form-cell"><input type="number" id="fb_ad"  min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="fb_imp" min="0" step="1" placeholder="0"></div>
-          <div class="form-cell"><input type="number" id="fb_val" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="fb_ad"    min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="fb_imp"   min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="fb_purch" min="0" step="1" placeholder="0"></div>
+          <div class="form-cell"><input type="number" id="fb_val"   min="0" step="0.01" placeholder="0"></div>
           <div class="form-cell num" id="fb_roi">—</div>
         </div>
 
@@ -323,6 +330,7 @@
           <div class="form-cell label-cell">รวมทั้งหมด</div>
           <div class="form-cell num" id="grand_ad_disp">—</div>
           <div class="form-cell num" id="grand_imp_disp">—</div>
+          <div class="form-cell num" id="grand_purch_disp">—</div>
           <div class="form-cell num" id="grand_val_disp">—</div>
           <div class="form-cell num" id="grand_roi_disp">—</div>
         </div>
@@ -436,7 +444,7 @@
     {id:'sp',            platform:'shopee',   ad_type:''},
     {id:'fb',            platform:'facebook', ad_type:''},
   ];
-  const SUFFIXES = ['ad','imp','val'];
+  const SUFFIXES = ['ad','imp','purch','val'];
 
   function val(id) { const el = document.getElementById(id); return el ? parseFloat(el.value) || 0 : 0; }
   function roiCalc(ad, v) {
@@ -449,10 +457,11 @@
     FIELDS.forEach(f => setEl(f.id + '_roi', roiCalc(val(f.id + '_ad'), val(f.id + '_val'))));
     const s = {};
     SUFFIXES.forEach(sfx => { s[sfx] = FIELDS.reduce((t, f) => t + val(f.id + '_' + sfx), 0); });
-    setEl('grand_ad_disp',  s.ad  > 0 ? fmt(s.ad)  : '—');
-    setEl('grand_imp_disp', s.imp > 0 ? fmt(s.imp) : '—');
-    setEl('grand_val_disp', s.val > 0 ? fmt(s.val) : '—');
-    setEl('grand_roi_disp', roiCalc(s.ad, s.val));
+    setEl('grand_ad_disp',    s.ad    > 0 ? fmt(s.ad)    : '—');
+    setEl('grand_imp_disp',   s.imp   > 0 ? fmt(s.imp)   : '—');
+    setEl('grand_purch_disp', s.purch > 0 ? fmt(s.purch) : '—');
+    setEl('grand_val_disp',   s.val   > 0 ? fmt(s.val)   : '—');
+    setEl('grand_roi_disp',   roiCalc(s.ad, s.val));
   }
 
   document.querySelectorAll('input[type=number]').forEach(inp => {
@@ -473,9 +482,10 @@
       const f = FIELDS.find(x => x.platform === e.platform && x.ad_type === e.ad_type);
       if (!f) return;
       const set = (sfx, v) => { const el = document.getElementById(f.id + '_' + sfx); if (el) el.value = v || ''; };
-      set('ad',  e.ad_amount);
-      set('imp', e.impression);
-      set('val', e.value_amount);
+      set('ad',    e.ad_amount);
+      set('imp',   e.impression);
+      set('purch', e.purchase_count);
+      set('val',   e.value_amount);
     });
     updateTotals();
   }
@@ -494,9 +504,10 @@
     if (!mk) { showAlert('danger', 'กรุณาเลือกเดือน'); return; }
     const entries = FIELDS.map(f => ({
       platform: f.platform, ad_type: f.ad_type,
-      ad_amount:    val(f.id + '_ad'),
-      impression:   val(f.id + '_imp'),
-      value_amount: val(f.id + '_val'),
+      ad_amount:      val(f.id + '_ad'),
+      impression:     val(f.id + '_imp'),
+      purchase_count: val(f.id + '_purch'),
+      value_amount:   val(f.id + '_val'),
     }));
     const btn = document.getElementById('btnSave');
     btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
