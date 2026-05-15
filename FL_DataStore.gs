@@ -97,15 +97,22 @@ function FL_writeSkuMonthly(data) {
   const lr = sheet.getLastRow();
   const existing = lr > 1 ? sheet.getRange(2, 1, lr - 1, NC).getValues() : [];
 
-  // ── 2. Dedup: drop matching month+platform; backfill year on old rows ──
+  // ── 2. Dedup: drop matching month+platform+sourceFile; backfill year on old rows ──
+  // Strip " (1)", " (2)" suffixes so duplicate Drive copies don't leave orphan rows.
+  const normalizeSf = name => String(name || '').replace(/\s*\(\d+\)(\.\w+)$/, '$1');
+  const sf = normalizeSf(data.sourceFile || '');
   const kept = existing
-    .filter(r => !(String(r[0]).replace(/^'/, '') === mk && String(r[1]).toLowerCase() === pl))
+    .filter(r => !(
+      String(r[0]).replace(/^'/, '') === mk &&
+      String(r[1]).toLowerCase() === pl &&
+      normalizeSf(String(r[7])) === sf
+    ))
     .map(r => { if (!r[8]) r[8] = String(r[0]).replace(/^'/, '').substring(0, 4); return r; });
 
   // ── 3. Build new rows ────────────────────────────────────────
   const newRows = data.skus.map(sku => [
     mk, data.platform, sku.skuRef, sku.category,
-    sku.units, sku.revenue, now, data.sourceFile || '', year,
+    sku.units, sku.revenue, now, sf, year,
   ]);
 
   // ── 4. Rewrite data area in ONE batch call ───────────────────
