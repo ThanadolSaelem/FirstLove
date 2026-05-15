@@ -186,13 +186,15 @@ function FL_parseTikTokOrder(driveFile) {
       skuMap[skuRef] = { skuRef, category: FL_getCategory(skuRef), units: 0, revenue: 0 };
     }
     skuMap[skuRef].units += 1;
-    // Use Before Discount - Seller Discount (M - O) when available: platform discount is
-    // reimbursed by TikTok in the income file, so only seller-funded discount reduces revenue
-    if (COL_SUBTOTAL_BEFORE >= 0 && COL_SELLER_DISC >= 0) {
+    // Use SKU Subtotal After Discount (after all discounts incl. platform — matches P&L)
+    // Fall back to Before−Seller only if After Discount column is absent
+    const net = COL_NET >= 0 ? FL_toNum(row[COL_NET]) : 0;
+    if (net !== 0) {
+      skuMap[skuRef].revenue += net;
+    } else if (COL_SUBTOTAL_BEFORE >= 0 && COL_SELLER_DISC >= 0) {
       skuMap[skuRef].revenue += FL_toNum(row[COL_SUBTOTAL_BEFORE]) - FL_toNum(row[COL_SELLER_DISC]);
     } else {
-      const net = FL_toNum(row[COL_NET]);
-      skuMap[skuRef].revenue += net !== 0 ? net : price * qty;
+      skuMap[skuRef].revenue += price * qty;
     }
   }
 

@@ -103,15 +103,15 @@ function FL_parseShopeeOrder(driveFile) {
 
   const successStatuses = ['สำเร็จแล้ว', 'สำเร็จ', 'Completed', 'Delivered', 'Shipped', 'เสร็จสิ้น'];
 
-  // monthSkuMap: { 'YYYY-MM': { skuRef: { skuRef, category, units, revenue } } }
-  const monthSkuMap = {};
+  const skuMap = {};
 
   for (let i = 1; i < rows.length; i++) {
     const row    = rows[i];
     const status = (row[COL_STATUS] || '').toString().trim();
     if (!successStatuses.includes(status)) continue;
 
-    // Derive month from actual ship date → expected ship date → filename fallback
+    // Multi-month export guard: only count orders whose ship date matches this file's month.
+    // Orders that shipped in a different month belong to that month's file.
     let rowMonthKey = null;
     if (COL_SHIP_DATE >= 0 && row[COL_SHIP_DATE]) {
       rowMonthKey = FL_monthKeyFromDateStr(row[COL_SHIP_DATE].toString());
@@ -119,10 +119,7 @@ function FL_parseShopeeOrder(driveFile) {
     if (!rowMonthKey && COL_EXP_SHIP >= 0 && row[COL_EXP_SHIP]) {
       rowMonthKey = FL_monthKeyFromDateStr(row[COL_EXP_SHIP].toString());
     }
-    if (!rowMonthKey) rowMonthKey = fileMonthKey;
-
-    if (!monthSkuMap[rowMonthKey]) monthSkuMap[rowMonthKey] = {};
-    const skuMap = monthSkuMap[rowMonthKey];
+    if (rowMonthKey && rowMonthKey !== fileMonthKey) continue;
 
     const skuRef = FL_normalizeSKU(row[COL_SKU] || '');
     const qty    = FL_toNum(row[COL_QTY]) || 1;
@@ -140,13 +137,10 @@ function FL_parseShopeeOrder(driveFile) {
     }
   }
 
-  // Return one object per distinct ship month (a single file can span month boundaries)
-  return Object.entries(monthSkuMap).map(function([mk, skuMap]) {
-    return {
-      monthKey:   mk,
-      platform:   'shopee',
-      skus:       Object.values(skuMap),
-      sourceFile: filename,
-    };
-  });
+  return {
+    monthKey:   fileMonthKey,
+    platform:   'shopee',
+    skus:       Object.values(skuMap),
+    sourceFile: filename,
+  };
 }
