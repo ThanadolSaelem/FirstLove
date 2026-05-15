@@ -74,36 +74,55 @@ function FL_parseShopeeIncome(driveFile) {
  * @returns {Object} SKU summary
  */
 function FL_parseShopeeOrder(driveFile) {
-  const filename = driveFile.getName();
-  const monthKey = FL_monthKeyFromFilename(filename);
-  if (!monthKey) throw new Error(`ไม่สามารถหา month_key จากชื่อไฟล์: ${filename}`);
+  const filename     = driveFile.getName();
+  const fileMonthKey = FL_monthKeyFromFilename(filename);
+  if (!fileMonthKey) throw new Error(`ไม่สามารถหา month_key จากชื่อไฟล์: ${filename}`);
 
   const sheetNames = FL_getSheetNames(driveFile);
   const possible   = ['orders', 'Order Data', 'Sheet1', 'Order', 'Order Export'];
   const actualName = possible.find(p => sheetNames.includes(p)) || sheetNames[0];
-  
+
   const { rows } = FL_readXlsxSheet(driveFile, actualName);
   if (rows.length < 2) throw new Error(`Shopee Order: ไม่พบ data rows ในหน้าชีต "${actualName}"`);
 
   const hdr = FL_buildHeaderMap(rows[0]);
 
-  const COL_STATUS  = FL_findCol(hdr, ['สถานะการสั่งซื้อ', 'Order Status', 'Status']);
-  const COL_SKU     = FL_findCol(hdr, ['เลขอ้างอิง SKU (SKU Reference No.)', 'เลขอ้างอิง SKU', 'SKU Reference No.', 'SKU']);
-  const COL_QTY     = FL_findCol(hdr, ['จำนวน', 'Quantity', 'Qty']);
-  const COL_PAYMENT = FL_findCol(hdr, ['ยอดชำระเงิน']);
-  const COL_PRICE   = FL_findCol(hdr, ['ราคาขาย', 'Unit Price', 'Price']);
+  const COL_STATUS    = FL_findCol(hdr, ['สถานะการสั่งซื้อ', 'Order Status', 'Status']);
+  const COL_SKU       = FL_findCol(hdr, ['เลขอ้างอิง SKU (SKU Reference No.)', 'เลขอ้างอิง SKU', 'SKU Reference No.', 'SKU']);
+  const COL_QTY       = FL_findCol(hdr, ['จำนวน', 'Quantity', 'Qty']);
+  const COL_PAYMENT   = FL_findCol(hdr, ['ยอดชำระเงิน']);
+  const COL_PRICE     = FL_findCol(hdr, ['ราคาขาย', 'Unit Price', 'Price']);
+  // P&L groups revenue by ship date (accountant confirmed): use actual ship time first,
+  // fall back to expected ship date, then filename month as last resort.
+  const COL_SHIP_DATE = FL_findCol(hdr, ['เวลาส่งสินค้า', 'Ship Time', 'Shipped Time', 'Shipped Date', 'Ship Date']);
+  const COL_EXP_SHIP  = FL_findCol(hdr, ['วันที่คาดว่าจะทำการจัดส่งสินค้า', 'วันที่คาดว่าจะทำการจัดส่ง', 'Expected Ship Date']);
 
   if (COL_STATUS < 0) throw new Error('Shopee Order: ไม่พบคอลัมน์ สถานะการสั่งซื้อ / Order Status');
   if (COL_SKU    < 0) throw new Error('Shopee Order: ไม่พบคอลัมน์ SKU Reference');
   if (COL_QTY    < 0) throw new Error('Shopee Order: ไม่พบคอลัมน์ จำนวน / Quantity');
 
   const successStatuses = ['สำเร็จแล้ว', 'สำเร็จ', 'Completed', 'Delivered', 'Shipped', 'เสร็จสิ้น'];
-  const skuMap = {};
+
+  // monthSkuMap: { 'YYYY-MM': { skuRef: { skuRef, category, units, revenue } } }
+  const monthSkuMap = {};
 
   for (let i = 1; i < rows.length; i++) {
-    const row = rows[i];
+    const row    = rows[i];
     const status = (row[COL_STATUS] || '').toString().trim();
     if (!successStatuses.includes(status)) continue;
+
+    // Derive month from actual ship date → expected ship date → filename fallback
+    let rowMonthKey = null;
+    if (COL_SHIP_DATE >= 0 && row[COL_SHIP_DATE]) {
+      rowMonthKey = FL_monthKeyFromDateStr(row[COL_SHIP_DATE].toString());
+    }
+    if (!rowMonthKey && COL_EXP_SHIP >= 0 && row[COL_EXP_SHIP]) {
+      rowMonthKey = FL_monthKeyFromDateStr(row[COL_EXP_SHIP].toString());
+    }
+    if (!rowMonthKey) rowMonthKey = fileMonthKey;
+
+    if (!monthSkuMap[rowMonthKey]) monthSkuMap[rowMonthKey] = {};
+    const skuMap = monthSkuMap[rowMonthKey];
 
     const skuRef = FL_normalizeSKU(row[COL_SKU] || '');
     const qty    = FL_toNum(row[COL_QTY]) || 1;
@@ -121,10 +140,13 @@ function FL_parseShopeeOrder(driveFile) {
     }
   }
 
-  return {
-    monthKey,
-    platform:   'shopee',
-    skus:       Object.values(skuMap),
-    sourceFile: filename,
-  };
+  // Return one object per distinct ship month (a single file can span month boundaries)
+  return Object.entries(monthSkuMap).map(function([mk, skuMap]) {
+    return {
+      monthKey:   mk,
+      platform:   'shopee',
+      skus:       Object.values(skuMap),
+      sourceFile: filename,
+    };
+  });
 }
