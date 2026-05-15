@@ -840,12 +840,14 @@ function FL_runParser(file, platform, fileType) {
   }
 
   if (platform === 'shopee' && fileType === 'orders') {
-    const data  = FL_parseShopeeOrder(file);
-    FL_writeSkuMonthly(data);
-    FL_markFileProcessed(file.getId(), name, 'shopee', 'orders', data.monthKey);
-    const units = data.skus.reduce((s, x) => s + x.units, 0);
+    const dataArray  = FL_parseShopeeOrder(file);
+    dataArray.forEach(data => FL_writeSkuMonthly(data));
+    const allMonths  = dataArray.map(d => d.monthKey).join(',');
+    const totalUnits = dataArray.reduce((s, d) => s + d.skus.reduce((ss, x) => ss + x.units, 0), 0);
+    const totalSkus  = dataArray.reduce((s, d) => s + d.skus.length, 0);
+    FL_markFileProcessed(file.getId(), name, 'shopee', 'orders', allMonths);
     return { file_type: 'orders', status: 'ok', status_type: 'success', message: 'ok',
-             detail: `${data.monthKey} | ${units} units | ${data.skus.length} SKUs` };
+             detail: `${allMonths} | ${totalUnits} units | ${totalSkus} SKUs` };
   }
 
   if (platform === 'tiktok' && fileType === 'income') {
