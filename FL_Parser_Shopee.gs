@@ -66,12 +66,17 @@ function FL_parseShopeeIncome(driveFile) {
 }
 
 /**
- * Parse Shopee Order file → SKU sales summary
+ * Parse Shopee Order file → SKU sales summary, grouped by ship-date month.
  * ไฟล์: Order_all_YYYYMMDD_YYYYMMDD.xlsx
  * Sheet: orders, Header Row 1
  *
+ * Returns an ARRAY — one entry per distinct ship month found in the file.
+ * P&L accountant confirmed revenue is attributed by ship date, not order date,
+ * so a Jan file may contribute revenue to both Jan (Jan-shipped) and Feb (Feb-shipped),
+ * and a Dec file may contribute to Jan (Dec-ordered/Jan-shipped).
+ *
  * @param {DriveApp.File} driveFile
- * @returns {Object} SKU summary
+ * @returns {Array<Object>} array of SKU summaries, one per ship month
  */
 function FL_parseShopeeOrder(driveFile) {
   const filename     = driveFile.getName();
@@ -92,7 +97,7 @@ function FL_parseShopeeOrder(driveFile) {
   const COL_QTY       = FL_findCol(hdr, ['จำนวน', 'Quantity', 'Qty']);
   const COL_PAYMENT   = FL_findCol(hdr, ['ยอดชำระเงิน']);
   const COL_PRICE     = FL_findCol(hdr, ['ราคาขาย', 'Unit Price', 'Price']);
-  // P&L groups revenue by ship date (accountant confirmed): use actual ship time first,
+  // P&L groups revenue by ship date (accountant confirmed): actual ship time first,
   // fall back to expected ship date, then filename month as last resort.
   const COL_SHIP_DATE = FL_findCol(hdr, ['เวลาส่งสินค้า', 'Ship Time', 'Shipped Time', 'Shipped Date', 'Ship Date']);
   const COL_EXP_SHIP  = FL_findCol(hdr, ['วันที่คาดว่าจะทำการจัดส่งสินค้า', 'วันที่คาดว่าจะทำการจัดส่ง', 'Expected Ship Date']);
@@ -103,15 +108,17 @@ function FL_parseShopeeOrder(driveFile) {
 
   const successStatuses = ['สำเร็จแล้ว', 'สำเร็จ', 'Completed', 'Delivered', 'Shipped', 'เสร็จสิ้น'];
 
-  const skuMap = {};
+  // monthSkuMap: { 'YYYY-MM': { skuRef: { skuRef, category, units, revenue } } }
+  const monthSkuMap = {};
 
   for (let i = 1; i < rows.length; i++) {
     const row    = rows[i];
     const status = (row[COL_STATUS] || '').toString().trim();
-    if (!successStatuses.includes(status)) continue;
+    // Also include "ผู้ซื้อได้รับสินค้าแล้ว..." (delivered, still in return window) —
+    // the full string has a return-date suffix, so use startsWith.
+    if (!successStatuses.includes(status) && !status.startsWith('ผู้ซื้อได้รับสินค้าแล้ว')) continue;
 
-    // Multi-month export guard: only count orders whose ship date matches this file's month.
-    // Orders that shipped in a different month belong to that month's file.
+    // Attribute revenue to the month the order was shipped, not the order date.
     let rowMonthKey = null;
     if (COL_SHIP_DATE >= 0 && row[COL_SHIP_DATE]) {
       rowMonthKey = FL_monthKeyFromDateStr(row[COL_SHIP_DATE].toString());
@@ -119,7 +126,10 @@ function FL_parseShopeeOrder(driveFile) {
     if (!rowMonthKey && COL_EXP_SHIP >= 0 && row[COL_EXP_SHIP]) {
       rowMonthKey = FL_monthKeyFromDateStr(row[COL_EXP_SHIP].toString());
     }
-    if (rowMonthKey && rowMonthKey !== fileMonthKey) continue;
+    if (!rowMonthKey) rowMonthKey = fileMonthKey;
+
+    if (!monthSkuMap[rowMonthKey]) monthSkuMap[rowMonthKey] = {};
+    const skuMap = monthSkuMap[rowMonthKey];
 
     const skuRef = FL_normalizeSKU(row[COL_SKU] || '');
     const qty    = FL_toNum(row[COL_QTY]) || 1;
@@ -129,7 +139,7 @@ function FL_parseShopeeOrder(driveFile) {
     }
     skuMap[skuRef].units += 1;
     if (COL_PAYMENT >= 0) {
-      // ยอดชำระเงิน = total payment for the order (VAT-inclusive); × 0.93 to remove 7% VAT
+      // ยอดชำระเงิน = total payment for the order (VAT-inclusive); × 0.93 removes 7% VAT
       skuMap[skuRef].revenue += FL_toNum(row[COL_PAYMENT]) * 0.93;
     } else {
       const price = COL_PRICE >= 0 ? FL_toNum(row[COL_PRICE]) : 0;
@@ -137,10 +147,10 @@ function FL_parseShopeeOrder(driveFile) {
     }
   }
 
-  return {
-    monthKey:   fileMonthKey,
+  return Object.entries(monthSkuMap).map(([mk, skuMap]) => ({
+    monthKey:   mk,
     platform:   'shopee',
     skus:       Object.values(skuMap),
     sourceFile: filename,
-  };
+  }));
 }
