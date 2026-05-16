@@ -841,7 +841,8 @@ function FL_runParser(file, platform, fileType) {
 
   if (platform === 'shopee' && fileType === 'orders') {
     const dataArray  = FL_parseShopeeOrder(file);
-    dataArray.forEach(data => FL_writeSkuMonthly(data));
+    const _sfShopee = file.getId();
+    dataArray.forEach(data => { data.sourceFile = _sfShopee; FL_writeSkuMonthly(data); });
     const allMonths  = dataArray.map(d => d.monthKey).join(',');
     const totalUnits = dataArray.reduce((s, d) => s + d.skus.reduce((ss, x) => ss + x.units, 0), 0);
     const totalSkus  = dataArray.reduce((s, d) => s + d.skus.length, 0);
@@ -860,7 +861,8 @@ function FL_runParser(file, platform, fileType) {
 
   if (platform === 'tiktok' && fileType === 'orders') {
     const dataArray  = FL_parseTikTokOrder(file);
-    dataArray.forEach(data => FL_writeSkuMonthly(data));
+    const _sfTikTok = file.getId();
+    dataArray.forEach(data => { data.sourceFile = _sfTikTok; FL_writeSkuMonthly(data); });
     const allMonths  = dataArray.map(d => d.monthKey).join(',');
     const totalUnits = dataArray.reduce((s, d) => s + d.skus.reduce((ss, x) => ss + x.units, 0), 0);
     const totalSkus  = dataArray.reduce((s, d) => s + d.skus.length, 0);
