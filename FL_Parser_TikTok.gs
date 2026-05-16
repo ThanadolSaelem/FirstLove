@@ -108,12 +108,16 @@ function FL_parseTikTokIncome(driveFile) {
 }
 
 /**
- * Parse TikTok Order file → SKU sales summary
+ * Parse TikTok Order file → SKU sales summary, grouped by ship-date month.
  * ไฟล์: ทั้งหมด_คำสั่งซื้อ-YYYY-MM-DD-HH_MM.xlsx
  * Sheet: OrderSKUList — inlineStr, Row 1=headers, Row 2=descriptions(SKIP), Row 3+=data
  *
+ * Returns an ARRAY — one entry per distinct ship month found in the file.
+ * Revenue is attributed by Shipped Time (matches P&L accountant's method, consistent
+ * with Shopee), so a Jan-created order that shipped in Feb counts in Feb.
+ *
  * @param {DriveApp.File} driveFile
- * @returns {Object} SKU summary
+ * @returns {Array<Object>} array of SKU summaries, one per ship month
  */
 function FL_parseTikTokOrder(driveFile) {
   const filename = driveFile.getName();
@@ -133,7 +137,10 @@ function FL_parseTikTokOrder(driveFile) {
   const COL_QTY         = hdr['Quantity']                    ?? FL_findCol(hdr, ['Qty', 'จำนวน']);
   const COL_NET         = hdr['SKU Subtotal After Discount']  ?? FL_findCol(hdr, ['Revenue', 'ยอดขาย']);
   const COL_PRICE       = hdr['SKU Unit Original Price']     ?? FL_findCol(hdr, ['Price', 'ราคา']);
-  const COL_DATE        = hdr['Created Time']                ?? FL_findCol(hdr, ['Paid Time', 'Date']);
+  // P&L groups revenue by ship date (consistent with Shopee): Shipped Time first,
+  // fall back to RTS Time, then Created Time, then filename month as last resort.
+  const COL_SHIP_DATE   = hdr['Shipped Time']                ?? FL_findCol(hdr, ['RTS Time']);
+  const COL_CREATE_DATE = hdr['Created Time']                ?? FL_findCol(hdr, ['Paid Time', 'Date']);
   // M - O columns: platform discount is reimbursed to seller, only seller discount reduces revenue
   const COL_SUBTOTAL_BEFORE = hdr['SKU Subtotal Before Discount'];
   const COL_SELLER_DISC     = hdr['SKU Seller Discount'];
@@ -143,33 +150,26 @@ function FL_parseTikTokOrder(driveFile) {
   // If no known headers found, fall back to starting at index 1
   const dataStartRow = (COL_STATUS >= 0 || COL_SKU >= 0) ? 2 : 1;
 
-  // ── Month key: prefer data (Created Time) over filename ──────────────
-  // Filename date = export date (e.g. 2026-04-07), NOT order date (e.g. 2026-01)
-  let monthKey = null;
-  if (COL_DATE >= 0) {
-    // Scan first few data rows to find Created Time
+  // fileMonthKey: used as last-resort fallback when no date column found.
+  // Filename date = export date (e.g. 2026-04-07), NOT order date.
+  // Prefer Created Time of first data row over filename.
+  let fileMonthKey = null;
+  if (COL_CREATE_DATE >= 0) {
     for (let i = dataStartRow; i < Math.min(dataStartRow + 10, rows.length); i++) {
-      const mk = FL_monthKeyFromDateStr(rows[i][COL_DATE]);
-      if (mk) { monthKey = mk; break; }
+      const mk = FL_monthKeyFromDateStr(rows[i][COL_CREATE_DATE]);
+      if (mk) { fileMonthKey = mk; break; }
     }
   }
-  // Fallback to filename if data date not found
-  if (!monthKey) monthKey = FL_monthKeyFromFilename(filename);
-  if (!monthKey) throw new Error(`TikTok Order: ไม่สามารถหา month_key (ไฟล์: ${filename})`);
+  if (!fileMonthKey) fileMonthKey = FL_monthKeyFromFilename(filename);
+  if (!fileMonthKey) throw new Error(`TikTok Order: ไม่สามารถหา month_key (ไฟล์: ${filename})`);
 
   const successStatuses = ['เสร็จสมบูรณ์', 'Completed', 'Delivered', 'Finished', 'สำเร็จ', 'Shipped'];
-  const skuMap = {};
+
+  // monthSkuMap: { 'YYYY-MM': { skuRef: { skuRef, category, units, revenue } } }
+  const monthSkuMap = {};
 
   for (let i = dataStartRow; i < rows.length; i++) {
     const row = rows[i];
-
-    // Multi-month export guard: skip orders from months other than monthKey.
-    // TikTok exports often span 60–90 days; without this filter all orders in the
-    // file would be attributed to the first order's month.
-    if (COL_DATE >= 0) {
-      const rowMk = FL_monthKeyFromDateStr(rows[i][COL_DATE]);
-      if (rowMk && rowMk !== monthKey) continue;
-    }
 
     const status = (row[COL_STATUS] || '').toString().trim();
     if (status && !successStatuses.includes(status)) continue;
@@ -177,6 +177,19 @@ function FL_parseTikTokOrder(driveFile) {
     const rawSku = (row[COL_SKU] || '').toString().trim();
     // Skip non-product rows (e.g. "ขวดน้ำ ฟรี" = free gift item)
     if (!rawSku || rawSku === 'ขวดน้ำ ฟรี') continue;
+
+    // Attribute revenue to the month the order was shipped, not the order creation date.
+    let rowMonthKey = null;
+    if (COL_SHIP_DATE >= 0 && row[COL_SHIP_DATE]) {
+      rowMonthKey = FL_monthKeyFromDateStr(row[COL_SHIP_DATE].toString());
+    }
+    if (!rowMonthKey && COL_CREATE_DATE >= 0 && row[COL_CREATE_DATE]) {
+      rowMonthKey = FL_monthKeyFromDateStr(row[COL_CREATE_DATE].toString());
+    }
+    if (!rowMonthKey) rowMonthKey = fileMonthKey;
+
+    if (!monthSkuMap[rowMonthKey]) monthSkuMap[rowMonthKey] = {};
+    const skuMap = monthSkuMap[rowMonthKey];
 
     const skuRef = FL_normalizeSKU(rawSku);
     const qty    = FL_toNum(row[COL_QTY]) || 1;
@@ -198,10 +211,10 @@ function FL_parseTikTokOrder(driveFile) {
     }
   }
 
-  return {
-    monthKey,
+  return Object.entries(monthSkuMap).map(([mk, skuMap]) => ({
+    monthKey:   mk,
     platform:   'tiktok',
     skus:       Object.values(skuMap),
     sourceFile: filename,
-  };
+  }));
 }
