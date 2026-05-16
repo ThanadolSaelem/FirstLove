@@ -1,0 +1,38 @@
+{
+  "_note": "Reference files จาก Mike สำหรับ verify P&L (upload 857dc6f7)",
+  "files": {
+    "shopee_jan": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/7ca2204b-ShopeeOrder.all.20260101_20260131_2.csv",
+    "shopee_feb": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/12366b35-ShopeeOrder.all.20260201_20260228.csv",
+    "shopee_mar": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/e3a795ba-ShopeeOrder.all.20260301_20260331.csv",
+    "tiktok_jan": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/67df656d-__________________tiktok2026051313_16.csv",
+    "tiktok_feb": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/a875d146-__________________tiktok2026051313_17.csv",
+    "tiktok_mar": "/root/.claude/uploads/857dc6f7-db70-43d2-a962-c3daafa0fae2/077fdeb8-__________________tiktok2026051313_17_1.csv"
+  },
+  "expected_revenue": {
+    "_formula": "Shopee: ยอดชำระเงิน × 0.93, group by Shipped Time (array). TikTok: SKU Subtotal After Discount, group by Shipped Time (array).",
+    "shopee": {
+      "2026-01": { "from_files": 95245.02, "pl_target": 98776.74, "note": "gap -3531 = ต้องการ Dec Shopee file" },
+      "2026-02": { "from_files": 62539.71, "pl_target": 62847.67, "note": "gap -308 ✅" },
+      "2026-03": { "from_files": 81959.97, "pl_target": 82363.58, "note": "gap -404 ✅" }
+    },
+    "tiktok": {
+      "2026-01": { "from_files": 119623.86, "pl_target": 130078.43, "note": "gap -10454 = ต้องการ Dec TikTok file" },
+      "2026-02": { "from_files": 97730.35,  "pl_target": 97168.07,  "note": "gap +562 ✅" },
+      "2026-03": { "from_files": 232882.99, "pl_target": 247175.35, "note": "gap -14292 = Apr-shipped orders from Mar file" }
+    }
+  },
+  "pending_pr": {
+    "branch": "claude/list-repo-files-6S9LC",
+    "changes": [
+      "Shopee: ship-date array approach (FL_Parser_Shopee.gs)",
+      "TikTok: Shipped Time array approach (FL_Parser_TikTok.gs + FL_Main.gs)"
+    ],
+    "deploy_steps": [
+      "1. Merge branch to main",
+      "2. clasp push --force",
+      "3. ลบ sku_monthly rows ที่ platform = shopee หรือ tiktok",
+      "4. ลบ processed_files rows สำหรับ order files",
+      "5. รัน FL_scanNow()"
+    ]
+  }
+}
