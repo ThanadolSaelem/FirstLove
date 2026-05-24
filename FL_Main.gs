@@ -629,7 +629,7 @@ function FL_getAnnualDashboardData(year) {
     monthly.forEach(m => {
       m.adSpend = adSpendMap[m.month] || 0;
       const entries = adDetailMap[m.month] || [];
-      m.adSales = entries.reduce((s, e) => s + (e.sales_amount || 0), 0);
+      m.adSales = entries.reduce((s, e) => s + (e.value_amount || 0), 0);
     });
 
     const result = {
