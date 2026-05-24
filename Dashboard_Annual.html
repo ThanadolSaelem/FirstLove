@@ -2157,6 +2157,8 @@
             const totalAd = (monthly || []).reduce((s, m) => s + (m.adSpend || 0), 0);
             const totalSales = (monthly || []).reduce((s, m) => s + (m.adSales || 0), 0);
             const yearLbl = YEAR ? 'ปี ' + YEAR : '';
+            const roas = totalAd > 0 ? Math.round(totalSales / totalAd * 100) / 100 : null;
+            const roi  = totalAd > 0 ? Math.round((totalSales - totalAd) / totalAd * 100) : null;
 
             const hasData = totalAd > 0 || totalSales > 0;
 
@@ -2172,6 +2174,8 @@
                         <span style="font-size:11px;color:#9ca3af;">รายได้จากโฆษณา</span>
                         <span style="font-size:18px;font-weight:800;color:#7c3aed;">฿${FMT(totalSales)}</span>
                     </div>
+                    ${roas != null ? `<span style="font-size:11px;color:#9ca3af;">ROAS <strong>${roas}x</strong></span>` : ''}
+                    ${roi  != null ? `<span style="font-size:11px;color:#9ca3af;">ROI <strong>${roi > 0 ? '+' : ''}${roi}%</strong></span>` : ''}
                     <div style="font-size:11px;color:#9ca3af;">${yearLbl}</div>
                 </div>
                 <div id="chartAdSpendInner" style="width:100%;height:200px;"></div>`;
