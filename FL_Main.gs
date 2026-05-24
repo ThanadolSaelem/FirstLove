@@ -273,7 +273,7 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
         month: m,
         label: FL_monthLabel(m),
         total: (adSpendByYr[m.substring(0, 4)] || {})[m] || 0,
-        sales: entries.reduce((s, e) => s + (e.sales_amount || 0), 0),
+        sales: entries.reduce((s, e) => s + (e.value_amount || 0), 0),
       };
     });
 
