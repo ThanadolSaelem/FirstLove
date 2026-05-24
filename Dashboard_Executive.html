@@ -2944,8 +2944,10 @@
 
             const trend = (adSpend && adSpend.trend) || [];
             const total = (adSpend && adSpend.total) || 0;
-            const totalSales = trend.reduce((s, r) => s + (r.sales || 0), 0);
+            const totalSales = (adSpend && adSpend.sales != null) ? (adSpend.sales || 0) : trend.reduce((s, r) => s + (r.sales || 0), 0);
+            const purchases = (adSpend && adSpend.purchases) || 0;
             const roas = adSpend && adSpend.roas;
+            const roi  = adSpend && adSpend.roi;
 
             const isAll = DATA.isAllMode || MONTH_KEY === 'all';
             const monthLbl = !isAll && MONTH_KEY ? thLbl(MONTH_KEY) : 'รวมทุกเดือน';
@@ -2961,7 +2963,9 @@
                         <span style="font-size:11px;color:#9ca3af;">รายได้จากโฆษณา</span>
                         <span style="font-size:18px;font-weight:800;color:#7c3aed;">฿${FMT(totalSales)}</span>
                     </div>
-                    ${roas ? `<span style="font-size:11px;color:#9ca3af;">ROAS ${roas}x</span>` : ''}
+                    ${roas != null ? `<span style="font-size:11px;color:#9ca3af;">ROAS <strong>${roas}x</strong></span>` : ''}
+                    ${roi  != null ? `<span style="font-size:11px;color:#9ca3af;">ROI <strong>${roi > 0 ? '+' : ''}${roi}%</strong></span>` : ''}
+                    ${purchases > 0 ? `<span style="font-size:11px;color:#9ca3af;">สินค้าที่ขายได้ <strong>${purchases} ชิ้น</strong></span>` : ''}
                     <span style="font-size:11px;color:#9ca3af;">${monthLbl}</span>
                 </div>
                 <div id="chartAdSpend" style="width:100%;height:160px;"></div>`;

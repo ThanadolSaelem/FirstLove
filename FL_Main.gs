@@ -277,10 +277,23 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       };
     });
 
+    // Selected-month ad sales & purchases for header display
+    let adSalesMonth = 0, adPurchasesMonth = 0;
+    if (!isAllMode && targetMonth && typeof FL_getAdSpendDetail === 'function') {
+      const det = FL_getAdSpendDetail(targetMonth);
+      adSalesMonth     = det.reduce((s, e) => s + (e.value_amount   || 0), 0);
+      adPurchasesMonth = det.reduce((s, e) => s + (e.purchase_count || 0), 0);
+    } else {
+      adSalesMonth = adTrend.reduce((s, r) => s + (r.sales || 0), 0);
+    }
+
     const adSpend = {
-      total: adSpendAmount,
-      roas:  adSpendAmount > 0 ? Math.round(curNet / adSpendAmount * 100) / 100 : null,
-      trend: adTrend,
+      total:     adSpendAmount,
+      sales:     adSalesMonth,
+      purchases: adPurchasesMonth,
+      roas:      adSpendAmount > 0 ? Math.round(adSalesMonth / adSpendAmount * 100) / 100 : null,
+      roi:       adSpendAmount > 0 ? Math.round((adSalesMonth - adSpendAmount) / adSpendAmount * 100) : null,
+      trend:     adTrend,
     };
 
     // Stock status (REQ-05) — computed once per dashboard load
