@@ -287,13 +287,17 @@ function FL_getExecutiveDashboardData(monthKey, platform = 'all') {
       adSalesMonth = adTrend.reduce((s, r) => s + (r.sales || 0), 0);
     }
 
+    const displayTrend = (!isAllMode && targetMonth)
+      ? adTrend.filter(r => r.month === targetMonth)
+      : adTrend;
+
     const adSpend = {
       total:     adSpendAmount,
       sales:     adSalesMonth,
       purchases: adPurchasesMonth,
       roas:      adSpendAmount > 0 ? Math.round(adSalesMonth / adSpendAmount * 100) / 100 : null,
       roi:       adSpendAmount > 0 ? Math.round((adSalesMonth - adSpendAmount) / adSpendAmount * 100) : null,
-      trend:     adTrend,
+      trend:     displayTrend,
     };
 
     // Stock status (REQ-05) — computed once per dashboard load
