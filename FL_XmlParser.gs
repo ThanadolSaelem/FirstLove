@@ -328,13 +328,20 @@ function FL_getCategory(skuRef) {
  * Returns [] for unknown bundles or uncategorised SKUs.
  */
 function FL_getComponentData(skuRef, units) {
-  const comp = FL_BUNDLE_COMPOSITION[skuRef];
+  const skuUpper = (skuRef || '').toUpperCase();
+  const compKey  = Object.keys(FL_BUNDLE_COMPOSITION).find(function(k) {
+    return k.toUpperCase() === skuUpper;
+  });
+  const comp = compKey ? FL_BUNDLE_COMPOSITION[compKey] : null;
   if (comp) {
     return Object.entries(comp).map(function(e) {
       return { category: e[0], units: e[1] * units };
     });
   }
-  const cat = FL_getCategory(skuRef);
+  const catKey = Object.keys(FL_CATEGORY_MAP).find(function(k) {
+    return k.toUpperCase() === skuUpper;
+  });
+  const cat = catKey ? FL_CATEGORY_MAP[catKey] : FL_getCategory(skuRef);
   if (!cat || cat === 'เซต' || cat === 'อื่นๆ') return [];
   const m   = skuRef.match(/-(\d+)$/);
   const qty = m ? parseInt(m[1], 10) : 1;
