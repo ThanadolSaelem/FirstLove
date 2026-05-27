@@ -2942,14 +2942,13 @@
             const el = document.getElementById('adSpendBody');
             if (!el) return;
 
-            const trend = (adSpend && adSpend.trend) || [];
+            const isAll = DATA.isAllMode || MONTH_KEY === 'all';
+            const trend = ((adSpend && adSpend.trend) || []).filter(r => isAll || r.month === MONTH_KEY);
             const total = (adSpend && adSpend.total) || 0;
             const totalSales = (adSpend && adSpend.sales != null) ? (adSpend.sales || 0) : trend.reduce((s, r) => s + (r.sales || 0), 0);
             const purchases = (adSpend && adSpend.purchases) || 0;
             const roas = adSpend && adSpend.roas;
             const roi  = adSpend && adSpend.roi;
-
-            const isAll = DATA.isAllMode || MONTH_KEY === 'all';
             const monthLbl = !isAll && MONTH_KEY ? thLbl(MONTH_KEY) : 'รวมทุกเดือน';
             el.innerHTML = `
                 <div style="display:flex;align-items:center;gap:16px;padding:8px 0 6px;flex-wrap:wrap;">
