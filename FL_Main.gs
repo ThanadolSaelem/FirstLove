@@ -465,6 +465,16 @@ function FL_getAnnualDashboardData(year) {
       const key  = `${targetYear}-${m}`;
       const mRows = allRows.filter(r => r[0] === key);
       const oPlatM = orderRevByPlatMonth[key] || {};
+      // Gross per platform (from monthly_summary) — fallback for historical
+      // years that have no SKU-level (order file) data, e.g. 2025 import.
+      const grossOf = (plat) => mRows.filter(r => r[1] === plat)
+        .reduce((s, r) => s + (parseFloat(r[idx('gross')]) || 0), 0);
+      const gShopee = grossOf('shopee'), gTiktok = grossOf('tiktok'), gLazada = grossOf('lazada');
+      // Unified sales revenue per platform: prefer order file; else gross.
+      const revShopee = (oPlatM.shopee || 0) > 0 ? oPlatM.shopee : gShopee;
+      const revTiktok = (oPlatM.tiktok || 0) > 0 ? oPlatM.tiktok : gTiktok;
+      const revLazada = (oPlatM.lazada || 0) > 0 ? oPlatM.lazada : gLazada;
+      const orderRev  = orderRevByMonth[key] || 0;
       return {
         month:        key,
         label:        FL_monthLabel(key),
@@ -474,10 +484,16 @@ function FL_getAnnualDashboardData(year) {
         shopee:       mRows.filter(r=>r[1]==='shopee').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
         tiktok:       mRows.filter(r=>r[1]==='tiktok').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
         lazada:       mRows.filter(r=>r[1]==='lazada').reduce((s,r)=>s+(parseFloat(r[idx('transferred')])||0),0),
-        orderRevenue: orderRevByMonth[key] || 0,
+        orderRevenue: orderRev,
         orderShopee:  oPlatM.shopee || 0,
         orderTiktok:  oPlatM.tiktok || 0,
         orderLazada:  oPlatM.lazada || 0,
+        // Unified sales revenue (order file where available, else gross) —
+        // used for cross-year comparison so historical years render correctly.
+        revShopee:    revShopee,
+        revTiktok:    revTiktok,
+        revLazada:    revLazada,
+        revTotal:     orderRev > 0 ? orderRev : (gShopee + gTiktok + gLazada),
       };
     });
 
