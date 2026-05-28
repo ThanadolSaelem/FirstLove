@@ -10,6 +10,7 @@ const FL_DEFAULT_CONFIG = {
     SHOPEE: '1-h66Z56evcoIOZ3L0dFxtxlxZC_bycQL',   // Income + Orders ของ Shopee รวมกัน
     TIKTOK: '1g6gdFpVjnPCYrsjhy2Oe1c-RhqTjvczQ',   // Income + Orders + Live Performance ของ TikTok รวมกัน
     LAZADA: '1FpJWRbVHbDoiKuj9kwu270nQ5FBxi6cC',   // Income + Orders ของ Lazada รวมกัน
+    STOCK:  '',                                      // Stock Movement files จากสำนักงานบัญชี
   },
   OUTPUT_SHEET_ID: '1iG41vcWgMV3E5gB8z9VczXD_IoKODRMMSG3LooAeZoQ',
   MC_LOG_SHEET_ID: '1u8AgUZ-oG07rJCgTBpm4mOthU4PFsxcTwEfL2Fs7-0w',

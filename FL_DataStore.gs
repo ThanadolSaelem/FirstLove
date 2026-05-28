@@ -214,8 +214,17 @@ function FL_getStockStatus() {
     }
 
     // ── 2) Aggregate sku_monthly.units_sold from firstDate onward ─
+    // Component-level SKUs (กลูต้า/วิตามินซี/โปรไบโอติก) use FL_getComponentData
+    // to decompose bundle sales into physical bottle counts.
+    const COMP_CATS = new Set(['กลูต้า', 'วิตามินซี', 'โปรไบโอติก']);
+    const compFirstDates = {};
+    Object.keys(inMap).forEach(function(k) {
+      if (COMP_CATS.has(k)) compFirstDates[k] = inMap[k].firstDate;
+    });
+    const hasCompCats = Object.keys(compFirstDates).length > 0;
+
     const skSheet = ss.getSheetByName(FL_SHEETS.SKU_MONTHLY);
-    const soldMap = {}; // sku (UPPER) → units sold from firstDate
+    const soldMap = {}; // sku → units sold from firstDate
     if (skSheet) {
       const data = skSheet.getDataRange().getValues();
       const hdr  = data[0] || [];
@@ -223,20 +232,33 @@ function FL_getStockStatus() {
       const iSku   = hdr.indexOf('sku_ref');
       const iUnits = hdr.indexOf('units_sold');
       for (let i = 1; i < data.length; i++) {
-        const r  = data[i];
+        const r   = data[i];
         const sku = (r[iSku] || '').toString().trim();
         if (!sku) continue;
-        const skuKey = Object.keys(inMap).find(k => k.toUpperCase() === sku.toUpperCase());
-        if (!skuKey) continue;
-        const firstDate = inMap[skuKey].firstDate;
-        // month_key '2026-01' → check if month >= firstDate's month
+
         let mk = r[iMonth];
         if (mk instanceof Date) mk = Utilities.formatDate(mk, Session.getScriptTimeZone(), 'yyyy-MM');
         mk = String(mk).replace(/^'/, '');
         const [yy, mm] = mk.split('-').map(Number);
         if (!yy || !mm) continue;
-        const rowMonthEnd = new Date(yy, mm, 0); // last day of that month
-        // Count if rowMonth's last day >= firstDate
+        const rowMonthEnd = new Date(yy, mm, 0);
+
+        // ── Component-level (decompose bundles → physical bottles) ──
+        if (hasCompCats && typeof FL_getComponentData === 'function') {
+          const units = parseFloat(r[iUnits]) || 0;
+          FL_getComponentData(sku, units).forEach(function(c) {
+            if (!compFirstDates[c.category]) return;
+            if (rowMonthEnd < compFirstDates[c.category]) return;
+            soldMap[c.category] = (soldMap[c.category] || 0) + c.units;
+          });
+        }
+
+        // ── SKU-level (original logic) ────────────────────────────
+        const skuKey = Object.keys(inMap).find(function(k) {
+          return !COMP_CATS.has(k) && k.toUpperCase() === sku.toUpperCase();
+        });
+        if (!skuKey) continue;
+        const firstDate = inMap[skuKey].firstDate;
         if (rowMonthEnd < firstDate) continue;
         soldMap[skuKey] = (soldMap[skuKey] || 0) + (parseFloat(r[iUnits]) || 0);
       }
@@ -493,6 +515,52 @@ function FL_saveAdSpend(monthKey, amount) {
   return FL_saveAdSpendDetail(monthKey, [
     { platform: 'total', ad_type: '', ad_amount: parseFloat(amount) || 0, sales_amount: 0 }
   ]);
+}
+
+// ─── Stock: Batch Write + Backfill ───────────────────────────
+
+/**
+ * Write multiple stock_in entries at once (dedup by note field).
+ * Used by FL_parseStockMovement and FL_populate_stock_2026.
+ */
+function FL_writeStockIn_batch(entries) {
+  const ss    = SpreadsheetApp.openById(FL_getConfig().OUTPUT_SHEET_ID);
+  const sheet = ss.getSheetByName(FL_SHEETS.STOCK_IN);
+  if (!sheet) throw new Error('ไม่พบ sheet stock_in — รัน Setup ก่อน');
+
+  const existing = sheet.getDataRange().getValues();
+  const existingNotes = new Set(existing.map(function(r) { return String(r[3]); }));
+
+  let written = 0;
+  entries.forEach(function(e) {
+    if (existingNotes.has(e.note)) return;   // dedup by note
+    sheet.appendRow([e.date, e.sku, e.qty, e.note, new Date()]);
+    existingNotes.add(e.note);
+    written++;
+  });
+  Logger.log('FL_writeStockIn_batch: เขียน ' + written + ' entries');
+  return written;
+}
+
+/**
+ * One-time backfill: ใส่ข้อมูล stock เปิดปี + รับเพิ่ม ม.ค.–เม.ย. 2026
+ * จากไฟล์รายงานการซื้อขายสินค้าของสำนักงานบัญชี
+ * รันครั้งเดียวจาก Apps Script editor
+ */
+function FL_populate_stock_2026() {
+  const entries = [
+    // ─── Opening balances 01/01/2026 ──────────────────────────
+    { date: new Date(2026, 0, 1), sku: 'กลูต้า',     qty: 1686, note: 'ยอดยกมา 01/01/2026' },
+    { date: new Date(2026, 0, 1), sku: 'วิตามินซี',  qty: 714,  note: 'ยอดยกมา 01/01/2026' },
+    { date: new Date(2026, 0, 1), sku: 'โปรไบโอติก', qty: 1633, note: 'ยอดยกมา 01/01/2026' },
+    // ─── Stock received (ซื้อ) 09/04/2026 EXP-20260400036 ──────
+    { date: new Date(2026, 3, 9), sku: 'กลูต้า',     qty: 2000, note: 'ซื้อ EXP-20260400036' },
+    { date: new Date(2026, 3, 9), sku: 'วิตามินซี',  qty: 1150, note: 'ซื้อ EXP-20260400036' },
+    // ─── Credit note: โปรไบโอติก +1 คืน 25/02/2026 ────────────
+    { date: new Date(2026, 1, 25), sku: 'โปรไบโอติก', qty: 1, note: 'ลดหนี้ CNT-20260200001' },
+  ];
+  const n = FL_writeStockIn_batch(entries);
+  Logger.log('FL_populate_stock_2026: เสร็จ เขียน ' + n + ' rows');
 }
 
 // ─── Populate 2025 Historical Data ──────────────────────────

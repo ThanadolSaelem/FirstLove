@@ -56,6 +56,12 @@ function FL_detectFileType(driveFile, platform) {
   const sheetNames = FL_getSheetNames(driveFile);
   const has = name => sheetNames.includes(name);
 
+  // ── Stock Movement (accounting office) ──────────────────────
+  if (platform === 'stock') {
+    if (driveFile.getName().startsWith('Stock_Movement_report')) return 'movement';
+    return 'unknown';
+  }
+
   // ── Shopee ──────────────────────────────────────────────────
   if (platform === 'shopee') {
     if (has('Summary') && has('Income'))  return 'income';

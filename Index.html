@@ -2527,6 +2527,16 @@ https://matthewjamestaylor.com/responsive-attributes
                             </div>
 
                             <div class="field-group">
+                                <label class="field-label" for="stockFolder">
+                                    Stock Folder
+                                    <span style="font-size:11px; font-weight:400; color:var(--text-light);">(รายงานจากสำนักงานบัญชี)</span>
+                                </label>
+                                <input class="field-input" type="text" id="stockFolder" disabled
+                                    placeholder="Folder ID หรือ URL">
+                                <span class="field-hint">Stock_Movement_report_*.xlsx</span>
+                            </div>
+
+                            <div class="field-group">
                                 <label class="field-label" for="outputSheetId">
                                     <span style="color:var(--danger)">*</span> Output Sheet ID
                                 </label>
@@ -3017,6 +3027,7 @@ https://matthewjamestaylor.com/responsive-attributes
                     document.getElementById('shopeeFolder').value = config.FOLDERS?.SHOPEE || '';
                     document.getElementById('tiktokFolder').value = config.FOLDERS?.TIKTOK || '';
                     document.getElementById('lazadaFolder').value = config.FOLDERS?.LAZADA || '';
+                    document.getElementById('stockFolder').value  = config.FOLDERS?.STOCK  || '';
                     document.getElementById('outputSheetId').value = config.OUTPUT_SHEET_ID || '';
 
                     if (config.FOLDERS?.SHOPEE) document.getElementById('navShopeeFolder').href = 'https://drive.google.com/drive/folders/' + config.FOLDERS.SHOPEE;
@@ -3095,6 +3106,7 @@ https://matthewjamestaylor.com/responsive-attributes
             document.getElementById('shopeeFolder').value = originalConfig.FOLDERS?.SHOPEE || '';
             document.getElementById('tiktokFolder').value = originalConfig.FOLDERS?.TIKTOK || '';
             document.getElementById('lazadaFolder').value = originalConfig.FOLDERS?.LAZADA || '';
+            document.getElementById('stockFolder').value  = originalConfig.FOLDERS?.STOCK  || '';
             document.getElementById('outputSheetId').value = originalConfig.OUTPUT_SHEET_ID || '';
             document.getElementById('mcLogSheetId').value = originalConfig.MC_LOG_SHEET_ID || '';
             document.getElementById('monthlyTarget').value = originalConfig.MONTHLY_TARGET || 2000000;
@@ -3123,6 +3135,7 @@ https://matthewjamestaylor.com/responsive-attributes
                     SHOPEE: document.getElementById('shopeeFolder').value.trim(),
                     TIKTOK: document.getElementById('tiktokFolder').value.trim(),
                     LAZADA: document.getElementById('lazadaFolder').value.trim(),
+                    STOCK:  document.getElementById('stockFolder').value.trim(),
                 },
                 OUTPUT_SHEET_ID: outSheet,
                 MC_LOG_SHEET_ID: document.getElementById('mcLogSheetId').value.trim(),
