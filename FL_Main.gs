@@ -771,6 +771,7 @@ function FL_doScanAndImportAll() {
     { platform: 'shopee', folderId: cfg.FOLDERS.SHOPEE },
     { platform: 'tiktok', folderId: cfg.FOLDERS.TIKTOK },
     { platform: 'lazada', folderId: cfg.FOLDERS.LAZADA },
+    { platform: 'stock',  folderId: cfg.FOLDERS.STOCK  },
   ];
 
   platformTasks.forEach(task => {
@@ -926,6 +927,14 @@ function FL_runParser(file, platform, fileType) {
     const warn  = data.warning ? ` ⚠️ ${data.warning}` : '';
     return { file_type: 'orders', status: 'ok', status_type: 'success', message: 'ok',
              detail: `${data.monthKey} | ${units} units | ${data.skus.length} SKUs${warn}` };
+  }
+
+  if (platform === 'stock' && fileType === 'movement') {
+    const parsed = FL_parseStockMovement(file);
+    FL_writeStockIn_batch(parsed.entries);
+    FL_markFileProcessed(file.getId(), name, 'stock', 'movement', null);
+    return { file_type: 'movement', status: 'ok', status_type: 'success', message: 'ok',
+             detail: `${parsed.category}: ${parsed.entries.length} entries` };
   }
 
   throw new Error(`ไม่มี handler สำหรับ platform="${platform}" fileType="${fileType}"`);
