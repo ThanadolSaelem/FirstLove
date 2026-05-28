@@ -529,13 +529,15 @@ function FL_writeStockIn_batch(entries) {
   if (!sheet) throw new Error('ไม่พบ sheet stock_in — รัน Setup ก่อน');
 
   const existing = sheet.getDataRange().getValues();
-  const existingNotes = new Set(existing.map(function(r) { return String(r[3]); }));
+  // dedup key = sku + note (note อย่างเดียวไม่พอเพราะหลาย product ใช้ note เดียวกัน)
+  const existingKeys = new Set(existing.map(function(r) { return String(r[1]) + '|' + String(r[3]); }));
 
   let written = 0;
   entries.forEach(function(e) {
-    if (existingNotes.has(e.note)) return;   // dedup by note
+    const key = e.sku + '|' + e.note;
+    if (existingKeys.has(key)) return;
     sheet.appendRow([e.date, e.sku, e.qty, e.note, new Date()]);
-    existingNotes.add(e.note);
+    existingKeys.add(key);
     written++;
   });
   Logger.log('FL_writeStockIn_batch: เขียน ' + written + ' entries');
