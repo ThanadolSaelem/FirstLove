@@ -2132,21 +2132,28 @@
 
             updateKPI('Net', p.totalNet, c ? c.totalNet : null, '฿', p.yoy);
             updateKPI('Avg', p.avgMonthly, c ? c.avgMonthly : null, '฿', p.yoy);
-            updateKPI('Units', p.totalUnits, c ? c.totalUnits : null, '', p.yoy);
+            // Units/Fees comparison only when the compare year actually has that
+            // data — historical years (e.g. 2025) hold revenue only, so a naive
+            // compare would falsely read −100%.
+            updateKPI('Units', p.totalUnits, (c && c.totalUnits > 0) ? c.totalUnits : null, '', null);
 
             const feePct = (p.totalFees + p.totalNet) > 0 ? (p.totalFees / (p.totalFees + p.totalNet) * 100).toFixed(1) : null;
-            updateKPI('Fees', p.totalFees, c ? c.totalFees : null, '฿', null, feePct ? `อัตราค่าธรรมเนียม ${feePct}%` : null);
+            updateKPI('Fees', p.totalFees, (c && c.totalFees > 0) ? c.totalFees : null, '฿', null, feePct ? `อัตราค่าธรรมเนียม ${feePct}%` : null);
 
-            renderPlatformBar(PRIMARY_DATA.monthly);
+            renderPlatformBar(
+                PRIMARY_DATA.monthly,
+                (IS_COMP_MODE && COMPARE_DATA) ? COMPARE_DATA.monthly : null
+            );
             renderMargin(PRIMARY_DATA.marginRanking || []);
             renderFeePie(PRIMARY_DATA.feeByPlatform);
             renderHeatmap(PRIMARY_DATA.monthly);
             renderAdSpendAnnual(PRIMARY_DATA.monthly);
             renderQuadrant(PRIMARY_DATA.quadrant || []);
-            renderSkuBar(
-                PRIMARY_DATA.componentsByCategory || {},
-                (IS_COMP_MODE && COMPARE_DATA) ? (COMPARE_DATA.componentsByCategory || {}) : null
-            );
+            // Category comparison only if compare year has SKU-level data.
+            const _cCat = (IS_COMP_MODE && COMPARE_DATA && COMPARE_DATA.componentsByCategory
+                && Object.keys(COMPARE_DATA.componentsByCategory).length)
+                ? COMPARE_DATA.componentsByCategory : null;
+            renderSkuBar(PRIMARY_DATA.componentsByCategory || {}, _cCat);
         }
 
         // ── Ad Spend + Revenue grouped ColumnChart (Annual) ──
@@ -2546,13 +2553,15 @@
         // Stacked bar — net revenue by platform per month
         // NOW WITH: Inline label for large segments & callout for small ones
         // ─────────────────────────────────────────────────────────────────────
-        function renderPlatformBar(monthly) {
+        function renderPlatformBar(monthly, cMonths) {
             const el = document.getElementById('chartPlatformBar');
             if (!el) return;
 
-            const getShopee = m => m.shopee_net != null ? (m.shopee_net || 0) : (m.orderShopee || 0);
-            const getTiktok = m => m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0);
-            const getLazada = m => m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0);
+            // Unified sales revenue per platform (rev* from backend); falls back
+            // to legacy fields so historical years without SKU data still render.
+            const getShopee = m => m.revShopee != null ? (m.revShopee || 0) : (m.shopee_net != null ? (m.shopee_net || 0) : (m.orderShopee || 0));
+            const getTiktok = m => m.revTiktok != null ? (m.revTiktok || 0) : (m.tiktok_net != null ? (m.tiktok_net || 0) : (m.orderTiktok || 0));
+            const getLazada = m => m.revLazada != null ? (m.revLazada || 0) : (m.lazada_net != null ? (m.lazada_net || 0) : (m.orderLazada || 0));
 
             const getMonthAbbr = (label) => {
                 if (!label) return '';
@@ -2565,6 +2574,12 @@
                 };
                 return mapping[m] || m;
             };
+
+            // Comparison mode → paired stacked bars (this year vs compare year)
+            if (cMonths) {
+                renderPlatformBarCompare(el, monthly, cMonths, getShopee, getTiktok, getLazada, getMonthAbbr);
+                return;
+            }
 
             // Only months with data
             const data = (monthly || [])
@@ -2626,7 +2641,7 @@
             s += `<line x1="${PAD.l}" x2="${W-PAD.r}" y1="${baseY}" y2="${baseY}" stroke="#e5e7eb" stroke-width="1"/>`;
 
             // Y axis title
-            s += `<text x="14" y="${PAD.t+innerH/2}" transform="rotate(-90 14 ${PAD.t+innerH/2})" text-anchor="middle" font-size="10" fill="#9ca3af">รายได้สุทธิ (฿)</text>`;
+            s += `<text x="14" y="${PAD.t+innerH/2}" transform="rotate(-90 14 ${PAD.t+innerH/2})" text-anchor="middle" font-size="10" fill="#9ca3af">ยอดขาย (฿)</text>`;
 
             // Bars + labels
             data.forEach((d, i) => {
@@ -2760,6 +2775,174 @@
             }
         }
 
+
+        // ── Paired stacked bars: this year vs compare year, split by platform ──
+        function renderPlatformBarCompare(el, monthly, cMonths, getShopee, getTiktok, getLazada, getMonthAbbr) {
+            const PORDER = ['shopee', 'tiktok', 'lazada'];
+            const platsOf = (m) => ({ shopee: getShopee(m), tiktok: getTiktok(m), lazada: getLazada(m) });
+            const totalOf = (o) => (o.shopee || 0) + (o.tiktok || 0) + (o.lazada || 0);
+
+            // Align by month index; keep months where either year has data
+            const data = (monthly || []).map((m, i) => {
+                const cm = cMonths[i] || null;
+                return {
+                    m: m.label ? getMonthAbbr(m.label) : (m.month || ''),
+                    cur: platsOf(m),
+                    cmp: cm ? platsOf(cm) : { shopee: 0, tiktok: 0, lazada: 0 },
+                };
+            }).filter(d => (totalOf(d.cur) + totalOf(d.cmp)) > 0);
+
+            if (!data.length) {
+                el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light)">ไม่มีข้อมูล</div>';
+                return;
+            }
+
+            const n = data.length;
+            const W = 1040, H = 340;
+            const PAD = { l: 54, r: 16, t: 24, b: 42 };
+            const innerW = W - PAD.l - PAD.r;
+            const innerH = H - PAD.t - PAD.b;
+            const colW = innerW / n;
+            const groupW = colW * (n <= 6 ? 0.6 : 0.7);
+            const gap = n <= 6 ? 6 : 3;
+            const barW = (groupW - gap) / 2;
+
+            const allTotals = [];
+            data.forEach(d => { allTotals.push(totalOf(d.cur), totalOf(d.cmp)); });
+            const yMaxRaw = Math.max(...allTotals, 0) * 1.22;
+            const yMax = niceMax(yMaxRaw) || 10;
+            const yToPx = v => PAD.t + innerH - (v / yMax) * innerH;
+            const ticks = niceTicks(yMax, 4);
+            const baseY = yToPx(0);
+
+            const yy = (s) => "'" + String(s).slice(-2);
+            const CMP_OPACITY = 0.4;
+
+            let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">`;
+
+            // Legend — platforms (left) + year style key (right)
+            let lx = PAD.l;
+            PORDER.forEach(p => {
+                s += `<rect x="${lx}" y="5" width="9" height="9" rx="1.5" fill="${PCOL[p]}"/>`;
+                s += `<text x="${lx + 13}" y="13" font-size="10" font-weight="500" fill="#6b7280">${PLBL[p]}</text>`;
+                lx += PLBL[p].length * 6.4 + 24;
+            });
+            let rx = W - PAD.r;
+            [{ lbl: yy(COMP_YEAR) + ' (ปีก่อน)', op: CMP_OPACITY }, { lbl: yy(YEAR), op: 1 }].forEach(it => {
+                const lw = it.lbl.length * 6 + 20;
+                rx -= lw;
+                s += `<rect x="${rx}" y="5" width="9" height="9" rx="1.5" fill="#5b4a9e" opacity="${it.op}"/>`;
+                s += `<text x="${rx + 13}" y="13" font-size="10" font-weight="500" fill="#6b7280">${it.lbl}</text>`;
+                rx -= 6;
+            });
+
+            // Gridlines + Y labels
+            ticks.forEach(t => {
+                const y = yToPx(t);
+                s += `<line x1="${PAD.l}" x2="${W - PAD.r}" y1="${y}" y2="${y}" stroke="#f3e8ff" stroke-width="1"/>`;
+                s += `<text x="${PAD.l - 7}" y="${y + 3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${t === 0 ? '0' : FMTK(t)}</text>`;
+            });
+            s += `<line x1="${PAD.l}" x2="${W - PAD.r}" y1="${baseY}" y2="${baseY}" stroke="#e5e7eb" stroke-width="1"/>`;
+            s += `<text x="14" y="${PAD.t + innerH / 2}" transform="rotate(-90 14 ${PAD.t + innerH / 2})" text-anchor="middle" font-size="10" fill="#9ca3af">ยอดขาย (฿)</text>`;
+
+            // Paired bars
+            data.forEach((d, i) => {
+                const colLeft = PAD.l + colW * i;
+                const gx0 = colLeft + (colW - groupW) / 2;
+                const bars = [
+                    { key: 'cur', o: d.cur, op: 1, lbl: yy(YEAR) },
+                    { key: 'cmp', o: d.cmp, op: CMP_OPACITY, lbl: yy(COMP_YEAR) },
+                ];
+                bars.forEach((bar, bi) => {
+                    const x = gx0 + bi * (barW + gap);
+                    const total = totalOf(bar.o);
+                    let yCursor = baseY;
+                    PORDER.forEach(p => {
+                        const v = bar.o[p] || 0; if (!v) return;
+                        const h = (v / yMax) * innerH; yCursor -= h;
+                        s += `<rect x="${x}" y="${yCursor}" width="${barW}" height="${h}" fill="${PCOL[p]}" opacity="${bar.op}"/>`;
+                    });
+                    if (total > 0) {
+                        s += `<text x="${x + barW / 2}" y="${yCursor - 4}" text-anchor="middle" font-size="${n > 8 ? 8.5 : 9.5}" font-weight="700" fill="${bar.op < 1 ? '#a78bfa' : '#5b4a9e'}">${FMTK(total)}</text>`;
+                    }
+                    // Year sub-label under each bar
+                    s += `<text x="${x + barW / 2}" y="${baseY + 13}" text-anchor="middle" font-size="8.5" fill="#9ca3af">${bar.lbl}</text>`;
+                    // Hover target
+                    s += `<rect class="fl-hover-col" data-idx="${i}" data-bar="${bar.key}" x="${x}" y="${PAD.t}" width="${barW}" height="${innerH}" fill="transparent" style="cursor:default"/>`;
+                });
+                // Month label
+                s += `<text x="${colLeft + colW / 2}" y="${baseY + 28}" text-anchor="middle" font-size="${n > 9 ? 9 : 10}" font-weight="600" fill="#4b5563">${d.m}</text>`;
+            });
+
+            s += '</svg>';
+            el.innerHTML = s;
+
+            // Tooltip
+            el.style.position = 'relative';
+            const tip = document.createElement('div');
+            tip.style.cssText = [
+                'position:absolute;pointer-events:none;display:none;',
+                'background:#fff;border:1px solid #ede9fe;border-radius:10px;',
+                'padding:10px 14px;box-shadow:0 4px 16px rgba(91,74,158,.15);',
+                "font-family:'Noto Sans Thai','Inter',sans-serif;font-size:12px;",
+                'color:#1e1b3a;min-width:170px;z-index:100;',
+            ].join('');
+            el.appendChild(tip);
+
+            el.querySelectorAll('.fl-hover-col').forEach(rect => {
+                const idx = parseInt(rect.getAttribute('data-idx'));
+                const which = rect.getAttribute('data-bar');
+                const d = data[idx];
+                const o = which === 'cur' ? d.cur : d.cmp;
+                const yr = which === 'cur' ? YEAR : COMP_YEAR;
+                const total = totalOf(o);
+
+                rect.addEventListener('mouseenter', function () {
+                    const rows = PORDER.map(p => {
+                        const v = o[p] || 0;
+                        const pct = total ? (v / total * 100).toFixed(0) : 0;
+                        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:3px 0;">
+                            <span style="display:flex;align-items:center;gap:5px;">
+                                <span style="width:8px;height:8px;border-radius:2px;background:${PCOL[p]};display:inline-block;"></span>
+                                <span style="font-weight:600;color:#6b7280;">${PLBL[p]}</span>
+                            </span>
+                            <span style="font-weight:700;">฿${FMT(v)}<span style="font-size:10px;color:#9ca3af;margin-left:4px;">${pct}%</span></span>
+                        </div>`;
+                    }).join('');
+                    tip.innerHTML = `
+                        <div style="font-weight:800;font-size:13px;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #ede9fe;">${d.m} · ปี ${yr}</div>
+                        ${rows}
+                        <div style="margin-top:8px;padding-top:7px;border-top:1px solid #ede9fe;display:flex;justify-content:space-between;">
+                            <span style="font-weight:600;color:#6b7280;">รวม</span>
+                            <span style="font-weight:800;font-size:13px;color:#5b4a9e;">฿${FMT(total)}</span>
+                        </div>`;
+                    tip.style.display = 'block';
+                });
+                rect.addEventListener('mousemove', function (e) {
+                    const r2 = el.getBoundingClientRect();
+                    const tipW = tip.offsetWidth || 180;
+                    let left = e.clientX - r2.left + 12;
+                    if (left + tipW > r2.width - 8) left = e.clientX - r2.left - tipW - 12;
+                    tip.style.left = left + 'px';
+                    tip.style.top = (e.clientY - r2.top - 10) + 'px';
+                });
+                rect.addEventListener('mouseleave', function () { tip.style.display = 'none'; });
+            });
+
+            // local helpers
+            function niceMax(v) {
+                if (v <= 0) return 0;
+                const pow = Math.pow(10, Math.floor(Math.log10(v)));
+                const k = v / pow;
+                const nice = k <= 1 ? 1 : k <= 2 ? 2 : k <= 2.5 ? 2.5 : k <= 5 ? 5 : 10;
+                return nice * pow;
+            }
+            function niceTicks(max, count) {
+                if (max <= 0) return [0];
+                const step = max / count;
+                return Array.from({ length: count + 1 }, (_, i) => Math.round(step * i));
+            }
+        }
 
         // Stacked revenue by platform per month (replaces units bar)
         function renderUnitsBar(monthly) {
