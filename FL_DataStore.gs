@@ -495,6 +495,46 @@ function FL_saveAdSpend(monthKey, amount) {
   ]);
 }
 
+// ─── Populate 2025 Historical Data ──────────────────────────
+// Run once from Apps Script editor to seed monthly_summary with
+// 2025 order revenue for YoY comparison in Annual dashboard.
+
+function FL_populate2025HistoricalData() {
+  const HISTORICAL = [
+    { monthKey: '2025-03', tiktok: 257644.00, shopee: 31233.00,  lazada: 0 },
+    { monthKey: '2025-04', tiktok: 217778.94, shopee: 33092.00,  lazada: 0 },
+    { monthKey: '2025-05', tiktok: 195064.50, shopee: 81039.00,  lazada: 0 },
+    { monthKey: '2025-06', tiktok: 214307.36, shopee: 103113.00, lazada: 0 },
+    { monthKey: '2025-07', tiktok: 286596.83, shopee: 97139.00,  lazada: 5334.12 },
+    { monthKey: '2025-08', tiktok: 428178.13, shopee: 142858.00, lazada: 4338.03 },
+    { monthKey: '2025-09', tiktok: 398818.40, shopee: 110077.00, lazada: 2768.82 },
+    { monthKey: '2025-10', tiktok: 571221.41, shopee: 150845.00, lazada: 6256.63 },
+    { monthKey: '2025-11', tiktok: 327017.02, shopee: 110726.00, lazada: 7752.33 },
+    { monthKey: '2025-12', tiktok: 274889.94, shopee: 58672.00,  lazada: 1499.00 },
+  ];
+
+  let written = 0;
+  let skipped = 0;
+  HISTORICAL.forEach(function(row) {
+    ['tiktok', 'shopee', 'lazada'].forEach(function(plat) {
+      const rev = row[plat] || 0;
+      if (rev <= 0) return;
+      FL_writeMonthlySummary({
+        monthKey:        row.monthKey,
+        platform:        plat,
+        gross:           rev,
+        seller_discount: 0,
+        net_revenue:     0,
+        platform_fees:   0,
+        transferred:     rev,
+        sourceFile:      'historical_2025',
+      });
+      written++;
+    });
+  });
+  Logger.log('FL_populate2025HistoricalData: เสร็จ — ' + written + ' rows');
+}
+
 // ─── Error Log ───────────────────────────────────────────────
 
 function FL_logError(fileName, platform, error) {
