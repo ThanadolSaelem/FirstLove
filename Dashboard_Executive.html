@@ -2732,7 +2732,7 @@
                             // anchor dot at top of stub
                             svg += `<circle cx="${x + barW / 2}" cy="${y - 1}" r="1.5" fill="${PCOL[p]}"/>`;
                         }
-                        svg += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" font-size="${isTiny ? 10.5 : 11}" font-weight="700" fill="${PCOL[p]}">${FMT(v)}</text>`;
+                        svg += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" font-size="${isTiny ? 10.5 : 11}" font-weight="700" fill="${PCOL[p]}">${Math.round(v)} ชิ้น</text>`;
                     } else {
                         // Zero bar — faint dash on baseline, no label
                         svg += `<line x1="${x + 2}" y1="${baseY}" x2="${x + barW - 2}" y2="${baseY}" stroke="#e5e7eb" stroke-width="1.5"/>`;
