@@ -20,12 +20,14 @@ function FL_parseStockMovement(driveFile) {
   const { rows } = FL_readXlsxSheet(driveFile, sheetName);
   if (rows.length < 9) throw new Error('Stock Movement: ไฟล์มีข้อมูลน้อยเกินไป');
 
-  // ── 1. หา product code จากหัวรายงาน (row 2, index 1) ────────
-  const titleCell = (rows[1] || []).join(' ');
-  const codeMatch = titleCell.match(/P\d{5}/);
-  if (!codeMatch) throw new Error('Stock Movement: ไม่พบรหัสสินค้าในชื่อรายงาน');
-  const productCode = codeMatch[0];
-  const category    = FL_STOCK_PRODUCT_MAP[productCode];
+  // ── 1. หา product code จากหัวรายงาน (scan 6 rows แรก เผื่อ xlsx parser ข้าม empty row) ──
+  let productCode = null;
+  for (let ri = 0; ri < Math.min(rows.length, 6); ri++) {
+    const m = (rows[ri] || []).join(' ').match(/P\d{5}/);
+    if (m) { productCode = m[0]; break; }
+  }
+  if (!productCode) throw new Error('Stock Movement: ไม่พบรหัสสินค้าในชื่อรายงาน');
+  const category = FL_STOCK_PRODUCT_MAP[productCode];
   if (!category) throw new Error('Stock Movement: ไม่รู้จักรหัสสินค้า ' + productCode);
 
   // ── 2. หา data start row (หลัง header ที่มี "ลำดับ" หรือ "วันที่") ──
