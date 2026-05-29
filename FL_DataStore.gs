@@ -565,6 +565,56 @@ function FL_populate_stock_2026() {
   Logger.log('FL_populate_stock_2026: เสร็จ เขียน ' + n + ' rows');
 }
 
+// ─── Populate 2025 Historical Ad Data ───────────────────────
+// Run once from Apps Script editor to seed ad_spend with 2025
+// ad spending + ad sales for YoY comparison in Ad/Annual dashboard.
+// Source: Mike's chart (total across all platforms, Mar–Dec 2025)
+
+function FL_populate2025AdData() {
+  const AD_2025 = [
+    { monthKey: '2025-03', spending: 80775.05,  sale: 176872.08 },
+    { monthKey: '2025-04', spending: 73855.34,  sale: 215741.61 },
+    { monthKey: '2025-05', spending: 73413.57,  sale: 208518.14 },
+    { monthKey: '2025-06', spending: 89312.00,  sale: 227990.50 },
+    { monthKey: '2025-07', spending: 103298.26, sale: 306792.00 },
+    { monthKey: '2025-08', spending: 109726.95, sale: 388158.41 },
+    { monthKey: '2025-09', spending: 119473.10, sale: 374146.71 },
+    { monthKey: '2025-10', spending: 199511.39, sale: 509872.35 },
+    { monthKey: '2025-11', spending: 111242.00, sale: 322276.62 },
+    { monthKey: '2025-12', spending: 77770.00,  sale: 255980.00 },
+  ];
+
+  // Check existing months to avoid overwriting real data
+  const sheet = _FL_adSheet(false);
+  const existingMonths = new Set();
+  if (sheet) {
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      existingMonths.add(String(data[i][0]).replace(/^'/, ''));
+    }
+  }
+
+  let written = 0;
+  let skipped = 0;
+  AD_2025.forEach(function(row) {
+    if (existingMonths.has(row.monthKey)) { skipped++; return; }
+    FL_saveAdSpendDetail(row.monthKey, [{
+      platform:      'total',
+      ad_type:       '',
+      ad_amount:     row.spending,
+      value_amount:  row.sale,
+      net_amount:    0,
+      impression:    0,
+      reach:         0,
+      live_view:     0,
+      purchase_count: 0,
+      freq:          0,
+    }]);
+    written++;
+  });
+  Logger.log('FL_populate2025AdData: เขียน ' + written + ' rows, ข้าม ' + skipped + ' (มีอยู่แล้ว)');
+}
+
 // ─── Populate 2025 Historical Data ──────────────────────────
 // Run once from Apps Script editor to seed monthly_summary with
 // 2025 order revenue for YoY comparison in Annual dashboard.
